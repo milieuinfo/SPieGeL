@@ -15,3 +15,35 @@ buildNumber.properties
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+.settings/
+.factorypath
+
+# MkDocs
+site/
+.venv/
+.gh-pages-deploy/
+__pycache__/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Operating system
+.DS_Store
+Thumbs.db
+
+# Local configuration and secrets: never commit these
+.env
+.env.*
+!.env.example
+application-local.yml
+application-local.properties
+
+# Runtime output
+*.log
+logs/
+
+# Claude Code: personal, machine-specific settings
+CLAUDE.local.md
+.claude/settings.local.json

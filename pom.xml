@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>4.1.1</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>be.vlaanderen.omgeving.spiegel</groupId>
+  <artifactId>spiegel-parent</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>SPieGeL</name>
+  <description>Open-source, configurable Linked Data publishing server</description>
+  <url>https://milieuinfo.github.io/SPieGeL/</url>
+  <inceptionYear>2026</inceptionYear>
+
+  <organization>
+    <name>Vlaamse Overheid, Departement Omgeving</name>
+    <url>https://omgeving.vlaanderen.be/</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:https://github.com/milieuinfo/SPieGeL.git</connection>
+    <developerConnection>scm:git:https://github.com/milieuinfo/SPieGeL.git</developerConnection>
+    <url>https://github.com/milieuinfo/SPieGeL</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <modules>
+    <module>spiegel-core</module>
+    <module>spiegel-adapter-config</module>
+    <module>spiegel-adapter-sparql</module>
+    <module>spiegel-adapter-web</module>
+    <module>spiegel-adapter-html</module>
+    <module>spiegel-app</module>
+  </modules>
+
+  <properties>
+    <java.version>21</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jena.version>6.2.0</jena.version>
+    <archunit.version>1.5.1</archunit.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>be.vlaanderen.omgeving.spiegel</groupId>
+        <artifactId>spiegel-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>be.vlaanderen.omgeving.spiegel</groupId>
+        <artifactId>spiegel-adapter-config</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>be.vlaanderen.omgeving.spiegel</groupId>
+        <artifactId>spiegel-adapter-sparql</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>be.vlaanderen.omgeving.spiegel</groupId>
+        <artifactId>spiegel-adapter-web</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>be.vlaanderen.omgeving.spiegel</groupId>
+        <artifactId>spiegel-adapter-html</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jena</groupId>
+        <artifactId>jena-arq</artifactId>
+        <version>${jena.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.tngtech.archunit</groupId>
+        <artifactId>archunit-junit5</artifactId>
+        <version>${archunit.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-build-environment</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>[3.8.7,)</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>[21,)</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <tagNameFormat>v@{project.version}</tagNameFormat>
+          <preparationGoals>clean verify</preparationGoals>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <distributionManagement>
+    <repository>
+      <id>repo.omgeving.vlaanderen.be</id>
+      <name>Omgeving Artifactory - releases</name>
+      <url>https://repo.omgeving.vlaanderen.be/artifactory/release/</url>
+    </repository>
+    <snapshotRepository>
+      <id>repo.omgeving.vlaanderen.be</id>
+      <name>Omgeving Artifactory - snapshots</name>
+      <url>https://repo.omgeving.vlaanderen.be/artifactory/snapshot/</url>
+    </snapshotRepository>
+  </distributionManagement>
+</project>
