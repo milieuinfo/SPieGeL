@@ -6,37 +6,37 @@ Before building something new, we compared the open-source projects closest to S
 
 | Project | Stack · licence | Last push · stars | What it does |
 |---|---|---|---|
-| [Trifid](https://github.com/zazuko/trifid) (Zazuko) | TypeScript / Node.js · Apache-2.0 | 2026-09-25 · 102 | Lightweight Linked Data server and proxy, inspired by Pubby. Plug-ins for an entity renderer (HTML subject pages), a SPARQL proxy, YASGUI and a graph explorer. Content negotiation; HTML templates per namespace pattern. |
-| [Prez](https://github.com/RDFLib/prez) (RDFLib / Kurrawong) | Python (FastAPI) · BSD-3-Clause | 2026-09-30 · 39 | Data-configurable Linked Data API that delivers profiles of knowledge-graph data according to **Content Negotiation by Profile**. Reads from a read-only SPARQL endpoint and exposes that endpoint itself. Variants for SKOS (VocPrez) and GeoSPARQL / OGC API (SpacePrez). |
-| [ELDA](https://github.com/epimorphics/elda) (Epimorphics) | Java · own licence | 2026-09-28 · 57 | Implementation of the *Linked Data API* specification. Endpoints with URI templates are configured in RDF; each becomes SPARQL against a triple store, with several output formats. |
+| [Trifid](https://github.com/zazuko/trifid) (Zazuko) | TypeScript / Node.js · Apache-2.0 | 2026-09-25 · 102 | Lightweight Linked Data server and proxy, inspired by Pubby. Plug-ins for an entity renderer (HTML subject pages), a SPARQL proxy, YASGUI and a graph explorer. Content negotiation; HTML templates per namespace pattern. See the [code review](trifid-code-review.md). |
+| [Prez](https://github.com/RDFLib/prez) (RDFLib / Kurrawong) | Python (FastAPI) · BSD-3-Clause | 2026-09-30 · 39 | Data-configurable Linked Data API that delivers profiles of knowledge-graph data according to **Content Negotiation by Profile**. Reads from a read-only SPARQL endpoint and exposes that endpoint itself. Variants for SKOS (VocPrez) and GeoSPARQL / OGC API (SpacePrez). See the [code review](prez-code-review.md). |
+| [ELDA](https://github.com/epimorphics/elda) (Epimorphics) | Java · Apache-2.0 | 2026-09-28 · 57 | Implementation of the *Linked Data API* specification. Endpoints with URI templates are configured in RDF; each becomes SPARQL against a triple store, with several output formats. See the [code review](elda-code-review.md). |
 | [LodView](https://github.com/LodLive/LodView) | Java (Spring + Jena) · MIT | 2023-12-17 · 137 | IRI dereferencing following W3C practice, with HTML views of RDF resources. Follows Pubby's configuration approach. See the [code review](lodview-code-review.md). |
 | [grlc](https://github.com/CLARIAH/grlc) (CLARIAH) | Python · MIT | 2026-10-01 · 151 | Generates a Web API (with an OpenAPI description) from SPARQL queries stored as files in a git repository: one query file is one API operation. No subject pages. |
 | [Pubby](https://github.com/cygri/pubby) | Java · Apache-2.0 | 2018-02-26 · 92 · *archived* | The historical reference in this niche. No longer maintained. Listed because Trifid and LodView build on its ideas. |
 
 ## Against the requirements
 
-This table is based on each project's documentation, **not** on hands-on testing, except the LodView column, which was checked in the source code. Cells marked "partly" or "to check" need a short spike before any decision.
+The Trifid, Prez, ELDA and LodView columns were checked in the source code; the grlc column is based on its documentation. None of it is based on hands-on testing. Cells marked "partly" or "to check" need a short spike before any decision.
 
 | Requirement | Trifid | Prez | ELDA | LodView | grlc |
 |---|---|---|---|---|---|
-| HTML subject pages and RDF content negotiation (FR-CN-01) | yes | yes | yes | yes | no |
-| Own query per URI template (FR-RA-01) | partly | yes | yes | no (one generic query) | yes |
-| Content negotiation by profile (FR-CN-03) | no | **yes, core feature** | to check | no | no |
-| Public SPARQL endpoint (FR-SPARQL-01) | yes (proxy plug-in) | yes | no | no (redirects to the store) | no |
-| Several domains in one stateless instance (FR-MT-01) | partly (base-URL rewriting) | to check | to check | no (one namespace and one endpoint per instance) | to check |
+| HTML subject pages and RDF content negotiation (FR-CN-01) | yes | RDF yes; HTML only through the separate Prez UI | yes | yes | no |
+| Own query per URI template (FR-RA-01) | partly (one renderer instance per path pattern, one query each) | yes, generated from SHACL profiles per class | yes | no (one generic query) | yes |
+| Content negotiation by profile (FR-CN-03) | no | **yes, core feature** | no, but named views per endpoint (`_view`) come close | no | no |
+| Public SPARQL endpoint (FR-SPARQL-01) | yes (proxy plug-in, unfiltered pass-through) | yes (pass-through, off by default) | no (but `_where` and `_select` let callers add SPARQL fragments) | no (redirects to the store) | no |
+| Several domains in one stateless instance (FR-MT-01) | partly (plug-ins per host name, but one default endpoint) | no (one store and one endpoint structure per instance) | partly (several specifications per web application, by path prefix, not host name) | no (one namespace and one endpoint per instance) | to check |
 | Access levels mapped to separate read-only credentials (FR-AC-03) | no | no | no | no | no |
-| Flemish URI standard, Skolem IRIs, ELI (FR-URI-02 to 05) | partly, by configuration | partly, by configuration | partly, by configuration | partly: `303` only via the edge, `ns` needs a separate instance, no Skolem or ELI | no |
+| Flemish URI standard, Skolem IRIs, ELI (FR-URI-02 to 05) | partly: Skolem and ELI paths resolve generically, `303` only per IRI in the data or via the edge | no: resources live under CURIE paths or `/object?iri=` | yes by configuration: generic `303` from item templates; Skolem and ELI paths as URI templates | partly: `303` only via the edge, `ns` needs a separate instance, no Skolem or ELI | no |
 | Relational sources via R2RML (FR-DS-02) | no | no | no | no | no |
-| Fits a Java / Spring Boot team | no | no | Java, not Spring Boot | partly: Spring 4.2 WAR with JSP, not Boot | no |
+| Fits a Java / Spring Boot team | no | no | partly: Java 21, Jakarta and Jena 5, but a Jersey WAR, not Spring Boot | partly: Spring 4.2 WAR with JSP, not Boot | no |
 | Actively maintained | yes | yes | yes | quiet since 2023 | yes |
 
 ## What this means
 
 No project covers the combination SPieGeL needs. Two things are missing everywhere: **access levels** and **relational sources**. The closest projects each excel at something different:
 
-- **ELDA** is conceptually closest to the predecessor's query catalogue: URI template → SPARQL query, configured declaratively, in Java.
-- **Prez** is the only project built around content negotiation by profile. That is exactly what the predecessor *intended* with its format-dependent queries.
-- **Trifid** is the most mature and most widely used pure Linked Data front end, including a SPARQL proxy and YASGUI, but on a different stack.
+- **ELDA** is conceptually closest to the predecessor's query catalogue: URI template → SPARQL query, configured declaratively, in Java. Its endpoint model and HTTP behaviour are worth adopting; see the [code review](elda-code-review.md#what-spiegel-can-learn-from-it).
+- **Prez** is the only project built around content negotiation by profile. That is exactly what the predecessor *intended* with its format-dependent queries. Its profile model is the most reusable idea of all; see the [code review](prez-code-review.md#what-spiegel-can-learn-from-it).
+- **Trifid** is the most mature and most widely used pure Linked Data front end, including a SPARQL proxy and YASGUI, but on a different stack. Several of its ideas are worth adopting; see the [code review](trifid-code-review.md#what-spiegel-can-learn-from-it).
 - **LodView** fits the language but not the architecture, and is functionally narrow.
 - **grlc** solves a different problem (queries as an API). Its idea of keeping queries as files in git is a good model for SPieGeL's per-tenant configuration.
 

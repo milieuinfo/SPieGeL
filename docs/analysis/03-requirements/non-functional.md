@@ -34,6 +34,17 @@ SPieGeL publishes open data, but may also serve data at higher access levels. Th
 | NFR-OPS-06 | **Configuration** is external to the build artefact. Per-tenant configuration (URI templates, queries, templates) is version-controlled. | M |
 | NFR-OPS-07 | **Deployment** supports a rolling or blue/green switch-over without mixing incompatible versions behind one host name. | S |
 
+## User interface
+
+The HTML must comply with the department's design system. See [Design system: Flux](design-system.md) and [ADR 0005](../../adr/0005-flux-design-system-for-html.md).
+
+| ID | Requirement | Priority |
+|---|---|---|
+| NFR-UI-01 | **Flux.** HTML pages use the components, styles and page-layout pattern of the Flux design system (v2). They use the *next* variants where both exist and no deprecated components. | M |
+| NFR-UI-02 | **Accessibility.** Pages meet WCAG 2.1 AA, as the law requires, and follow Flux's route to *silver [plus]* (WCAG 2.2 AA). End-to-end tests include automated accessibility checks. | M |
+| NFR-UI-03 | **Strict Content Security Policy.** Pages send a CSP that is as strict as Flux allows (Flux 2.4.0 or later). There are no inline scripts and no inline style blocks. | S |
+| NFR-UI-04 | **Content without JavaScript.** The title, properties, links and alternate formats of a resource are rendered on the server and readable without JavaScript. Scripts only add interaction: trees, lazily loaded relations, maps and the SPARQL editor. | S |
+
 ## Quality
 
 | ID | Requirement | Priority |

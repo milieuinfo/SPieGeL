@@ -11,7 +11,7 @@ This chapter lists the predecessor's SPARQL query paths. It covers queries run o
 | `/sparql` | server | active | user's own query |
 | `/keywordsearch` | server | active | count + result query on `bif:contains` |
 | Incoming relations panel | browser | active | `objects-inbound(-count).rq` |
-| Expandable property groups | browser | active | `objects-outbound(-count).rq` |
+| Expandable property groups | browser | not used: outgoing groups get no `endpoint` (see [Data-dependent HTML rendering](html-rendering.md#observations)) | `objects-outbound(-count).rq` |
 | SKOS tree ("Browse code list") | browser | active | `taxonomy-up.rq`, `taxonomy-down.rq` |
 | DCAT tree ("Browse dataset") | browser | active (repaired in `omgeving-ld` 1.7.27) | `dataset-up.rq`, `dataset-down.rq` |
 | Collection table | browser | active | `list-by-pattern(-count).rq` |

@@ -42,6 +42,8 @@ Each requirement has a stable identifier, a priority and a phase (see [Scope](..
 | FR-HTML-03 | HTML templates can be chosen per URI template or resource type. | S | 2 | C |
 | FR-HTML-04 | HTML embeds the subject IRI on an element with class `ld-subject` and an `about` attribute (compatibility with existing [client components](../02-current-platform/client-components.md)). | S | 2 | P |
 | FR-HTML-05 | Incoming relations, SKOS hierarchies, DCAT catalogues and collection tables can be browsed, whether in the browser or rendered on the server. | M | 2 | P |
+| FR-HTML-06 | Within a page, presentation blocks and components are chosen by configurable rules on the data: the resource's type, the predicate, the predicate's own type, and the value's datatype. Defaults are shared and tenants can extend them. See [Data-dependent HTML rendering](../02-current-platform/html-rendering.md). | S | 2 | P, G |
+| FR-HTML-07 | Resources with a geometry are shown on a map: any WKT geometry type with its CRS, and WGS84 or Lambert 72 coordinate pairs. The map uses Flux's map components, which take GeoJSON in the map's projection (see [Design system: Flux](design-system.md#constraints-for-spiegel)). | S | 2 | P, G |
 
 ## SPARQL endpoint
 

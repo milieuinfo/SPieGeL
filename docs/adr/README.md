@@ -10,3 +10,4 @@ Use [`template.md`](template.md) for new records.
 | [0002](0002-documentation-as-markdown-with-mkdocs.md) | Documentation as Markdown, published with MkDocs | Accepted |
 | [0003](0003-build-with-jenkins.md) | Build with the departmental Jenkins | Accepted |
 | [0004](0004-technology-baseline.md) | Technology baseline | Accepted |
+| [0005](0005-flux-design-system-for-html.md) | Use the Flux design system for HTML | Accepted |

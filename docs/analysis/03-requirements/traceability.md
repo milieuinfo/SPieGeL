@@ -20,6 +20,10 @@ This matrix links every function of the predecessor, and every need of the model
 | Public `/sparql` | yes | — | FR-SPARQL-01 to 04 | M | 2 | `spiegel-adapter-web`, `spiegel-adapter-sparql` |
 | Client component compatibility | yes | — | FR-HTML-04, FR-SPARQL-02 | S | 2 | `spiegel-adapter-html` |
 | Browsing relations, trees, collections | in the browser | — | FR-HTML-05 | M | 2 | to be decided |
+| Data-dependent presentation blocks | XSLT rules by type and predicate | — | FR-HTML-06 | S | 2 | `spiegel-adapter-html` |
+| Map for resources with a geometry | one point (`ld-map`) | — | FR-HTML-07 | S | 2 | `spiegel-adapter-html` |
+| Departmental design system | no (`omgeving-ld`, Vue 2) | — | NFR-UI-01, NFR-UI-04 | M | 1 | `spiegel-adapter-html` |
+| Accessibility and CSP | not assessed | — | NFR-UI-02, NFR-UI-03 | M | 1 | `spiegel-adapter-html`, `spiegel-adapter-web` |
 | Keyword search | yes (`bif:contains`) | — | FR-SRCH-01 | S | 2 | `spiegel-adapter-sparql` |
 | Relational sources (R2RML) | no | extended (C) | FR-DS-02 | C | later | `spiegel-adapter-r2rml` |
 | Full-text search across sources | no | won't (W) | FR-SRCH-02 | W | — | — |

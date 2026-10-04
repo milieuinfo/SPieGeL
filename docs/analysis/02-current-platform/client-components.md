@@ -6,13 +6,14 @@ The predecessor's HTML pages embed web components from the shared front-end pack
 |---|---|---|
 | `<ld-predicate inbound>` | "Incoming relations" panel | `objects-inbound.rq`, `objects-inbound-count.rq` |
 | `<ld-predicate>` | Expandable groups of properties | `objects-outbound.rq`, `objects-outbound-count.rq` |
-| `<ld-taxonomy>` | SKOS tree. Used automatically by `ld-predicate` for `skos:broader`, `narrower`, `topConceptOf`, `hasTopConcept` and `inScheme` | `taxonomy-up.rq`, `taxonomy-down.rq` |
+| `<ld-taxonomy>` | SKOS tree. `ld-predicate` would switch to it for `skos:broader`, `narrower`, `topConceptOf`, `hasTopConcept` and `inScheme`, but in practice it is placed by type (see [Data-dependent HTML rendering](html-rendering.md#observations)) | `taxonomy-up.rq`, `taxonomy-down.rq` |
 | `<ld-dataset>` | DCAT catalogue tree | `dataset-up.rq`, `dataset-down.rq` |
 | `<ld-data-table>` | Searchable, paged table of collection members | `list-by-pattern.rq`, `list-by-pattern-count.rq` |
+| `<ld-map>` | Map with one marker (OpenLayers, Lambert 72, GRB base map), from `lon`/`lat` or `x`/`y` attributes | none |
 | `<ld-sparql-form>` | SPARQL editor (YASQE) with example queries | none; navigates to `/sparql?query=…` |
 | `<ld-search-form>` | Search box with example terms | none; navigates to `/keywordsearch?search=…` |
 
-The literal templates are in the [Query catalogue](query-catalogue.md#browser-side).
+The literal templates are in the [Query catalogue](query-catalogue.md#browser-side). The package also provides layout components that run no queries (`ld-view`, `ld-card`, `ld-collapsible`, `ld-subject`, `ld-predicate` without `endpoint`, `ld-object`, `flex-container`, `flex-item`). Which components appear on a page depends on the data; see [Data-dependent HTML rendering](html-rendering.md).
 
 ## What SPieGeL must provide for these components
 
@@ -27,4 +28,4 @@ The HTML of three domains (`imjv`, `cbb`, `dba`) loads extra configuration and "
 
 ## Will SPieGeL keep these components?
 
-That is not decided. The successor's HTML could be built with a different design system (FluxUI is under consideration) without these components. If the components go, their *functions* (incoming relations, tree browsing, collection tables) still need a home, either rendered on the server or rebuilt. → [Open questions](../06-open-questions.md)
+No, not as they are. SPieGeL's HTML must comply with the Flux design system ([ADR 0005](../../adr/0005-flux-design-system-for-html.md)), and these components are Vue 2 components outside Flux. Their *functions* (incoming relations, tree browsing, collection tables, the map, the SPARQL editor) still need a home: Flux components where they exist, and new components where they do not. See [Design system: Flux](../03-requirements/design-system.md#from-omgeving-ld-to-flux). Whether the `/sparql` and HTML conventions for the old components must stay for a transition period is [open question 8](../06-open-questions.md#front-end).

@@ -47,3 +47,6 @@ logs/
 # Claude Code: personal, machine-specific settings
 CLAUDE.local.md
 .claude/settings.local.json
+
+# Private notes (for example undisclosed security reports): never commit these
+private/

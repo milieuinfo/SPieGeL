@@ -66,14 +66,19 @@ nav:
           - Request flows: analysis/02-current-platform/request-flows.md
           - Query catalogue: analysis/02-current-platform/query-catalogue.md
           - Client components: analysis/02-current-platform/client-components.md
+          - Data-dependent HTML rendering: analysis/02-current-platform/html-rendering.md
       - Requirements:
           - Functional: analysis/03-requirements/functional.md
           - Non-functional: analysis/03-requirements/non-functional.md
           - Standards: analysis/03-requirements/standards.md
           - Traceability: analysis/03-requirements/traceability.md
+          - Design system (Flux): analysis/03-requirements/design-system.md
       - Landscape:
           - Comparison: analysis/04-landscape/comparison.md
           - LodView code review: analysis/04-landscape/lodview-code-review.md
+          - Trifid code review: analysis/04-landscape/trifid-code-review.md
+          - Prez code review: analysis/04-landscape/prez-code-review.md
+          - ELDA code review: analysis/04-landscape/elda-code-review.md
       - Architecture:
           - Hexagonal design: analysis/05-architecture/hexagonal-design.md
           - Module structure: analysis/05-architecture/module-structure.md
@@ -84,4 +89,5 @@ nav:
       - 0002 Documentation with MkDocs: adr/0002-documentation-as-markdown-with-mkdocs.md
       - 0003 Build with Jenkins: adr/0003-build-with-jenkins.md
       - 0004 Technology baseline: adr/0004-technology-baseline.md
+      - 0005 Flux design system for HTML: adr/0005-flux-design-system-for-html.md
       - Template: adr/template.md

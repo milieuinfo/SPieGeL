@@ -7,7 +7,7 @@ spiegel/                         (parent POM, packaging pom)
 ├── spiegel-core                 domain model, use cases, ports. No Spring.
 ├── spiegel-adapter-sparql       DataSourcePort over SPARQL 1.1 (Apache Jena)
 ├── spiegel-adapter-web          HTTP inbound: dereferencing, 303, content negotiation, /sparql
-├── spiegel-adapter-html         RendererPort for HTML (template engine, design system)
+├── spiegel-adapter-html         RendererPort for HTML (template engine, Flux design system, front-end build)
 ├── spiegel-adapter-security     IdentityPort: OIDC, roles → AccessLevel
 ├── spiegel-adapter-config       TenantConfigurationPort: YAML + .rq files
 ├── spiegel-adapter-r2rml        DataSourcePort over R2RML (later)
