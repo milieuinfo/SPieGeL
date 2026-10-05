@@ -46,7 +46,7 @@ Everything needed to switch off the predecessor:
 
 ### Later
 
-- relational data sources (PostgreSQL, Trino) via R2RML;
+- non-RDF data sources (relational databases such as PostgreSQL and Trino, and CSV, JSON or XML files and Web APIs) via RML mappings;
 - full-text search across data sources;
 - assisted query building in the web interface.
 

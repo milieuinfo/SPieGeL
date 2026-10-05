@@ -17,7 +17,7 @@ Documentation, including the full analysis and the architecture decisions, is pu
 - **Content negotiation as a first-class concern.** One URI, many representations. This includes [content negotiation by profile](https://www.w3.org/TR/dx-prof-conneg/), so a client can ask for a lighter or a richer view of the same resource.
 - **Configurable URI templates.** Each URI template is bound to its own SPARQL query on a named data source. Adding a new resource type should not require new code.
 - **URI policy out of the box.** SPieGeL follows the `id` / `doc` / `ns` pattern of the Flemish URI standard for data, with `303 See Other` from `/id/` to `/doc/`. Skolem IRIs (`/.well-known/genid/…`) are dereferenceable. A dedicated path structure is planned for [ELI](https://eur-lex.europa.eu/eli-register/about.html) legislative resources.
-- **Hexagonal architecture.** A plain domain core, with data sources (SPARQL endpoints first, relational sources via R2RML later), renderers and identity providers behind ports and adapters.
+- **Hexagonal architecture.** A plain domain core, with data sources (SPARQL endpoints first, non-RDF sources through RML mappings later), renderers and identity providers behind ports and adapters.
 - **Multi-tenant.** One stateless instance can serve several data domains, each selected by host name.
 - **Access levels.** Each access level can be mapped to its own read-only credentials on the data source, so authorisation is enforced by the store as well as by the application.
 - **Open by default.** CORS is open and a public SPARQL endpoint is available, in line with an open data policy.

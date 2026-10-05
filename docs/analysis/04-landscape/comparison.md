@@ -26,13 +26,13 @@ The Trifid, Prez, ELDA and LodView columns were checked in the source code; the 
 | Several domains in one stateless instance (FR-MT-01) | partly (plug-ins per host name, but one default endpoint) | no (one store and one endpoint structure per instance) | partly (several specifications per web application, by path prefix, not host name) | no (one namespace and one endpoint per instance) | to check |
 | Access levels mapped to separate read-only credentials (FR-AC-03) | no | no | no | no | no |
 | Flemish URI standard, Skolem IRIs, ELI (FR-URI-02 to 05) | partly: Skolem and ELI paths resolve generically, `303` only per IRI in the data or via the edge | no: resources live under CURIE paths or `/object?iri=` | yes by configuration: generic `303` from item templates; Skolem and ELI paths as URI templates | partly: `303` only via the edge, `ns` needs a separate instance, no Skolem or ELI | no |
-| Relational sources via R2RML (FR-DS-02) | no | no | no | no | no |
+| Non-RDF sources via RML or R2RML (FR-DS-02) | no | no | no | no | no |
 | Fits a Java / Spring Boot team | no | no | partly: Java 21, Jakarta and Jena 5, but a Jersey WAR, not Spring Boot | partly: Spring 4.2 WAR with JSP, not Boot | no |
 | Actively maintained | yes | yes | yes | quiet since 2023 | yes |
 
 ## What this means
 
-No project covers the combination SPieGeL needs. Two things are missing everywhere: **access levels** and **relational sources**. The closest projects each excel at something different:
+No project covers the combination SPieGeL needs. Two things are missing everywhere: **access levels** and **non-RDF sources** (through RML or R2RML). The closest projects each excel at something different:
 
 - **ELDA** is conceptually closest to the predecessor's query catalogue: URI template → SPARQL query, configured declaratively, in Java. Its endpoint model and HTTP behaviour are worth adopting; see the [code review](elda-code-review.md#what-spiegel-can-learn-from-it).
 - **Prez** is the only project built around content negotiation by profile. That is exactly what the predecessor *intended* with its format-dependent queries. Its profile model is the most reusable idea of all; see the [code review](prez-code-review.md#what-spiegel-can-learn-from-it).
@@ -48,7 +48,7 @@ No project covers the combination SPieGeL needs. Two things are missing everywhe
 
 SPieGeL takes option 3. Its distinguishing features are the four things no other project offers together:
 
-1. a **hexagonal core** with pluggable data sources, SPARQL and relational;
+1. a **hexagonal core** with pluggable data sources: SPARQL, and later non-RDF sources through RML;
 2. **access levels** mapped to separate read-only credentials per source;
 3. **several tenants** in one stateless instance;
 4. **out-of-the-box conformance to the URI policy**, including dereferenceable Skolem IRIs and ELI paths.

@@ -80,7 +80,7 @@ Each requirement has a stable identifier, a priority and a phase (see [Scope](..
 | ID | Requirement | Priority | Phase | Source |
 |---|---|---|---|---|
 | FR-DS-01 | One or more SPARQL endpoints can be configured as named data sources. | M | 1 | P, C |
-| FR-DS-02 | Relational sources (PostgreSQL, Trino) via R2RML. | C | later | C |
+| FR-DS-02 | Non-RDF sources can be published through declarative mappings: relational databases (for example PostgreSQL and Trino), and files or Web APIs in CSV, JSON or XML. Mappings use [RML](https://rml.io/), which generalises R2RML; existing R2RML mappings remain usable. Whether the data is materialised into a store beforehand or translated per request is [open question 28](../06-open-questions.md#architecture-and-operations). | C | later | C |
 | FR-DS-03 | Elasticsearch as a data source. | W | — | C |
 
 ## Access control

@@ -20,7 +20,9 @@ The [analysis](../analysis/05-architecture/module-structure.md) proposes a Maven
 | Versioning | Semantic versioning; tags `v{version}` through the Maven release plugin. |
 | Artefacts | Published to the departmental Artifactory, like other departmental projects. |
 
-Modules are added when they are needed. Phase 1 starts with `spiegel-core`, `spiegel-adapter-config`, `spiegel-adapter-sparql`, `spiegel-adapter-web`, `spiegel-adapter-html` and `spiegel-app`. `spiegel-adapter-security` and `spiegel-adapter-r2rml` follow in later phases.
+Modules are added when they are needed. Phase 1 starts with `spiegel-core`, `spiegel-adapter-config`, `spiegel-adapter-sparql`, `spiegel-adapter-web`, `spiegel-adapter-html` and `spiegel-app`. `spiegel-adapter-security` and `spiegel-adapter-rml` follow in later phases.
+
+*Amended on 2026-10-05:* the module for non-RDF sources was called `spiegel-adapter-r2rml`. It is renamed `spiegel-adapter-rml`, because RML generalises R2RML (see FR-DS-02). The module did not exist yet, so nothing else changed.
 
 ## Consequences
 

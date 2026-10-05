@@ -20,7 +20,7 @@ flowchart LR
     end
     subgraph outbound [Outbound adapters]
         DS[(SPARQL data source)]
-        R2[(R2RML data source)]
+        R2[(RML data source)]
         CFG[Tenant configuration]
         CACHE[Cache]
         IDP[Identity provider]
@@ -64,7 +64,7 @@ Outbound ports:
 
 | Port | Adapters |
 |---|---|
-| `DataSourcePort` | SPARQL over HTTP (Jena); later R2RML over JDBC |
+| `DataSourcePort` | SPARQL over HTTP (Jena); later RML mappings over relational, file and Web API sources (see [open question 28](../06-open-questions.md#architecture-and-operations)) |
 | `TenantConfigurationPort` | Files under version control (YAML for settings, `.rq` files for queries) |
 | `CachePort` | In-memory; later a shared cache |
 | `IdentityPort` | OIDC through Spring Security |

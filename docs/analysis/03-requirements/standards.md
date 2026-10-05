@@ -12,7 +12,7 @@ SPieGeL implements or follows these standards. Where the predecessor deviates fr
 | [Content Negotiation by Profile](https://www.w3.org/TR/dx-prof-conneg/) (W3C draft) | Profile negotiation | FR-CN-03 |
 | [RFC 8288: Web Linking](https://www.rfc-editor.org/rfc/rfc8288) | `Link` headers to alternates | FR-CN-04 |
 | [SPARQL 1.1 Protocol](https://www.w3.org/TR/sparql11-protocol/) and [Query Results JSON](https://www.w3.org/TR/sparql11-results-json/) | `/sparql` endpoint | FR-SPARQL-01, 02 |
-| [R2RML](https://www.w3.org/TR/r2rml/) | Relational data sources | FR-DS-02 |
+| [RML](https://kg-construct.github.io/rml-resources/portal/) (W3C Knowledge Graph Construction Community Group) and [R2RML](https://www.w3.org/TR/r2rml/) | Mappings from non-RDF sources (relational, CSV, JSON, XML, Web APIs) to RDF | FR-DS-02 |
 | [DCAT-AP](https://interoperable-europe.ec.europa.eu/collection/semic-support-centre/dcat-ap) and the Flemish [OSLO](https://data.vlaanderen.be/) application profiles | Catalogues published by the domains | FR-HTML-05 |
 | [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html) | Authentication | FR-AC-01 |
 

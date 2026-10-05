@@ -31,7 +31,7 @@ This matrix links every function of the predecessor, and every requirement of th
 | Departmental design system | no (`omgeving-ld`, Vue 2) | — | NFR-UI-01, NFR-UI-04 | M | 1 | `spiegel-adapter-html` |
 | Accessibility and CSP | not assessed | — | NFR-UI-02, NFR-UI-03 | M | 1 | `spiegel-adapter-html`, `spiegel-adapter-web` |
 | Keyword search | yes (`bif:contains`) | — | FR-SRCH-01 | S | 2 | `spiegel-adapter-sparql` |
-| Relational sources (R2RML) | no | extended (C) | FR-DS-02 | C | later | `spiegel-adapter-r2rml` |
+| Non-RDF sources through mappings (RML, R2RML) | no | extended (C) | FR-DS-02 | C | later | `spiegel-adapter-rml`, or none if materialised |
 | Full-text search across sources | no | won't (W) | FR-SRCH-02 | W | — | — |
 | Elasticsearch source | no | won't (W) | FR-DS-03 | W | — | — |
 | Assisted (LLM) query building | no | won't (W) | — | W | — | — |

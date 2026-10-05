@@ -10,7 +10,7 @@ spiegel/                         (parent POM, packaging pom)
 ├── spiegel-adapter-html         RendererPort for HTML (template engine, Flux design system, front-end build)
 ├── spiegel-adapter-security     IdentityPort: OIDC, roles → AccessLevel
 ├── spiegel-adapter-config       TenantConfigurationPort: YAML + .rq files
-├── spiegel-adapter-r2rml        DataSourcePort over R2RML (later)
+├── spiegel-adapter-rml          DataSourcePort over RML mappings (later)
 └── spiegel-app                  Spring Boot application: wiring, caching, health, packaging
 ```
 
@@ -24,7 +24,7 @@ flowchart BT
     html[spiegel-adapter-html] --> core
     sec[spiegel-adapter-security] --> core
     cfg[spiegel-adapter-config] --> core
-    r2rml[spiegel-adapter-r2rml] --> core
+    rml[spiegel-adapter-rml] --> core
     app[spiegel-app] --> sparql & web & html & sec & cfg
 ```
 
@@ -39,7 +39,7 @@ The modules are a direct consequence of the [hexagonal design](hexagonal-design.
 
 1. **The compiler guards the boundaries.** A module can only use what its own POM declares. Jena is only in `spiegel-adapter-sparql`, and Spring MVC only in `spiegel-adapter-web`. The core cannot import a Spring or Jena HTTP class by accident, because it would not compile. With packages in one module, such a boundary is only a convention.
 2. **A test guards what the compiler cannot see.** `ArchitectureTest` (ArchUnit) checks on every build that the core stays free of frameworks and that adapters do not depend on each other.
-3. **Adapters can be replaced.** A relational source arrives as a second implementation of the same `DataSourcePort` (`spiegel-adapter-r2rml`), without any change to the core. The same holds for the template engine, which is still to be chosen ([open question 9](../06-open-questions.md#front-end)).
+3. **Adapters can be replaced.** A non-RDF source arrives as a second implementation of the same `DataSourcePort` (`spiegel-adapter-rml`), without any change to the core. The same holds for the template engine, which is still to be chosen ([open question 9](../06-open-questions.md#front-end)).
 4. **The core can be tested without infrastructure.** The rules for URI templates, profiles, access levels and merging descriptions are tested without a server, a store or a browser (NFR-Q-01, NFR-Q-02).
 5. **Each technology stays in its own module.** This matters especially for `spiegel-adapter-html`, which gets a front-end build (Node.js, pnpm, Flux; see [Design system: Flux](../03-requirements/design-system.md#consequences-for-the-design)) that must not leak into the rest of the build.
 6. **Modules arrive by phase.** Phase 1 needs no authentication, so `spiegel-adapter-security` arrives in phase 2 ([ADR 0004](../../adr/0004-technology-baseline.md): modules are added when they are needed).
@@ -52,7 +52,7 @@ The split has costs:
 
 ## Phase 1 subset
 
-Phase 1 (see [Scope](../01-context/scope.md#phasing)) needs `spiegel-core`, `spiegel-adapter-sparql`, `spiegel-adapter-web`, `spiegel-adapter-html`, `spiegel-adapter-config` and `spiegel-app`. `spiegel-adapter-security` arrives in phase 2, and `spiegel-adapter-r2rml` later.
+Phase 1 (see [Scope](../01-context/scope.md#phasing)) needs `spiegel-core`, `spiegel-adapter-sparql`, `spiegel-adapter-web`, `spiegel-adapter-html`, `spiegel-adapter-config` and `spiegel-app`. `spiegel-adapter-security` arrives in phase 2, and `spiegel-adapter-rml` later.
 
 ## Group and artefact identifiers
 

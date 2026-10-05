@@ -10,7 +10,7 @@
 :   Negotiating not only the *format* but also the *profile* of a representation, such as a lighter or richer description, or the same data in another model. See the W3C draft [Content Negotiation by Profile](https://www.w3.org/TR/dx-prof-conneg/).
 
 **Data source**
-:   A store that SPieGeL reads from. Initially a SPARQL endpoint; later possibly a relational database exposed through R2RML.
+:   A store that SPieGeL reads from. Initially a SPARQL endpoint; later possibly a non-RDF source (a relational database, files or a Web API) exposed through an RML mapping.
 
 **Dereference**
 :   To look up a URI over HTTP and get something useful back.
@@ -34,7 +34,10 @@
 :   A named specification that a representation conforms to, for example "summary" or "full", or "Data Cube" versus "SOSA observation".
 
 **R2RML**
-:   [RDB to RDF Mapping Language](https://www.w3.org/TR/r2rml/). A W3C language for exposing relational data as RDF.
+:   [RDB to RDF Mapping Language](https://www.w3.org/TR/r2rml/). A W3C Recommendation (2012) for exposing relational data as RDF. Generalised by RML.
+
+**RML**
+:   [RDF Mapping Language](https://rml.io/). A declarative language for generating RDF from heterogeneous sources: relational databases, CSV, JSON, XML, Web APIs and streams. It generalises R2RML and is specified in modules (RML-Core, RML-IO, RML-CC, RML-FNML, RML-Star, RML-LV) by the W3C Knowledge Graph Construction Community Group.
 
 **Skolem IRI**
 :   An IRI that replaces a blank node, conventionally under `/.well-known/genid/`. See [RDF 1.1 Concepts §3.5](https://www.w3.org/TR/rdf11-concepts/#section-skolemization).
