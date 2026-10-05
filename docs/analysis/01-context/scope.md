@@ -28,8 +28,8 @@ Enough to publish a single public catalogue (for example a catalogue of simulati
 - configurable data sources (SPARQL first);
 - configurable URI templates, each bound to its own query;
 - content negotiation over the common RDF serialisations and HTML;
-- simple HTML subject pages;
-- a configurable front page.
+- simple HTML subject pages that also carry their data as embedded JSON-LD;
+- a front page generated from the data it publishes (catalogues, thesauri, classes).
 
 No authentication is needed in this phase, because the catalogue is public.
 

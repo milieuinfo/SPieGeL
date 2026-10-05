@@ -23,6 +23,6 @@ SPieGeL therefore starts from the intended behaviour, expressed as [requirements
 
 Publishing Linked Data with content negotiation, a URI policy and access control is not specific to one department. Other public bodies in the Flemish [OSLO](https://www.vlaanderen.be/digitaal-vlaanderen/onze-oplossingen/oslo) and European [SEMIC](https://interoperable-europe.ec.europa.eu/collection/semic-support-centre) ecosystems face the same problem. Existing open-source tools cover parts of it, but none covers the combination we need (see [Landscape](../04-landscape/comparison.md)). Building SPieGeL in the open lets others reuse it and contribute to it.
 
-## Related initiative
+## X-Cite
 
-A departmental project on describing simulation models and datasets with metadata needs a Linked Data service to publish a model catalogue. Its requirements for that service overlap strongly with the needs of the predecessor's successor. SPieGeL is intended to serve both. The relevant requirements are traced in [Traceability](../03-requirements/traceability.md), and the phasing is described in [Scope](scope.md).
+SPieGeL replaces and improves the NetKernel-based platform in line with the requirements of the **X-Cite** project. X-Cite describes simulation models and datasets with metadata and publishes them as DCAT catalogues, for which it needs a Linked Data service. Its requirements for that service overlap strongly with the needs of the predecessor's successor, so SPieGeL serves both. The X-Cite requirements are traced in [Traceability](../03-requirements/traceability.md), and the phasing is described in [Scope](scope.md).

@@ -28,7 +28,7 @@ This chapter describes what Flux offers, which constraints it puts on SPieGeL, h
 4. **Content Security Policy.** Flux recommends the strictest possible CSP. That is only meaningful from Flux 2.4.0 onwards, and with the CSP-compliant header introduced in 2.3.0. The policy has to allow the Digitaal Vlaanderen and CDN domains that the header and fonts use. Inline scripts are not allowed, so SPieGeL must not copy the predecessor's inline loader script. → NFR-UI-03.
 5. **Accessibility.** Government sites must meet WCAG 2.1 AA by law. Flux's approach sets *bronze [basic]* (WCAG A, the basic part) for every application, and expects public applications to plan a route to *silver [plus]* (all of WCAG 2.2 AA). SPieGeL is public. → NFR-UI-02.
 6. **Version line.** Flux v2 is current. Some components exist as a legacy and a *next* variant (`vl-header-next`, `vl-footer-next`, `vl-tabs-next`, `vl-side-navigation-next`). The next variant replaces the legacy one in v3, for which there is no date yet. `vl-search` and `vl-share-buttons` are deprecated and will be removed in v3. SPieGeL should use the next variants and avoid deprecated components from the start.
-7. **Maps.** The map uses Lambert 72 (EPSG:31370) by default, and Lambert 2008 (EPSG:3812) is announced as the future default. The features layer takes **GeoJSON** and does not reproject it: features must already be in the map's projection, or the layer must be given their projection code. SPieGeL therefore has to convert WKT literals from the data into GeoJSON, with the right coordinate reference system. That can happen on the server or in a small wrapper component. → FR-HTML-07.
+7. **Maps.** The map uses Lambert 72 (EPSG:31370) by default, and Lambert 2008 (EPSG:3812) is announced as the future default. The features layer takes features in **GeoJSON structure**, but reads their coordinates **in the map's projection** by default (Lambert 72), not in WGS84 as [RFC 7946](https://www.rfc-editor.org/rfc/rfc7946) prescribes. With the `projection-code` attribute the layer reprojects from another projection. The documented case is Lambert 72 data on a Lambert 2008 map. Only OpenLayers `Feature` objects added directly (`addFeatures`, `setFeatures`) are not transformed. For SPieGeL this means the map needs **no conversion on the server and no extra request**. The geometry is already in the page, in the description and in the embedded JSON-LD (FR-HTML-04). A small component reads the WKT literal and its CRS from there. Following GeoSPARQL, the CRS is the IRI at the start of the literal, for example `<http://www.opengis.net/def/crs/EPSG/0/31370> POINT(…)`; without one, it is WGS84 (CRS84). That covers RDF data in WGS84 and data from other sources in Lambert alike. The component turns the WKT into features with OpenLayers' WKT reader (`ol/format/WKT`), which reprojects into the map's projection. Proj4 is already registered in the Flux map for Lambert 72 and Lambert 2008. Alternatively, it passes GeoJSON-structured features with the CRS as `projection-code`, if the layer accepts that CRS. Whether it accepts WGS84 (EPSG:4326) still has to be checked. → FR-HTML-07.
 8. **Testing.** For server-rendered applications, Flux recommends putting most tests on the server side and covering the front end with end-to-end tests (Cypress), including accessibility checks. → NFR-Q-02.
 
 ## From `omgeving-ld` to Flux
@@ -46,13 +46,14 @@ The predecessor's components come from `omgeving-ld`, which uses Vue 2. They are
 | `ld-predicate inbound` | Paged list of incoming relations, loaded in the browser, with counts | `vl-accordion` and `vl-pager` | **missing**: loading and paging relations is Linked-Data-specific |
 | `ld-taxonomy`, `ld-dataset` | Lazily expanding tree of SKOS concepts or DCAT catalogues | none: Flux has no tree component | **missing** |
 | `ld-data-table` | Searchable, paged table of collection members | `vl-rich-data-table` (filter, sorting, paging with `vl-pager`, responsive), `vl-search-filter` | **partly**: the interface exists, but loading the data is Linked-Data-specific |
-| `ld-map` | One point on a map | `vl-map`, `vl-map-features-layer`, `vl-map-baselayer-grb-gray` | **covered**, provided geometries arrive as GeoJSON in the map's projection |
+| `ld-map` | One point on a map | `vl-map`, `vl-map-features-layer`, `vl-map-baselayer-grb-gray` | **covered**: features in GeoJSON structure, in the map's projection or with their `projection-code` |
 | `ld-sparql-form` (YASQE) | SPARQL editor with example queries | none: Flux has no code editor | **missing** |
 | SPARQL results as HTML (FR-SPARQL-03) | Result table | `vl-table`, `vl-rich-data-table` | **covered**, except for rendering RDF terms |
 | `ld-search-form` | Search box | the input-group pattern (`vl-input-group` with a button); `vl-search` is deprecated | **covered** |
 | `ld-lookup-form` | Lookup with suggestions | `vl-autocomplete` | **covered** |
 | Error pages (404, 406, 500) | Error message | `vl-http-error-message` | **covered** |
-| Front page per domain (FR-HTML-02) | Introduction, example queries, search | `vl-content-header`, `vl-info-tile`, `vl-typography` | **covered** |
+| Front page per domain (FR-HTML-02, FR-HTML-09) | Introduction, discovered blocks (catalogues with datasets, thesauri, classes), example queries, search | `vl-content-header`, `vl-info-tile`, `vl-accordion`, `vl-rich-data-table` with `vl-pager` for long blocks, `vl-typography` | **covered** |
+| Portal page (FR-HTML-08) | Overview of all domains, each linking to its front page | `vl-info-tile` (clickable) in a grid, `vl-content-header` | **covered** (new; the predecessor has no portal) |
 
 ## Components SPieGeL has to build
 
@@ -60,12 +61,12 @@ These are Linked-Data-specific. The first two are mostly markup composed on the 
 
 | Component (working name) | What it does | Built from | Requirement |
 |---|---|---|---|
-| Resource description | The properties of a resource in [presentation blocks](../02-current-platform/html-rendering.md#rules-by-predicate-presentation-categories): grouped values, IRIs as links with labels, language tags and datatypes, nested blank nodes. Rendered on the server, so it works without JavaScript | `vl-properties` or `vl-description-data`, `vl-link`, `vl-pill`, `vl-accordion` | FR-HTML-01, FR-HTML-06 |
+| Resource description | The properties of a resource in [presentation blocks](../02-current-platform/html-rendering.md#rules-by-predicate-presentation-categories): grouped values, every property label and every IRI value as a link to its IRI with its label (FR-HTML-10), language tags and datatypes, nested blank nodes. Rendered on the server, so it works without JavaScript | `vl-properties` or `vl-description-data`, `vl-link`, `vl-pill`, `vl-accordion` | FR-HTML-01, FR-HTML-06 |
 | RDF term | One IRI, literal or blank node: a label with the IRI as a link, the language as a pill, the datatype as a hint | `vl-link`, `vl-pill`, `vl-text` | FR-HTML-01 |
 | Incoming relations | Per predicate: a count, plus paged subjects, loaded on demand | `vl-accordion`, `vl-pager` | FR-HTML-05 |
 | Hierarchy tree | A lazily expanding tree for SKOS (`skos:hasTopConcept`, `skos:narrower`) and DCAT (`dcat:dataset`, `dcat:catalog`), keyboard-accessible, following the WAI-ARIA tree pattern | new; style from `@domg-wc/styles` | FR-HTML-05 |
 | Collection table | Loads the members of a collection page by page and connects searching and sorting to SPieGeL | `vl-rich-data-table`, `vl-pager`, `vl-search-filter` | FR-HTML-05 |
-| Geometry map | Shows one or more geometries of a resource (points, lines, polygons) from GeoJSON in the right projection | `vl-map`, `vl-map-features-layer`, a GRB base layer | FR-HTML-07 |
+| Geometry map | Shows one or more geometries of a resource (points, lines, polygons). It reads the WKT literals and their CRS from the page, so it needs no extra request, and turns them into features in the map's projection with OpenLayers' WKT reader | `vl-map`, `vl-map-features-layer`, a GRB base layer | FR-HTML-07 |
 | SPARQL editor | Edits a query with syntax highlighting and example queries, runs it, and shows the results | an editor library behind a Flux-styled wrapper; results in `vl-rich-data-table` | FR-SPARQL-03, FR-SPARQL-04 |
 
 The new components follow Flux's conventions:
@@ -77,6 +78,44 @@ The new components follow Flux's conventions:
 Whether they live in SPieGeL or are contributed to Flux is an [open question](../06-open-questions.md#front-end). Flux accepts contributions from other teams, provided they are backwards compatible and a new approach is agreed with the Flux team first.
 
 The interactive components need data from the server. Today they build SPARQL queries in the browser ([query catalogue](../02-current-platform/query-catalogue.md#browser-side)). SPieGeL can keep that, through its same-origin `/sparql` (FR-SPARQL-02), or offer small JSON endpoints per function (counts, a page of relations, the children of a tree node). The second option keeps queries on the server, where they can be configured, cached and authorised (NFR-SEC-03, NFR-SEC-04). → [open question 24](../06-open-questions.md#front-end).
+
+## Requirements and components
+
+Which Flux components implement which requirement, and where a new component is needed. **Flux** means Flux components are enough. **Composed** means Flux components put together by SPieGeL's templates, with no new component. **New** means a component from the [list above](#components-spiegel-has-to-build) is needed. Requirements that are server logic only (choosing blocks, labels, languages, discovery) appear here only for the part that is visible.
+
+| Requirement | Function on the page | Flux components | New component | Status |
+|---|---|---|---|---|
+| NFR-UI-01 | Page frame: header, functional header, content, footer | `vl-template`, `vl-header-next`, `vl-functional-header`, `vl-footer-next`; `vl-section`, `vl-content-block` and grid styles | — | Flux |
+| FR-HTML-01, FR-HTML-06 | Subject page: title, presentation blocks, collapsible blocks | `vl-title`, `vl-accordion`, `vl-properties`, `vl-description-data` | Resource description | New |
+| FR-HTML-10, FR-HTML-11 | Every IRI as a link with its label; literals with language and datatype | `vl-link`, `vl-pill`, `vl-text` | RDF term | New |
+| FR-RA-04 | Nested structures (blank nodes) shown inside their resource | `vl-properties` (nested) | Resource description | New |
+| FR-CN-02, FR-CN-04 | Links to the other formats and profiles of a resource | `vl-link`, `vl-button`, `vl-pill` | — | Composed |
+| FR-HTML-04 | Data in machine-readable form (subject IRI, `<link rel="alternate">`, JSON-LD) | none: not visible | — | Template |
+| FR-HTML-05 | Incoming relations: count per relation, paged subjects | `vl-accordion`, `vl-pager` | Incoming relations | New |
+| FR-HTML-05 | Thesaurus hierarchy and catalogue structure as a tree | none: Flux has no tree component | Hierarchy tree | New |
+| FR-HTML-05 | Members of a collection, paged, searchable and sortable | `vl-rich-data-table`, `vl-pager`, `vl-search-filter` | Collection table (loads the data) | New, on a Flux base |
+| FR-HTML-07 | Geometries on a map | `vl-map`, `vl-map-features-layer`, `vl-map-baselayer-grb-gray` | Geometry map (reads WKT and CRS from the page; reprojection in the browser) | New, on a Flux base (thin) |
+| FR-URI-03, FR-RA-05 | Vocabulary page: one card per term, class expressions as lists | `vl-info-tile` or `vl-infoblock`, `vl-properties` | Resource description | New |
+| FR-HTML-02, FR-HTML-09 | Front page per domain: introduction, discovered blocks (catalogues with datasets, thesauri, classes), example queries | `vl-content-header`, `vl-typography`, `vl-info-tile`, `vl-accordion`; `vl-rich-data-table` and `vl-pager` for long blocks | — | Composed |
+| FR-HTML-08 | Portal: one tile per domain, linking to its front page | `vl-info-tile` (clickable) in a grid, `vl-content-header` | — | Composed |
+| FR-HTML-12 | Language choice and translated interface texts | none: Flux has no language switcher; links in the functional header (`vl-link`) | — | Composed (to check with the Flux team) |
+| FR-SPARQL-03, FR-SPARQL-04 | Query editor with example queries, run, share by URL | `vl-button`, `vl-select` (examples) | SPARQL editor | New |
+| FR-SPARQL-03 | Query results as a table with clickable IRIs | `vl-rich-data-table`, `vl-table`, `vl-pager` | RDF term (cells) | Flux + new |
+| FR-SRCH-01 | Search box and result list | input-group pattern (`vl-input-group`, `vl-input-field`, `vl-button`), `vl-search-result`, `vl-pager` | — | Flux |
+| FR-URI-06, FR-CN-05 | Error pages (`404`, `406`, `5xx`) | `vl-http-error-message` | — | Flux |
+| FR-AC-01 *(phase 2)* | Login, logout, changing organisation | `vl-header-next` (Digitaal Vlaanderen's global header) | — | Flux |
+| NFR-UI-02 | Skip link, keyboard operation, ARIA | `skip-to-content-id` on `vl-header-next` and `vl-functional-header`; Flux components' own accessibility | WAI-ARIA patterns in every new component | Flux + new |
+
+In summary, Flux covers the page frame, search, errors, the login header, the front page and the portal. **Seven new components** are needed, all of them specific to Linked Data:
+1. resource description;
+2. RDF term;
+3. incoming relations;
+4. hierarchy tree;
+5. collection table;
+6. geometry map;
+7. SPARQL editor.
+
+The collection table and the geometry map are thin layers on Flux components (`vl-rich-data-table`, `vl-map`). The hierarchy tree and the SPARQL editor have no Flux base at all. Where the new components live is [open question 23](../06-open-questions.md#front-end).
 
 ## The same house style elsewhere: data.vlaanderen.be
 
@@ -97,6 +136,6 @@ The comparison confirms the choice for Flux: SPieGeL gets the same look as the r
 - **Templates** generate Flux markup: tags, slots and CSS classes. The choice of template engine is still open ([open question 9](../06-open-questions.md#front-end)), but it must emit custom elements and attributes cleanly and encode output by context (NFR-SEC-05).
 - **Tenant configuration** includes what Flux needs per domain: the page title, the links in the header, and, once access levels exist, the login and logout URLs.
 - **Response headers** include a strict CSP alongside the existing open CORS policy (NFR-OPEN-01).
-- **Geometries:** a WKT literal must be converted to GeoJSON with reprojection, for example with JTS and a projection library on the server.
+- **Geometries:** the server only writes the WKT literals, with their CRS, into the page. Conversion and reprojection happen in the browser, in the geometry map component, with OpenLayers and proj4 from the Flux map. There is no conversion service and no extra request.
 
 See [NFR-UI-01 to NFR-UI-04](non-functional.md#user-interface) and [FR-HTML-07](functional.md#html).

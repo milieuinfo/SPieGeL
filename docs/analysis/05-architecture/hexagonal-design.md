@@ -40,6 +40,8 @@ flowchart LR
     UC2 --> IDP
 ```
 
+The order in which these parts act on a request is described in [Request flow](request-flow.md).
+
 ## Domain core
 
 | Concept | Responsibility |

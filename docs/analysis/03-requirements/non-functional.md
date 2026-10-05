@@ -33,6 +33,7 @@ SPieGeL publishes open data, but may also serve data at higher access levels. Th
 | NFR-OPS-05 | **Structured logging** with a request identifier and timing, and **metrics** per tenant and data source. | S |
 | NFR-OPS-06 | **Configuration** is external to the build artefact. Per-tenant configuration (URI templates, queries, templates) is version-controlled. | M |
 | NFR-OPS-07 | **Deployment** supports a rolling or blue/green switch-over without mixing incompatible versions behind one host name. | S |
+| NFR-OPS-08 | **Rate limiting per client.** A client that exceeds its limit gets `429 Too Many Requests` with `Retry-After`, before any query is run. Limits are configurable per tenant and per kind of request, with a stricter limit for `/sparql`. An authenticated client is identified by its identity. For public access, which is unauthenticated, the client is identified by its address as reported by a trusted reverse proxy. Limits hold across all nodes, without sticky sessions (NFR-OPS-01). `429` (this client asks too much) is distinct from `503` (the service or a data source is overloaded, NFR-OPS-02). Whether SPieGeL or the reverse proxy enforces the limit is still to be decided ([open question 13](../06-open-questions.md#architecture-and-operations)). | S |
 
 ## User interface
 

@@ -81,6 +81,7 @@ nav:
           - ELDA code review: analysis/04-landscape/elda-code-review.md
       - Architecture:
           - Hexagonal design: analysis/05-architecture/hexagonal-design.md
+          - Request flow: analysis/05-architecture/request-flow.md
           - Module structure: analysis/05-architecture/module-structure.md
       - Open questions: analysis/06-open-questions.md
   - Decisions:

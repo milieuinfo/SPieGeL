@@ -1,7 +1,7 @@
 # Glossary
 
 **Access level**
-:   A classification of data by sensitivity. The predecessor uses five levels: *public*, *internal*, *confidential*, *secret* and *top secret*. A user's level is derived from roles in an identity token.
+:   A classification of data by sensitivity. The predecessor uses five levels: *public*, *internal*, *confidential*, *secret* and *top secret*. A user's level is derived from roles in an identity token. *Public*, the lowest level, is the level of an unauthenticated client.
 
 **Content negotiation**
 :   The HTTP mechanism by which one URI returns different representations, chosen by the client's `Accept` header. See [RFC 9110 §12](https://www.rfc-editor.org/rfc/rfc9110#section-12).

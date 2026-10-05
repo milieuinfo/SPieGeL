@@ -1,6 +1,6 @@
 # Request flows
 
-This chapter describes how the predecessor builds a response for its main server-side paths. The literal queries are in the [Query catalogue](query-catalogue.md).
+This chapter describes how the predecessor builds a response for its main server-side paths. The literal queries are in the [Query catalogue](query-catalogue.md). SPieGeL's own flow is described in [Request flow](../05-architecture/request-flow.md).
 
 ## `/doc/{concept}/{id}`: assembling a document
 
