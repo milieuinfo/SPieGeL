@@ -14,6 +14,7 @@ Each requirement has a stable identifier, a priority and a phase (see [Scope](..
 | FR-URI-04 | Blank nodes published as Skolem IRIs (`/.well-known/genid/{id}`) can be looked up like any other resource, so that every node in the published data is dereferenceable. | M | 2 | G |
 | FR-URI-05 | Legislative resources can be published under an ELI-conformant `/eli/…` path structure, alongside the generic scheme. | S | 2 | G |
 | FR-URI-06 | An unknown resource returns `404`. A known resource the caller may not see returns `404` as well, so that its existence is not disclosed. | M | 1 | — |
+| FR-URI-07 | The RDF of a document links it to the thing it describes, and the thing to its document: `foaf:primaryTopic` from the `doc` URI to the `id` URI, and `foaf:page` back, as [Cool URIs §4.6](https://www.w3.org/TR/cooluris/#linking) recommends. A consumer that merges the triples into a larger graph still knows where they came from. SPieGeL adds these links itself, so no query has to. Vocabulary terms keep their own `rdfs:isDefinedBy`, which points to the ontology that defines them. | S | 1 | G |
 
 ## Resource assembly
 
@@ -34,6 +35,10 @@ Each requirement has a stable identifier, a priority and a phase (see [Scope](..
 | FR-CN-03 | Clients can ask for a view (profile) per [W3C Content Negotiation by Profile](https://www.w3.org/TR/dx-prof-conneg/), for example a light view for a web page and a complete view for a machine. | M | 2 | P, G, C, L |
 | FR-CN-04 | Every response tells the client which other formats and profiles exist, and which profile it got (`Link` headers). | S | 1 | L |
 | FR-CN-05 | An unsupported media type returns `406 Not Acceptable`. | M | 1 | — |
+| FR-CN-06 | A response whose content depends on request headers names those headers in `Vary` (`Accept`, and `Accept-Profile` and `Accept-Language` where they apply). Otherwise a shared cache can serve Turtle to a browser, or HTML to a harvester. A response at a format-specific URL (FR-CN-02) does not vary on `Accept`. | M | 1 | G |
+| FR-CN-07 | A negotiated response names the format-specific URL of the variant it returned in `Content-Location`, for example `/doc/x.ttl`, as [Cool URIs §2.1](https://www.w3.org/TR/cooluris/#conneg) recommends. | S | 1 | G |
+| FR-CN-08 | Negotiation weighs the client's quality values (`q`) against SPieGeL's own quality per format, as [Cool URIs §4.7](https://www.w3.org/TR/cooluris/#choosing) describes. A request without `Accept`, or with only `*/*`, gets HTML. | M | 1 | G |
+| FR-CN-09 | A `HEAD` request returns the same status and headers as `GET` on the same URL, including `Content-Length` if `GET` sends it ([RFC 9110 §9.3.2](https://www.rfc-editor.org/rfc/rfc9110#section-9.3.2)). Link checkers and monitoring tools rely on it. | S | 1 | G |
 
 ## HTML
 

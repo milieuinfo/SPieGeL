@@ -7,8 +7,8 @@ SPieGeL implements or follows these standards. Where the predecessor deviates fr
 | Flemish URI standard for data (Informatie Vlaanderen, v1.0, 2017) | `id` / `doc` / `ns` URI shape, `303` redirect | FR-URI-01 to 03 |
 | [European Legislation Identifier (ELI)](https://eur-lex.europa.eu/eli-register/about.html), including the *ELI Technical Implementation Guide* | `/eli/…` paths for legislative resources | FR-URI-05 |
 | [RDF 1.1 Concepts §3.5: Skolemisation](https://www.w3.org/TR/rdf11-concepts/#section-skolemization) | `/.well-known/genid/` IRIs | FR-URI-04 |
-| [Cool URIs for the Semantic Web](https://www.w3.org/TR/cooluris/) | `303` pattern, content negotiation | FR-URI-02, FR-CN-01 |
-| [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110) | Content negotiation, `303`, `404`, `406` | FR-CN-01, FR-CN-05 |
+| [Cool URIs for the Semantic Web](https://www.w3.org/TR/cooluris/) | `303` pattern, content negotiation, `Content-Location`, links between a thing and its document | FR-URI-02, FR-URI-07, FR-CN-01, FR-CN-07, FR-CN-08 |
+| [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110) | Content negotiation, `303`, `404`, `406`, `Vary`, `HEAD` | FR-CN-01, FR-CN-05, FR-CN-06, FR-CN-09 |
 | [Content Negotiation by Profile](https://www.w3.org/TR/dx-prof-conneg/) (W3C draft) | Profile negotiation | FR-CN-03 |
 | [RFC 8288: Web Linking](https://www.rfc-editor.org/rfc/rfc8288) | `Link` headers to alternates | FR-CN-04 |
 | [SPARQL 1.1 Protocol](https://www.w3.org/TR/sparql11-protocol/) and [Query Results JSON](https://www.w3.org/TR/sparql11-results-json/) | `/sparql` endpoint | FR-SPARQL-01, 02 |

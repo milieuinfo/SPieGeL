@@ -64,17 +64,17 @@ sequenceDiagram
 | 3a | **Check the rate limit** for this client, tenant and kind of request, unless the proxy already does so (step 0). Over the limit gives `429` with `Retry-After` (step E7). No query has been run yet. A limit per authenticated client can only be applied after step 3. | web adapter or reverse proxy | NFR-OPS-08 |
 | 4 | **Match the URI template.** When several match, the most specific wins: more literal characters, then more variables. Variables are typed and validated, so an invalid value gives `404` (no match), not an error. No match gives `404`. | core (`UriTemplate`) | FR-URI-01, FR-URI-03 to 05 |
 | 5 | **`id` → `doc`.** If the template is an `id` template, answer `303 See Other` with the matching `doc` URI in `Location`, for every media type. The data is not consulted, so the redirect reveals nothing about whether the resource exists or is visible. | core (`UriTemplate`), web adapter | FR-URI-02, NFR-SEC-07 |
-| 6 | **Negotiate the media type.** A format suffix or `_format` overrides `Accept`. Nothing acceptable gives `406`. | web adapter | FR-CN-01, FR-CN-02, FR-CN-05 |
+| 6 | **Negotiate the media type.** A format suffix or `_format` overrides `Accept`. Otherwise the client's quality values are weighed against SPieGeL's quality per format; no `Accept`, or only `*/*`, gives HTML. Nothing acceptable gives `406`. | web adapter | FR-CN-01, FR-CN-02, FR-CN-05, FR-CN-08 |
 | 7 | **Negotiate the profile.** `_profile` overrides `Accept-Profile`. If nothing is asked for, or the request cannot be met, the resource type's default profile *for this media type* applies, for example a lighter HTML profile. The response says which profile was used. | core (`Profile`) | FR-CN-03 |
 | 7a | **Choose the language** for HTML: `?lang=`, then `Accept-Language`, then the tenant's default, among the languages the tenant offers. It affects rendering only, not the queries or the cache. | web adapter | FR-HTML-12 |
 | 8 | **Call the use case** `DereferenceResource` with the tenant, the template match (resource IRI and type), the profile and the access level. | web adapter → core | — |
 | 9 | **Select the queries.** Those `QuerySpec`s of the resource type whose conditions hold for the profile. The conditions are typed and tested. | core (`ResourceType`, `QuerySpec`) | FR-RA-01 to 03 |
 | 10 | **Look up the cache** under (tenant, resource IRI, profile, access level). The media type is not part of the key, because the cache holds RDF. | core → `CachePort` | NFR-SEC-03, NFR-OPS-03 |
 | 11 | **Run the queries** on a miss, on each query's named data source, with the credentials for the caller's access level. The resource IRI is bound as a term, not pasted into text. Queries run concurrently, within a bounded pool per data source and with a timeout. | core → `DataSourcePort` | FR-DS-01, FR-AC-03, NFR-SEC-02, NFR-SEC-04, NFR-OPS-02 |
-| 12 | **Merge and check.** Merge the results into one `ResourceDescription`, with blank nodes to the configured depth and `owl:unionOf` lists expanded for vocabularies. If a query failed or timed out, the request fails (step E2), and nothing is cached. If the description is empty, the result is *not found*: the resource does not exist, or the caller may not see it. | core | FR-RA-01, FR-RA-04, FR-RA-05, FR-URI-06, NFR-SEC-07 |
+| 12 | **Merge and check.** Merge the results into one `ResourceDescription`, with blank nodes to the configured depth and `owl:unionOf` lists expanded for vocabularies. If a query failed or timed out, the request fails (step E2), and nothing is cached. If the description is empty, the result is *not found*: the resource does not exist, or the caller may not see it. Otherwise, add the links between the document and the thing it describes (`foaf:primaryTopic`, `foaf:page`). | core | FR-RA-01, FR-RA-04, FR-RA-05, FR-URI-06, FR-URI-07, NFR-SEC-07 |
 | 13 | **Store** a complete description in the cache, with the tenant's expiry time. | core → `CachePort` | NFR-OPS-03 |
 | 14 | **Render.** For RDF formats, serialise with Jena RIOT, streaming where possible. For HTML, see [Rendering HTML](#rendering-html). | `RendererPort` | FR-CN-01, FR-HTML-01 |
-| 15 | **Set the headers** and send the response. See [Response headers](#response-headers). | web adapter | FR-CN-04, NFR-OPEN-01, NFR-UI-03 |
+| 15 | **Set the headers** and send the response. See [Response headers](#response-headers). A `HEAD` request gets the same status and headers, without the body. | web adapter | FR-CN-04, FR-CN-09, NFR-OPEN-01, NFR-UI-03 |
 | 16 | **Log and measure:** status, duration, and cache hit or miss, per tenant and data source. | web adapter | NFR-OPS-05 |
 
 A conditional request (`If-None-Match`) whose `ETag` still matches gets `304 Not Modified` after step 13, without rendering.
@@ -95,8 +95,8 @@ HTML is rendered from the same `ResourceDescription`, after the cache. The steps
 |---|---|---|---|
 | `Content-Type` | always | the negotiated media type | FR-CN-01 |
 | `Content-Language` | HTML | the chosen interface language | FR-HTML-12 |
-| `Vary` | when the format, profile or language was negotiated from headers | `Accept`, `Accept-Profile`, `Accept-Language` (HTML, when no `?lang=` is given) and, in phase 2, `Authorization`. Omitted for a suffix or `_format`, whose URL already fixes the format | NFR-SEC-03 |
-| `Content-Location` | when negotiated | the format-specific URL, for example `/doc/x.ttl` | FR-CN-02 |
+| `Vary` | when the format, profile or language was negotiated from headers | `Accept`, `Accept-Profile`, `Accept-Language` (HTML, when no `?lang=` is given) and, in phase 2, `Authorization`. Omitted for a suffix or `_format`, whose URL already fixes the format | FR-CN-06, NFR-SEC-03 |
+| `Content-Location` | when negotiated | the format-specific URL, for example `/doc/x.ttl` | FR-CN-02, FR-CN-07 |
 | `Link` | always | `rel="alternate"` per format and profile; `rel="profile"` for the profile used | FR-CN-03, FR-CN-04 |
 | `ETag`, `Cache-Control` | `200` and `304` | a hash of the description and the variant; the tenant's expiry. `private` for non-public access levels | NFR-OPS-03, NFR-SEC-03 |
 | `Access-Control-Allow-Origin` | public responses | `*`. Credentialed requests follow normal CORS rules | NFR-OPEN-01 |

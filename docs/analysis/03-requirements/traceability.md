@@ -7,6 +7,8 @@ This matrix links every function of the predecessor, and every requirement of th
 | Configurable data sources | implicit, one triple store per domain | basic (M) | FR-DS-01 | M | 1 | `spiegel-adapter-sparql` |
 | URI template → queries | XML query catalogue | basic (M) | FR-URI-01, FR-RA-01, FR-RA-02 | M | 1 | `spiegel-core` |
 | Content negotiation | yes | basic (M) | FR-CN-01, FR-CN-05 | M | 1 | `spiegel-adapter-web` |
+| Negotiation that caches and HTTP tools understand (`Vary`, `Content-Location`, quality values, `HEAD`) | not checked | — | FR-CN-06 to 09 | M | 1 | `spiegel-adapter-web` |
+| Links between a thing and its document in the RDF | only where the data has them | — | FR-URI-07 | S | 1 | `spiegel-core` |
 | Simple HTML pages | XSLT | basic (M) | FR-HTML-01 | M | 1 | `spiegel-adapter-html` |
 | Front page per domain | static, per domain | basic (M) | FR-HTML-02 | M | 1 | `spiegel-adapter-html` |
 | Portal page linking all domains | no; static pages, nothing discovered | — | FR-HTML-08 | S | 2 | `spiegel-adapter-html`, `spiegel-adapter-config` |
