@@ -21,6 +21,9 @@
 **ELI**
 :   [European Legislation Identifier](https://eur-lex.europa.eu/eli-register/about.html). A URI scheme and ontology for legislation and legal decisions, with its own hierarchical path structure.
 
+**Event stream** (also *LDES*)
+:   A [Linked Data Event Stream](https://semiceu.github.io/LinkedDataEventStreams/): an append-only collection of versions of resources, fragmented so that a client can replicate it and stay in sync. Complementary to SPieGeL's resource endpoints, which serve the current state (see [ADR 0006](../../adr/0006-resources-and-event-streams.md)).
+
 **Hexagonal architecture** (also *ports and adapters*)
 :   An architecture in which the domain core depends only on interfaces (*ports*). Technology-specific code (*adapters*) implements or calls those interfaces. See [Hexagonal design](../05-architecture/hexagonal-design.md).
 

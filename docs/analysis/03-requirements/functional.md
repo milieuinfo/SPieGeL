@@ -25,6 +25,7 @@ Each requirement has a stable identifier, a priority and a phase (see [Scope](..
 | FR-RA-03 | A resource can have several views (profiles) with different content, for example a summary and a complete description. Which queries make up each view is configuration. The conditions are typed and covered by tests. | M | 2 | P, G, L |
 | FR-RA-04 | Nested structures without their own identity (blank nodes, such as an address or a measurement with its unit) are shown as part of the resource that holds them, to a configurable depth. | M | 1 | P |
 | FR-RA-05 | Vocabulary pages show class expressions (`owl:unionOf`, `owl:intersectionOf`) as readable lists of classes, not as raw RDF lists. | S | 2 | P |
+| FR-RA-06 | **A description is bounded to its subject.** It holds the subject's own properties. An object that is itself a resource appears by its IRI only, because it is described at its own URI or in its own event stream. Two exceptions are allowed: the label and type of a linked resource, for presentation (FR-HTML-10), and values without an identity of their own, such as a measurement with its unit (FR-RA-04). Incoming relations are not part of a description. See [ADR 0006](../../adr/0006-resources-and-event-streams.md). | M | 1 | G |
 
 ## Content negotiation
 
@@ -56,6 +57,7 @@ Each requirement has a stable identifier, a priority and a phase (see [Scope](..
 | FR-HTML-10 | **Every IRI on a page is a link to that IRI, shown by its label where one exists.** The link points to the IRI itself, so that `id` URIs redirect to their `doc` page (FR-URI-02) and terms in a domain's vocabularies open their `ns` page (FR-URI-03). What is shown as the link text depends on the position:<br>• **properties** (and types): the label from the data or the vocabulary (`rdfs:label`, `skos:prefLabel`), or from the label sources of FR-HTML-11; without one, a prefixed name if a prefix for its namespace is known (from the configuration or the data); otherwise the full IRI;<br>• **objects that are resources** (IRI values): preferably the resource's label (`rdfs:label`, `skos:prefLabel`, `dct:title`), if it is present in the store; without one, the full IRI;<br>• objects that are literals are shown as values, with their language or datatype; blank nodes are shown nested (FR-RA-04).<br>**Language:** when a resource or property has labels in several languages, one label is chosen by a language priority list configured per tenant, for example `nl`, then `en`, then a label without language tag, then any other language. The page title follows the same list. The link text is never empty. | M | 1 | P |
 | FR-HTML-11 | **Labels of external vocabularies are available.** Pages also show readable labels for terms of external vocabularies (for example DCTERMS, SKOS, DCAT, schema.org). The labels come from configured label sources, consulted in order: the domain's own data source; a shared vocabulary source for all tenants (a data source, or vocabulary files in the configuration); otherwise the fallback of FR-HTML-10: a prefixed name if the prefix is known, else the full IRI. Vocabularies are never fetched from the web while a request is handled (NFR-SEC-06). Which sources are the default is [open question 26](../06-open-questions.md#architecture-and-operations). | S | 1 | G, L |
 | FR-HTML-12 | **Multilingual HTML.** A visitor can read HTML pages in one of the languages a domain offers. The choice applies both to the data (which label is chosen first, FR-HTML-10) and to the interface texts (block titles, buttons, messages, the front page). It is made from the URL (`?lang=en`, so that a page in a given language can be linked and cached), then from the browser's `Accept-Language`, then from the tenant's default. Each domain configures which languages it offers. Interface texts live in translation files, not in templates. If a label is missing in the chosen language, the tenant's priority list applies. RDF representations are not affected: they always contain all languages. | S | 2 | G, L |
+| FR-HTML-13 | **Links to other distributions of the same thing.** A subject page can link to the thing in other forms in which it is published, for example its feature in an OGC API Features collection or WFS layer, or a map viewer centred on it. The links are configured per kind of resource, as templates filled from the URI's variables or from the data. Users who arrive from a map viewer through the thing's URI can go back the same way ([ADR 0007](../../adr/0007-uri-as-shared-identifier.md)). | S | 2 | G |
 
 ## SPARQL endpoint
 
@@ -88,6 +90,14 @@ Each requirement has a stable identifier, a priority and a phase (see [Scope](..
 | FR-DS-02 | Non-RDF sources can be published through declarative mappings: relational databases (for example PostgreSQL and Trino), and files or Web APIs in CSV, JSON or XML. Mappings use [RML](https://rml.io/), which generalises R2RML; existing R2RML mappings remain usable. Whether the data is materialised into a store beforehand or translated per request is [open question 28](../06-open-questions.md#architecture-and-operations). | C | later | C |
 | FR-DS-03 | Elasticsearch as a data source. | W | — | C |
 
+## Event streams
+
+Event streams ([LDES](https://semiceu.github.io/LinkedDataEventStreams/)) publish the same resources as SPieGeL, but as their history, and are served by an LDES server, not by SPieGeL ([ADR 0006](../../adr/0006-resources-and-event-streams.md)).
+
+| ID | Requirement | Priority | Phase | Source |
+|---|---|---|---|---|
+| FR-ES-01 | A domain's event streams can be discovered from what SPieGeL publishes: from the domain's front page and its dataset description, and from a resource to the stream that publishes it. How a resource points to its stream is [open question 30](../06-open-questions.md#architecture-and-operations). | S | 2 | G |
+
 ## Access control
 
 | ID | Requirement | Priority | Phase | Source |
@@ -102,4 +112,4 @@ These features exist in the predecessor but are not routed, or their use is unkn
 
 - OpenRefine-compatible reconciliation service.
 - Linked Data Fragments interface.
-- Data dump per domain (a placeholder in the predecessor).
+- Data dump per domain (a placeholder in the predecessor). Replicating a domain's event streams covers bulk access ([ADR 0006](../../adr/0006-resources-and-event-streams.md)).

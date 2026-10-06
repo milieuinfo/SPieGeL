@@ -15,6 +15,9 @@ SPieGeL is a **read-only Linked Data publishing server**. It:
 
 - **Writing data.** SPieGeL never modifies a data source. Loading and transforming data (ETL) is a separate concern.
 - **Managing vocabularies.** Ontologies, concept schemes, SHACL shapes and catalogues are maintained elsewhere and loaded into the data sources. SPieGeL publishes them.
+- **Serving event streams.** Linked Data Event Streams publish the same resources and are served by an LDES server, such as OpenLDES's. SPieGeL makes them discoverable ([ADR 0006](../../adr/0006-resources-and-event-streams.md)).
+- **Integrating data across domains.** Consumers combine resources themselves, by dereferencing, by replicating event streams or with SPARQL ([ADR 0006](../../adr/0006-resources-and-event-streams.md)).
+- **Other distributions of the data**, such as OGC API Features or WFS layers and downloads. They carry the things' URIs, so that SPieGeL's subject pages serve as their landing pages ([ADR 0007](../../adr/0007-uri-as-shared-identifier.md)).
 - **Edge concerns that belong to the reverse proxy**, such as TLS termination and HSTS. Which edge concerns move into SPieGeL is an [open question](../06-open-questions.md).
 
 ## Phasing

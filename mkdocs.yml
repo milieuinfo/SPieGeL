@@ -91,4 +91,6 @@ nav:
       - 0003 Build with Jenkins: adr/0003-build-with-jenkins.md
       - 0004 Technology baseline: adr/0004-technology-baseline.md
       - 0005 Flux design system for HTML: adr/0005-flux-design-system-for-html.md
+      - 0006 Resources and event streams: adr/0006-resources-and-event-streams.md
+      - 0007 URI as shared identifier: adr/0007-uri-as-shared-identifier.md
       - Template: adr/template.md

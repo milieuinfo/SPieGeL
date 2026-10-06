@@ -36,10 +36,13 @@ This matrix links every function of the predecessor, and every requirement of th
 | Non-RDF sources through mappings (RML, R2RML) | no | extended (C) | FR-DS-02 | C | later | `spiegel-adapter-rml`, or none if materialised |
 | Full-text search across sources | no | won't (W) | FR-SRCH-02 | W | — | — |
 | Elasticsearch source | no | won't (W) | FR-DS-03 | W | — | — |
+| Descriptions bounded to their subject | no, queries decide | — | FR-RA-06 | M | 1 | `spiegel-core`, tenant queries |
+| Links to other distributions (OGC API, WFS, map viewers) | no | — | FR-HTML-13 | S | 2 | `spiegel-core`, `spiegel-adapter-html` |
+| Discovery of event streams (LDES) | no | — | FR-ES-01 | S | 2 | `spiegel-adapter-html`, `spiegel-core` |
 | Assisted (LLM) query building | no | won't (W) | — | W | — | — |
 | Reconciliation | present, not routed | — | — | — | — | retired unless needed |
 | Linked Data Fragments | present, not routed | — | — | — | — | retired unless needed |
-| Data dump | placeholder | — | — | — | — | retired unless needed |
+| Data dump | placeholder | — | — | — | — | covered by event streams (ADR 0006) |
 | Caching | two layers, per script | — | NFR-OPS-03, NFR-SEC-03 | S | 2 | `spiegel-app` |
 | Concurrency limit per store | yes (5 concurrent, queue of 500) | — | NFR-OPS-02 | M | 1 | `spiegel-adapter-sparql` |
 | Rate limiting per client (`429`) | no | — | NFR-OPS-08 | S | 2 | `spiegel-adapter-web` |
