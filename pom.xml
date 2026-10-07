@@ -55,6 +55,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jena.version>6.2.0</jena.version>
     <archunit.version>1.5.1</archunit.version>
+    <!-- Security overrides of versions managed by Spring Boot 4.1.1; drop once Boot ships them. -->
+    <tomcat.version>11.0.25</tomcat.version>
+    <jackson-bom.version>3.1.7</jackson-bom.version>
   </properties>
 
   <dependencyManagement>
