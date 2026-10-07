@@ -1,0 +1,2280 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Open-source, configurable Linked Data publishing server">
+      
+      
+      
+        <link rel="canonical" href="https://milieuinfo.github.io/SPieGeL/analysis/04-landscape/elda-code-review/">
+      
+      
+        <link rel="prev" href="../prez-code-review/">
+      
+      
+        <link rel="next" href="../../05-architecture/hexagonal-design/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>ELDA code review - SPieGeL</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#elda-code-review" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="SPieGeL" class="md-header__button md-logo" aria-label="SPieGeL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SPieGeL
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ELDA code review
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/milieuinfo/SPieGeL" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    milieuinfo/SPieGeL
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="SPieGeL" class="md-nav__button md-logo" aria-label="SPieGeL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SPieGeL
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/milieuinfo/SPieGeL" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    milieuinfo/SPieGeL
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analysis
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Analysis
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Context
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-context/background/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Background
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-context/scope/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scope
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-context/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Current platform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Current platform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/functional-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functional overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/data-domains/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data domains
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/uri-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    URI patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/request-flows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Request flows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/query-catalogue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Query catalogue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/client-components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client components
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/html-rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data-dependent HTML rendering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Requirements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-requirements/functional/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functional
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-requirements/non-functional/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Non-functional
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-requirements/standards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-requirements/traceability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Traceability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-requirements/design-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design system (Flux)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Landscape
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Landscape
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lodview-code-review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LodView code review
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trifid-code-review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trifid code review
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prez-code-review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prez code review
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ELDA code review
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ELDA code review
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How it works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-an-api-specification-in-rdf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration: an API specification in RDF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#request-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coverage-of-the-predecessors-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage of the predecessor's functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#points-to-note-before-using-it-in-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Points to note before using it in production
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-spiegel-can-learn-from-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What SPieGeL can learn from it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-architecture/hexagonal-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hexagonal design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-architecture/request-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Request flow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-architecture/module-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Module structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-open-questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../adr/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisions
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0001-record-architecture-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0001 Record architecture decisions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0002-documentation-as-markdown-with-mkdocs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0002 Documentation with MkDocs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0003-build-with-jenkins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0003 Build with Jenkins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0004-technology-baseline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0004 Technology baseline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0005-flux-design-system-for-html/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0005 Flux design system for HTML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0006-resources-and-event-streams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0006 Resources and event streams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0007-uri-as-shared-identifier/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0007 URI as shared identifier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How it works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-an-api-specification-in-rdf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration: an API specification in RDF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#request-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coverage-of-the-predecessors-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage of the predecessor's functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#points-to-note-before-using-it-in-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Points to note before using it in production
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-spiegel-can-learn-from-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What SPieGeL can learn from it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/milieuinfo/SPieGeL/edit/main/docs/analysis/04-landscape/elda-code-review.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="elda-code-review">ELDA code review<a class="headerlink" href="#elda-code-review" title="Permanent link">&para;</a></h1>
+<p><a href="https://github.com/epimorphics/elda">ELDA</a> (Epimorphics) is the Java implementation of the <a href="https://github.com/UKGovLD/linked-data-api">Linked Data API</a> (LDA) specification, developed for UK government open data. In the <a href="../comparison/">comparison</a> it is conceptually closest to the predecessor's query catalogue: URI template → SPARQL query, configured declaratively, in Java. We read its source code to find out what it does, how much of the predecessor's behaviour it covers, and which of its ideas SPieGeL should adopt.</p>
+<p><strong>Version reviewed:</strong> upstream commit <code>62d85de</code> (2 October 2026), version 3.0.5-SNAPSHOT. About 31,000 lines of Java in the main module (<code>elda-lda</code>, including its own JSON-RDF library), plus 187 test classes. Release 3.0.0 moved it to Java 21, Jakarta EE 11 (Servlet 6, Tomcat 11), Jersey 3, Jena 5.6 and Velocity 2.4. Packaged as WARs (<code>elda-common</code> for deployment, <code>elda-standalone</code> with examples) and a Docker image. Apache-2.0 (the comparison previously listed an "own licence").</p>
+<h2 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
+<h3 id="configuration-an-api-specification-in-rdf">Configuration: an API specification in RDF<a class="headerlink" href="#configuration-an-api-specification-in-rdf" title="Permanent link">&para;</a></h3>
+<p>Everything is configured in Turtle with the LDA vocabulary (<code>api:</code>) and ELDA extensions (<code>elda:</code>). <code>elda-common</code> loads every file matching <code>/etc/elda/conf.d/{APP}/*.ttl</code> (<code>web.xml</code>). Each file can define one or more APIs, and modified files are reloaded without a restart (<code>RouterRestletSupport</code>). The example <code>environment.data.gov.uk-bwq.ttl</code> (bathing water quality, about 75 endpoints) shows the model:</p>
+<ul>
+<li><strong>An <code>api:API</code></strong> has a <code>api:sparqlEndpoint</code>, a <code>api:base</code>, default and maximum page sizes, languages, formatters, variables, cache settings (<code>elda:cacheExpiryTime "1h"</code>, <code>elda:enableETags</code>) and a list of endpoints.</li>
+<li><strong>An endpoint</strong> has an <code>api:uriTemplate</code> (for example <code>/doc/bathing-water/{eubwid}</code>) and is one of two kinds:<ul>
+<li>an <strong><code>api:ItemEndpoint</code></strong> describes one resource, whose IRI is built from an <code>api:itemTemplate</code> (<code>http://environment.data.gov.uk/id/bathing-water/{eubwid}</code>);</li>
+<li>an <strong><code>api:ListEndpoint</code></strong> selects a page of resources with an <code>api:selector</code>: a <code>api:where</code> fragment, <code>api:filter</code> (<code>type=BathingWater</code>), <code>api:orderBy</code> or <code>api:sort</code>.</li>
+</ul>
+</li>
+<li><strong>Viewers</strong> (<code>api:Viewer</code>) say what to show of each selected resource: <code>api:describeViewer</code> (a <code>DESCRIBE</code>), <code>api:labelledDescribeViewer</code>, <code>api:basicViewer</code>, or a list of <strong>property chains</strong> using short names, such as <code>name,type,broader.name,contributor.mbox</code>. An endpoint lists its viewers and a default; callers pick one with <code>_view=</code>.</li>
+<li><strong>Formatters</strong> produce the output: JSON and XML in the LDA result format, Turtle, RDF/XML, JSON-LD, and HTML or CSV through an XSLT stylesheet or a Velocity template. Atom feeds are also available.</li>
+<li><strong>Variables</strong> (<code>api:variable</code>) give typed values that can use URI-template parameters, such as <code>{scheme}</code> or <code>{eubwid}</code>.</li>
+<li><strong>Short names</strong> (<code>api:label</code>, or derived from the vocabulary) map properties to readable names, used in viewers, filters and JSON output.</li>
+<li><strong>Credentials</strong> are not in the specification. An endpoint names an <code>elda:authKey</code>, which refers to a separate properties file (<code>sources/AuthMap.java</code>). Basic authentication over plain <code>http:</code> is refused unless <code>elda:authAllowInsecure</code> is set (<code>SparqlSource</code>).</li>
+</ul>
+<h3 id="request-flow">Request flow<a class="headerlink" href="#request-flow" title="Permanent link">&para;</a></h3>
+<p>One JAX-RS resource handles every path (<code>restlets/RouterRestlet.java</code>):</p>
+<ol>
+<li><strong>Match</strong> the path against the URI templates of all loaded APIs. When several match, the most specific wins: more literal characters first, then more variables (<code>routing/MatchTemplate.java</code>). A format suffix (<code>/doc/x.ttl</code>) or <code>?_format=</code> selects a formatter directly.</li>
+<li><strong>No match? Try the item templates in reverse.</strong> If the path matches the path of an endpoint's <code>api:itemTemplate</code> (for example <code>/id/bathing-water/{eubwid}</code>), ELDA answers <strong><code>303 See Other</code></strong> to that endpoint's URI template (<code>/doc/bathing-water/{eubwid}</code>) (<code>routing/DefaultRouter.findItemURIPath</code>). This is the <code>id</code>→<code>doc</code> redirect, derived from configuration alone.</li>
+<li><strong>Build the selection query</strong> (<code>query/APIQuery.java</code>, <code>query/ContextQueryUpdater.java</code>). Request parameters become filters: <code>name=value</code> and <code>type.label=value</code> (by short name), <code>min-</code>, <code>max-</code>, <code>minEx-</code>, <code>maxEx-</code>, <code>exists-</code>, <code>lang-</code>, <code>_search</code> (text index), <code>near-lat</code>/<code>near-long</code>/<code>_distance</code>, <code>_sort</code>, <code>_page</code> and <code>_pageSize</code>. Values are rendered as SPARQL terms through a small term model (<code>rdfq/</code>): literals via Jena's <code>FmtUtils</code>, IRIs via <code>URIUtils.escapeAsURI</code>.</li>
+<li><strong>Two phases.</strong> A <code>SELECT</code> fetches one page of item IRIs. Then the view fetches the descriptions of exactly those IRIs, with one <code>CONSTRUCT</code> built from the property chains or one <code>DESCRIBE</code> (<code>core/View.java</code>). Both queries are parsed with Jena's <code>QueryFactory</code> before they are sent.</li>
+<li><strong>Compose the page.</strong> The result carries page metadata (<code>api:Page</code>, first, previous and next, the available views and formats) and, on request (<code>_metadata=all</code>), the bindings, the selection and view queries and execution times.</li>
+<li><strong>Respond.</strong> The output is rendered by the chosen formatter, with <code>Content-Location</code> (the format-specific URL), <code>Expires</code> (from the configured expiry time), <code>ETag</code> (if enabled), <code>Access-Control-Allow-Origin: *</code>, and <code>Vary: Accept</code> <em>only when the format was negotiated</em>, not when it came from a suffix or <code>_format</code>. An empty item endpoint returns <code>404</code>.</li>
+</ol>
+<h3 id="other-functions">Other functions<a class="headerlink" href="#other-functions" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Several data sources: remote SPARQL, a local file, TDB, data embedded in the specification (<code>here:</code>), and combinations of these</td>
+<td><code>sources/</code></td>
+</tr>
+<tr>
+<td>In-process caching of selections, descriptions, counts and responses, with policies limiting entries or triples</td>
+<td><code>cache/</code></td>
+</tr>
+<tr>
+<td>Total counts on request (<code>_count</code>, <code>elda:enableCounting</code>), themselves cached</td>
+<td><code>APIQuery.requestTotalCount</code></td>
+</tr>
+<tr>
+<td>Rewriting of result IRIs between a public and a local base (<code>rewriteURLFrom</code> / <code>rewriteURLTo</code>), and support for <code>X-Forwarded-*</code> headers</td>
+<td><code>RouterRestlet.makeRequestURI</code></td>
+</tr>
+<tr>
+<td>Licence and notice metadata on result pages</td>
+<td><code>licence/</code>, <code>metadata/</code></td>
+</tr>
+<tr>
+<td>Control pages: cache contents and clearing, statistics, the loaded configuration (<code>/control/*</code>, <code>/api-config</code>, <code>/meta/*</code>)</td>
+<td><code>restlets/</code></td>
+</tr>
+<tr>
+<td>Request logging with a response ID, JMX beans, Prometheus metrics (<code>/metrics</code>)</td>
+<td><code>support/LogRequestFilter.java</code>, <code>jmx/</code>, <code>metrics/</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="coverage-of-the-predecessors-functions">Coverage of the predecessor's functions<a class="headerlink" href="#coverage-of-the-predecessors-functions" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Predecessor function</th>
+<th>ELDA</th>
+<th>Where in the code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/doc/{concept}/{id}</code> as HTML and as RDF/XML, Turtle, N-Triples and JSON-LD</td>
+<td><strong>yes, except N-Triples</strong>. Also LDA JSON and XML, CSV and Atom. Override by suffix or <code>_format</code></td>
+<td><code>renderers/</code>, <code>RouterRestlet</code></td>
+</tr>
+<tr>
+<td>Own composed query per concept and media type</td>
+<td><strong>per concept yes</strong>: each endpoint has its own selector and viewers. <strong>Per media type no</strong>: the view is chosen independently of the format</td>
+<td><code>specs/APIEndpointSpec.java</code>, <code>core/View.java</code></td>
+</tr>
+<tr>
+<td>HTML view per concept</td>
+<td><strong>yes</strong>: a formatter (XSLT or Velocity) per API or per endpoint</td>
+<td><code>renderers/XSLT_RendererFactory.java</code>, <code>VelocityRendererFactory.java</code></td>
+</tr>
+<tr>
+<td><code>303</code> from <code>/id/</code> to <code>/doc/</code></td>
+<td><strong>yes, generically</strong>, derived from each item endpoint's <code>api:itemTemplate</code></td>
+<td><code>routing/DefaultRouter.java</code></td>
+</tr>
+<tr>
+<td><code>/ns/{model}</code></td>
+<td><strong>yes</strong>, as ordinary endpoints (the example serves <code>/def/{scheme}</code> and <code>/def/{scheme}/{term}</code>)</td>
+<td>example specification</td>
+</tr>
+<tr>
+<td>Several domains in one service</td>
+<td><strong>partly</strong>: several specifications in one web application, each with its own endpoint and base, separated by path prefix. No selection by host name</td>
+<td><code>routing/</code>, <code>RouterRestletSupport</code></td>
+</tr>
+<tr>
+<td><code>/sparql</code> as a filtered proxy with HTML results</td>
+<td><strong>no</strong>. A specification can link to a public endpoint. The <code>_where</code> and <code>_select</code> parameters (see below) are not a substitute</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Access levels through OIDC</td>
+<td><strong>no</strong>. Only fixed basic-auth credentials per data source</td>
+<td><code>sources/SparqlSource.java</code></td>
+</tr>
+<tr>
+<td>Keyword search</td>
+<td><strong>yes</strong>, with a Jena text index (<code>_search</code>, <code>elda:textQueryProperty</code>)</td>
+<td><code>textsearch/</code>, <code>APIQuery.addSearchTriple</code></td>
+</tr>
+<tr>
+<td>Reconciliation, Linked Data Fragments, dumps</td>
+<td><strong>no</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Incoming relations</td>
+<td><strong>not built in</strong>. Property chains follow outgoing links; incoming ones need a template view or a custom selector</td>
+<td><code>core/View.java</code></td>
+</tr>
+<tr>
+<td>Blank nodes in outgoing relations</td>
+<td><strong>yes</strong>, through property chains or the store's <code>DESCRIBE</code></td>
+<td><code>core/View.java</code></td>
+</tr>
+<tr>
+<td>Front-end components that need a same-origin <code>/sparql</code></td>
+<td><strong>no</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Skolem IRIs and ELI paths</td>
+<td><strong>yes, by configuration</strong>: they are just URI templates</td>
+<td><code>routing/MatchTemplate.java</code></td>
+</tr>
+<tr>
+<td>Caching</td>
+<td><strong>yes</strong>: in-process caches with policies, plus <code>Expires</code>, <code>ETag</code> and a correct <code>Vary: Accept</code></td>
+<td><code>cache/</code>, <code>RouterRestlet.standardHeaders</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="points-to-note-before-using-it-in-production">Points to note before using it in production<a class="headerlink" href="#points-to-note-before-using-it-in-production" title="Permanent link">&para;</a></h2>
+<p>As with the other reviews, these are listed so that SPieGeL avoids them, not as criticism of a project that has served UK government data for years.</p>
+<ol>
+<li><strong>Callers can add SPARQL to queries.</strong> As the LDA specification defines, the <code>_where</code>, <code>_select</code>, <code>_orderBy</code>, <code>_template</code> and <code>_graph</code> parameters pass SPARQL fragments, a whole selection query, a <code>CONSTRUCT</code> template or a graph name into the generated queries (<code>ContextQueryUpdater.handleReservedParameters</code>). <code>elda:allowReserved</code> only controls which <em>unknown</em> reserved parameters are ignored; it does not switch these off. Because every query is parsed by Jena as a <code>SELECT</code>, <code>CONSTRUCT</code> or <code>DESCRIBE</code>, updates are impossible. But the API is in effect an unrestricted query interface on the store. → SPieGeL: NFR-SEC-01, NFR-SEC-04, NFR-OPS-02.</li>
+<li><strong>Variables are substituted as text.</strong> Variable bindings are written into the assembled query string afterwards, not bound as terms, and not every kind of value goes through the same escaping. The term model in <code>rdfq/</code> is a step in the right direction, but it does not cover the whole query. The maintainers have confirmed that crafted values can produce invalid SPARQL and a server error, found no way to exploit it, and plan to sanitise these values in release 3.0.5 (<a href="https://github.com/epimorphics/elda/issues/323">issue 323</a>). → SPieGeL: NFR-SEC-04, with one query-building mechanism throughout.</li>
+<li><strong>Control pages are public.</strong> <code>/control/clear-cache</code> (including by <code>GET</code>), <code>/control/show-cache</code>, <code>/control/show-stats</code>, <code>/api-config</code> (the whole loaded configuration, including selectors) and <code>/meta/*</code> are served by the same application. Deployments must block them at the edge, which is how the maintainers intend it: access is restricted by the reverse proxy in front of ELDA. → SPieGeL: NFR-SEC-08.</li>
+<li><strong>No timeouts.</strong> The Java <code>HttpClient</code> for SPARQL sources is built without connect or request timeouts, and no query timeout is set. Together with point 1, one expensive request ties up a thread until the store gives up. In the maintainers' view, query timeouts belong in the triple store, and the client's default connect timeout is sufficient. → SPieGeL: NFR-OPS-02.</li>
+<li><strong>Error pages show exception messages.</strong> Parse errors, Velocity errors and general failures are rendered with <code>e.getMessage()</code>, which can include query text (<code>RouterRestlet.runEndpoint</code>).</li>
+<li><strong><code>400</code> instead of <code>406</code>.</strong> If no formatter fits the <code>Accept</code> header, the answer is <code>400 Bad Request</code>. → SPieGeL: FR-CN-05.</li>
+<li><strong>In-process, per-replica caches.</strong> The caches live in static registries in the JVM. That is fine for one node, but they are not shared and are cleared only by expiry or the control page. → SPieGeL: NFR-OPS-03.</li>
+<li><strong>Architecture.</strong> Query construction appends strings to <code>StringBuffer</code>s across a 1,100-line <code>APIQuery</code> class. Controllers, Jena and rendering are interwoven, and there is an <code>Attic</code> of retired code. Release 3.0 modernised the dependencies, not the design. → SPieGeL: NFR-Q-01.</li>
+</ol>
+<h2 id="what-spiegel-can-learn-from-it">What SPieGeL can learn from it<a class="headerlink" href="#what-spiegel-can-learn-from-it" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>The <code>303</code> comes from configuration.</strong> Mapping an <code>id</code> template (the <em>item template</em>) to a <code>doc</code> endpoint, and deriving the redirect from that mapping, is exactly FR-URI-02 with no extra configuration. SPieGeL should do the same, and generate the <code>Link</code> back from <code>doc</code> to <code>id</code> as well.</li>
+<li><strong>Item endpoints and list endpoints.</strong> Two endpoint kinds cover almost every page: one resource, or a page of selected resources. Their configuration (template, selector, viewers, formatter) is a good, proven shape for SPieGeL's tenant configuration (FR-URI-01, FR-RA-01, FR-HTML-03). See <a href="../../06-open-questions/#architecture-and-operations">open question 20</a>.</li>
+<li><strong>Select, then describe.</strong> Fetching one page of IRIs first and then describing exactly those keeps every query bounded and makes both phases cacheable (NFR-OPS-02, NFR-OPS-03). It also suits listings and collection tables (FR-HTML-05).</li>
+<li><strong>Named views are profiles without the standard.</strong> <code>_view=</code> with a default per endpoint is the predecessor's "different query per representation" in its simplest form. Combined with the Prez <a href="../prez-code-review/#what-spiegel-can-learn-from-it">profile model</a>, views can become <code>prof:Profile</code>s with <code>Accept-Profile</code> negotiation (FR-CN-03).</li>
+<li><strong>Property chains as a description language.</strong> <code>name,type,broader.name</code> is short, readable and easy to validate. It is a lighter alternative to SHACL shapes (Prez) or hand-written queries (FR-RA-02) for the simple cases (see <a href="../../06-open-questions/#architecture-and-operations">open question 19</a>).</li>
+<li><strong>HTTP caching done right.</strong> <code>Vary: Accept</code> only on negotiated responses, <code>Content-Location</code> pointing to the format-specific URL, <code>Expires</code> from configuration, and an <code>ETag</code> from the result. SPieGeL should do all four (FR-CN-04, NFR-OPS-03).</li>
+<li><strong>Format suffixes as well as parameters.</strong> <code>/doc/x.ttl</code> next to <code>?_format=ttl</code> gives stable, linkable URLs per format (FR-CN-02).</li>
+<li><strong>Short names for filtering.</strong> Query parameters such as <code>type.label=…</code>, <code>min-date=…</code> and <code>exists-geometry=true</code> give a simple, safe filter language for listings, as long as it is the <em>only</em> way callers influence queries (unlike point 1).</li>
+<li><strong>Credentials by reference.</strong> Naming a credential set by key (<code>elda:authKey</code>) and keeping its values in separate files is a ready-made pattern for access-level credentials per source (FR-AC-03, NFR-OPS-06). So is refusing basic authentication over plain HTTP.</li>
+<li><strong>Configuration from a directory, reloaded on change.</strong> One file per API, picked up by a glob, fits "adding a domain needs configuration only" (FR-MT-02). Reloading on change is useful in development, but in production SPieGeL should prefer immutable configuration with a rolling restart (NFR-OPS-07).</li>
+<li><strong>Visible queries.</strong> Page metadata that can include the selection and view queries, as in Prez, is valuable for diagnosis (behind NFR-SEC-08).</li>
+<li><strong>Several kinds of source.</strong> Remote SPARQL, a local file, TDB and inline data behind one <code>Source</code> interface is close to SPieGeL's data-source port (FR-DS-01) and makes tests easy.</li>
+</ul>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>As a replacement for the predecessor: no</strong>, but it comes closer than any other candidate. It has URI templates with their own queries, a generic <code>303</code>, <code>ns</code> pages, HTML per endpoint, text search and caching. Missing: access levels, a filtered SPARQL endpoint, host-based multi-tenancy, profile negotiation per media type, and safe handling of caller input.</li>
+<li><strong>For phase 1 (a single public catalogue): possible.</strong> It is Java and current on Jakarta and Jena 5. However, the reserved query parameters and the control pages would have to be blocked at the edge, and the HTML would need new XSLT or Velocity templates in the Flemish design system.</li>
+<li><strong>As a reference for SPieGeL: the closest model for configuration.</strong> The LDA endpoint model (item and list endpoints, selectors, viewers, formatters, item templates) and its HTTP behaviour are worth adopting nearly as they are. The parts to leave behind are text-built queries, caller-supplied SPARQL fragments and the monolithic structure.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../prez-code-review/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Prez code review">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Prez code review
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../05-architecture/hexagonal-design/" class="md-footer__link md-footer__link--next" aria-label="Next: Hexagonal design">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Hexagonal design
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © 2026 Vlaamse Overheid, Departement Omgeving · MIT licence
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "navigation.footer", "search.highlight", "content.code.copy", "content.action.edit"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
