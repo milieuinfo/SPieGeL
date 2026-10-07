@@ -13,3 +13,4 @@ Use [`template.md`](template.md) for new records.
 | [0005](0005-flux-design-system-for-html.md) | Use the Flux design system for HTML | Accepted |
 | [0006](0006-resources-and-event-streams.md) | Publish resources and event streams as complementary forms | Proposed |
 | [0007](0007-uri-as-shared-identifier.md) | Use the URI as the shared identifier in every distribution | Proposed |
+| [0008](0008-neo4j-not-a-data-source.md) | Do not use Neo4j as a data source for SPieGeL | Proposed |

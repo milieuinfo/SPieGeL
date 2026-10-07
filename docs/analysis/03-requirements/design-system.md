@@ -95,6 +95,7 @@ Which Flux components implement which requirement, and where a new component is 
 | FR-HTML-05 | Thesaurus hierarchy and catalogue structure as a tree | none: Flux has no tree component | Hierarchy tree | New |
 | FR-HTML-05 | Members of a collection, paged, searchable and sortable | `vl-rich-data-table`, `vl-pager`, `vl-search-filter` | Collection table (loads the data) | New, on a Flux base |
 | FR-HTML-07 | Geometries on a map | `vl-map`, `vl-map-features-layer`, `vl-map-baselayer-grb-gray` | Geometry map (reads WKT and CRS from the page; reprojection in the browser) | New, on a Flux base (thin) |
+| FR-HTML-14 | Images of a resource, with alternative text and a link to the full image | an image element (`vl-image`, to check in Flux), `vl-link` | — | Composed (to check with the Flux team) |
 | FR-URI-03, FR-RA-05 | Vocabulary page: one card per term, class expressions as lists | `vl-info-tile` or `vl-infoblock`, `vl-properties` | Resource description | New |
 | FR-HTML-02, FR-HTML-09 | Front page per domain: introduction, discovered blocks (catalogues with datasets, thesauri, classes), example queries | `vl-content-header`, `vl-typography`, `vl-info-tile`, `vl-accordion`; `vl-rich-data-table` and `vl-pager` for long blocks | — | Composed |
 | FR-HTML-08 | Portal: one tile per domain, linking to its front page | `vl-info-tile` (clickable) in a grid, `vl-content-header` | — | Composed |
@@ -125,6 +126,22 @@ Digitaal Vlaanderen's own Linked Data site shows the same house style built in a
 - **Empty without JavaScript.** The server sends only empty header and footer containers and the page data as embedded JSON. All content is built in the browser. That is what NFR-UI-04 rules out for SPieGeL. This follows from the application's architecture (rendering in the browser), not from the component library. With Flux, the server can write the content into the page itself (see [constraint 2](#constraints-for-spiegel)).
 - **One hand-built page per type.** The application has its own route and page for each resource type: `onderneming`, `vestiging`, `adres`, `gebouw`, `perceel`, `concept`, `conceptscheme` and about twenty more. Each page reads a JSON endpoint per type (for example `/doc/api/enterprise/{id}`). SPieGeL aims for the opposite: generic pages with presentation rules as configuration (FR-HTML-06). The JSON endpoints are, however, a working example of the server-side option in [open question 24](../06-open-questions.md#front-end).
 - **Content negotiation, but no `303`.** The `doc` URI returns Turtle and JSON-LD for the matching `Accept` header. The `id` URI answers `200` directly, for HTML and Turtle alike, instead of `303 See Other` to `doc` (FR-URI-02). The response carries no `Vary`, `Link` or Content-Security-Policy header (FR-CN-04, NFR-UI-03).
+
+## A subject page with images: the heritage inventory
+
+The Flemish Heritage Agency (Onroerend Erfgoed) publishes its inventory under its own URIs. We looked at one designated object, [`https://id.erfgoed.net/aanduidingsobjecten/104159`](https://id.erfgoed.net/aanduidingsobjecten/104159) (an office building in Antwerp), on 7 October 2026:
+
+- **`303` from the thing to its page.** The `id` URI answers `303 See Other` to the inventory page (`https://inventaris.onroerenderfgoed.be/aanduidingsobjecten/104159`), whatever format is asked for. This is the pattern of FR-URI-02, across host names: the identifier lives on `id.erfgoed.net`, and the application that describes it lives elsewhere ([ADR 0007](../../adr/0007-uri-as-shared-identifier.md)).
+- **Rendered on the server.** Title, status, legal decisions, location, typology, dating, style, designers, description, values and relations are all in the HTML as sent. The page uses its own Foundation-based layout with jQuery, and the same global header widget as data.vlaanderen.be. It does not use Flux.
+- **Data in the page, but only a summary.** The page embeds a schema.org description as JSON-LD (`LandmarksOrHistoricalBuildings`, with name, description and postal address), with the `id` URI as its `@id`. It also has Open Graph tags for previews on social media. A structured-data extractor gets only these few triples, not the full record. This is the shape of FR-HTML-04; SPieGeL embeds the whole description instead.
+- **No RDF by content negotiation.** The inventory page returns its own JSON for `application/json`, with the full record. Turtle, JSON-LD and RDF/XML get `404`. The HTML response varies only on `Accept-Encoding`.
+- **Images are resources with their own URI.** The page shows the photo of the related heritage object. The photo is a resource in its own right, `https://id.erfgoed.net/afbeeldingen/183076`, which answers `303` to the image bank (`beeldbank.onroerenderfgoed.be/images/183076`). The image itself has smaller renditions at a fixed path (`…/content/small`). The HTML contains only an empty `<img>`. A script rewrites the `id` URI to the image bank's address and sets the source in the browser, so **without JavaScript there is no image**.
+
+What SPieGeL takes from this:
+
+- A subject page **shows images, not only links to them**, when a value is a picture (FR-HTML-14). The image is a resource with its own URI, like any other value.
+- The `<img>` element, its source and its alternative text are **written on the server** (NFR-UI-04). Which rendition to show (a thumbnail on the page, a link to the full image) is configuration, as a URL template on the image's URI, not a rewrite in a script.
+- Images from another host, such as an image bank, must be allowed by the page's Content Security Policy (`img-src`). The allowed hosts are part of the tenant configuration (NFR-UI-03).
 
 **Why Flux suits data-driven subject pages.** In SPieGeL, the server decides from the data which blocks and components a page gets (FR-HTML-06). It then writes the matching Flux tags with the content inside them. The components only add styling and interaction in the browser. A generic page per resource therefore works with Flux. data.vlaanderen.be instead needs a hand-built Vue page per type, because its components exist only in the browser.
 
