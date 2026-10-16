@@ -28,7 +28,7 @@ SPieGeL publishes open data, but may also serve data at higher access levels. Th
 |---|---|---|
 | NFR-OPS-01 | **Stateless.** No server-side session. Any node can serve any request, so no sticky sessions are needed. | M |
 | NFR-OPS-02 | **Backpressure.** The number of concurrent queries per data source is bounded, with a bounded queue and timeouts. | M |
-| NFR-OPS-03 | **Caching** is centralised, configurable per tenant, and respects NFR-SEC-03. | S |
+| NFR-OPS-03 | **Caching** is centralised, configurable per tenant, and respects NFR-SEC-03. Responses stay valid until the tenant's data changes: the loading chain signals a new **data version** per tenant, which also serves as the entity tag (`ETag`), so that clients and caches can revalidate cheaply (`304 Not Modified`). A fixed lifetime is only a fallback, because domains change at very different rates: some every night, others a few times a year (see [Performance and availability](performance.md#the-predecessor-today)). | S |
 | NFR-OPS-04 | **Health and readiness** endpoints that really check the configured data sources. | M |
 | NFR-OPS-05 | **Structured logging** with a request identifier and timing, and **metrics** per tenant and data source. | S |
 | NFR-OPS-06 | **Configuration** is external to the build artefact. Per-tenant configuration (URI templates, queries, templates) is version-controlled. | M |

@@ -116,7 +116,7 @@ In summary, Flux covers the page frame, search, errors, the login header, the fr
 6. geometry map;
 7. SPARQL editor.
 
-The collection table and the geometry map are thin layers on Flux components (`vl-rich-data-table`, `vl-map`). The hierarchy tree and the SPARQL editor have no Flux base at all. Where the new components live is [open question 23](../06-open-questions.md#front-end).
+The collection table and the geometry map are thin layers on Flux components (`vl-rich-data-table`, `vl-map`). The hierarchy tree and the SPARQL editor have no Flux base at all. For the SPARQL editor, an existing web component is a candidate: [`@sib-swiss/sparql-editor`](https://github.com/sib-swiss/sparql-editor), which autocompletes from the VoID description that SPieGeL publishes and lists its example queries ([open question 37](../06-open-questions.md#front-end), [UniProt](../04-landscape/uniprot-reference.md#how-it-is-built)). Where the new components live is [open question 23](../06-open-questions.md#front-end).
 
 ## The same house style elsewhere: data.vlaanderen.be
 
