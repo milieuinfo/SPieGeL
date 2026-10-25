@@ -99,4 +99,15 @@ nav:
       - 0006 Resources and event streams: adr/0006-resources-and-event-streams.md
       - 0007 URI as shared identifier: adr/0007-uri-as-shared-identifier.md
       - 0008 Neo4j not a data source: adr/0008-neo4j-not-a-data-source.md
+      - 0009 Ontop for relational sources: adr/0009-ontop-for-relational-sources.md
+      - 0010 Jena graph types in the core: adr/0010-jena-graph-types-in-the-core.md
+      - 0011 Query policy: adr/0011-query-policy.md
+      - 0012 Tenant configuration as RDF: adr/0012-tenant-configuration-as-rdf.md
+      - 0013 Tenant configuration delivery: adr/0013-tenant-configuration-delivery.md
+      - 0014 Placement of Linked Data components: adr/0014-placement-of-linked-data-components.md
+      - 0015 Paged lists as resources: adr/0015-paged-lists-as-resources.md
+      - 0016 Problem details for errors: adr/0016-problem-details-for-errors.md
+      - 0017 Framed JSON-LD: adr/0017-framed-json-ld-with-a-frozen-context.md
+      - 0018 Personal data: adr/0018-personal-data-in-requests-and-caches.md
+      - 0019 Findability: adr/0019-findability.md
       - Template: adr/template.md

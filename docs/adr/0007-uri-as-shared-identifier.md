@@ -1,6 +1,6 @@
 # 0007. Use the URI as the shared identifier in every distribution
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-06
 
 ## Context

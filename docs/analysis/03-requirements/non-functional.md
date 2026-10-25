@@ -30,7 +30,7 @@ SPieGeL publishes open data, but may also serve data at higher access levels. Th
 | NFR-OPS-02 | **Backpressure.** The number of concurrent queries per data source is bounded, with a bounded queue and timeouts. | M |
 | NFR-OPS-03 | **Caching** is centralised, configurable per tenant, and respects NFR-SEC-03. Responses stay valid until the tenant's data changes: the loading chain signals a new **data version** per tenant, which also serves as the entity tag (`ETag`), so that clients and caches can revalidate cheaply (`304 Not Modified`). A fixed lifetime is only a fallback, because domains change at very different rates: some every night, others a few times a year (see [Performance and availability](performance.md#the-predecessor-today)). | S |
 | NFR-OPS-04 | **Health and readiness** endpoints that really check the configured data sources. | M |
-| NFR-OPS-05 | **Structured logging** with a request identifier and timing, and **metrics** per tenant and data source. | S |
+| NFR-OPS-05 | **Structured logging** with a request identifier and timing, and **metrics** per tenant and data source. What is logged follows NFR-PRIV-02. | S |
 | NFR-OPS-06 | **Configuration** is external to the build artefact. Per-tenant configuration (URI templates, queries, templates) is version-controlled. | M |
 | NFR-OPS-07 | **Deployment** supports a rolling or blue/green switch-over without mixing incompatible versions behind one host name. | S |
 | NFR-OPS-08 | **Rate limiting per client.** A client that exceeds its limit gets `429 Too Many Requests` with `Retry-After`, before any query is run. Limits are configurable per tenant and per kind of request, with a stricter limit for `/sparql`. An authenticated client is identified by its identity. For public access, which is unauthenticated, the client is identified by its address as reported by a trusted reverse proxy. Limits hold across all nodes, without sticky sessions (NFR-OPS-01). `429` (this client asks too much) is distinct from `503` (the service or a data source is overloaded, NFR-OPS-02). Whether SPieGeL or the reverse proxy enforces the limit is still to be decided ([open question 13](../06-open-questions.md#architecture-and-operations)). | S |
@@ -47,6 +47,16 @@ Targets are measured on the server, from SPieGeL's own metrics (NFR-OPS-05), und
 | NFR-PERF-03 | **SPARQL is bounded.** A bounded lookup on one resource through `/sparql` takes p95 ≤ 300 ms. Every query stops at a timeout configured per tenant, and results are streamed to the client. | S |
 | NFR-PERF-04 | **Throughput with headroom.** The targets of NFR-PERF-01 to 03 still hold at twice the measured peak load per tenant. Beyond that, SPieGeL refuses work (`429`, `503` with `Retry-After`; NFR-OPS-02, NFR-OPS-08) rather than slowing down for everyone. The peak load is still to be measured ([open question 36](../06-open-questions.md#architecture-and-operations)). | S |
 | NFR-PERF-05 | **Availability.** Public requests are available 99.5 % of each month (about 3.6 hours of downtime), excluding announced maintenance, as measured by an external probe. | S |
+
+## Privacy
+
+Personal data reaches SPieGeL in the published data and in the requests themselves. See [ADR 0018](../../adr/0018-personal-data-in-requests-and-caches.md).
+
+| ID | Requirement | Priority |
+|---|---|---|
+| NFR-PRIV-01 | **Personal data in the data is the store's responsibility.** Data owners, the loading chain and the store keep personal data in separate graphs that only the accounts of the levels allowed to see it can read. SPieGeL serves it only through such an account (NFR-SEC-02) and does not decide what is personal. | M |
+| NFR-PRIV-02 | **Personal data from requests is minimised.** Logs hold truncated IP addresses (IPv4 /24, IPv6 /48), an authenticated caller as a keyed hash, and URLs without the values of parameters other than `_format`, `_profile`, `_page`, `_property` and `_inverse`. Search terms and SPARQL texts are not logged; a query is logged as a keyed hash with its duration, status and number of results. The key changes at least as often as logs are deleted. Full IP addresses appear only in rate-limit counters, for minutes. Metrics are never labelled by IRI, IP address or caller. The retention of logs is configurable. | M |
+| NFR-PRIV-03 | **Caching follows the access level.** A response at a non-public level is `private`, and cached by SPieGeL only under its access level and data version. A public response may be kept by shared caches for minutes only, configurable per tenant, and is then revalidated with its `ETag`. Configuration, example queries and test fixtures contain no real personal data. | M |
 
 ## User interface
 

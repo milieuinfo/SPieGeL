@@ -4,7 +4,7 @@ SPieGeL's HTML must comply with **Flux**, the design system of the Department of
 
 **Terminology.** In the department, Flux's components are usually called *the web components*; the package scope `@domg-wc` stands for *Departement Omgeving web components*. They are web components in the technical sense: custom elements registered in the browser. Digitaal Vlaanderen also calls its Webuniversum components "webcomponents", but Flux points out that those are mainly CSS with a little JavaScript, not custom elements. Both follow the same house style and use the same `vl-` class names, so they look alike. This analysis says *Flux* or *Flux web components* to avoid confusion.
 
-This chapter describes what Flux offers, which constraints it puts on SPieGeL, how the predecessor's [client components](../02-current-platform/client-components.md) map onto it, and which components SPieGeL still has to build. **Version reviewed:** Flux 2.20.0 (18 September 2026).
+This chapter describes what Flux offers, which constraints it puts on SPieGeL, how the predecessor's [client components](../02-current-platform/client-components.md) map onto it, and which components SPieGeL still has to build. **Version reviewed:** Flux 2.20.0 (18 September 2026). The Flux team reviewed the components SPieGeL needs against Flux 2.21.0; see [Feedback from the Flux team](#feedback-from-the-flux-team).
 
 ## What Flux offers
 
@@ -44,7 +44,7 @@ The predecessor's components come from `omgeving-ld`, which uses Vue 2. They are
 | `ld-subject`, `ld-predicate`, `ld-object` | List of properties: grouped values, links with labels, nested blank nodes | `vl-properties`, `vl-description-data` (label and value pairs) | **partly**: several values per predicate, nested blank nodes, language tags and datatypes need composition |
 | Export links (HTML, JSON-LD, Turtle, N-Triples, RDF/XML) | Links to alternate formats | `vl-link`, `vl-button`, `vl-pill` | **covered** |
 | `ld-predicate inbound` | Paged list of incoming relations, loaded in the browser, with counts | `vl-accordion` and `vl-pager` | **missing**: loading and paging relations is Linked-Data-specific |
-| `ld-taxonomy`, `ld-dataset` | Lazily expanding tree of SKOS concepts or DCAT catalogues | none: Flux has no tree component | **missing** |
+| `ld-taxonomy`, `ld-dataset` | Lazily expanding tree of SKOS concepts or DCAT catalogues | `vl-cascader` (since 2.21.0): a drilldown with a breadcrumb, loading each level through `itemListFn` | **partly**: whether a drilldown is enough is [open question 39](../06-open-questions.md#front-end) |
 | `ld-data-table` | Searchable, paged table of collection members | `vl-rich-data-table` (filter, sorting, paging with `vl-pager`, responsive), `vl-search-filter` | **partly**: the interface exists, but loading the data is Linked-Data-specific |
 | `ld-map` | One point on a map | `vl-map`, `vl-map-features-layer`, `vl-map-baselayer-grb-gray` | **covered**: features in GeoJSON structure, in the map's projection or with their `projection-code` |
 | `ld-sparql-form` (YASQE) | SPARQL editor with example queries | none: Flux has no code editor | **missing** |
@@ -57,14 +57,14 @@ The predecessor's components come from `omgeving-ld`, which uses Vue 2. They are
 
 ## Components SPieGeL has to build
 
-These are Linked-Data-specific. The first two are mostly markup composed on the server; the others are interactive web components.
+These are Linked-Data-specific. The first two are markup composed on the server, with no custom element of their own; the others are interactive web components. Where each one lives is decided in [ADR 0014](../../adr/0014-placement-of-linked-data-components.md).
 
 | Component (working name) | What it does | Built from | Requirement |
 |---|---|---|---|
 | Resource description | The properties of a resource in [presentation blocks](../02-current-platform/html-rendering.md#rules-by-predicate-presentation-categories): grouped values, every property label and every IRI value as a link to its IRI with its label (FR-HTML-10), language tags and datatypes, nested blank nodes. Rendered on the server, so it works without JavaScript | `vl-properties` or `vl-description-data`, `vl-link`, `vl-pill`, `vl-accordion` | FR-HTML-01, FR-HTML-06 |
 | RDF term | One IRI, literal or blank node: a label with the IRI as a link, the language as a pill, the datatype as a hint | `vl-link`, `vl-pill`, `vl-text` | FR-HTML-01 |
 | Incoming relations | Per predicate: a count, plus paged subjects, loaded on demand | `vl-accordion`, `vl-pager` | FR-HTML-05 |
-| Hierarchy tree | A lazily expanding tree for SKOS (`skos:hasTopConcept`, `skos:narrower`) and DCAT (`dcat:dataset`, `dcat:catalog`), keyboard-accessible, following the WAI-ARIA tree pattern | new; style from `@domg-wc/styles` | FR-HTML-05 |
+| Hierarchy tree | A lazily expanding tree for SKOS (`skos:hasTopConcept`, `skos:narrower`) and DCAT (`dcat:dataset`, `dcat:catalog`), keyboard-accessible | candidate: `vl-cascader` with an `itemListFn` that loads the children from SPieGeL; the visualisation is [open question 39](../06-open-questions.md#front-end) | FR-HTML-05 |
 | Collection table | Loads the members of a collection page by page and connects searching and sorting to SPieGeL | `vl-rich-data-table`, `vl-pager`, `vl-search-filter` | FR-HTML-05 |
 | Geometry map | Shows one or more geometries of a resource (points, lines, polygons). It reads the WKT literals and their CRS from the page, so it needs no extra request, and turns them into features in the map's projection with OpenLayers' WKT reader | `vl-map`, `vl-map-features-layer`, a GRB base layer | FR-HTML-07 |
 | SPARQL editor | Edits a query with syntax highlighting and example queries, runs it, and shows the results | an editor library behind a Flux-styled wrapper; results in `vl-rich-data-table` | FR-SPARQL-03, FR-SPARQL-04 |
@@ -77,7 +77,7 @@ The new components follow Flux's conventions:
 
 Whether they live in SPieGeL or are contributed to Flux is an [open question](../06-open-questions.md#front-end). Flux accepts contributions from other teams, provided they are backwards compatible and a new approach is agreed with the Flux team first.
 
-The interactive components need data from the server. Today they build SPARQL queries in the browser ([query catalogue](../02-current-platform/query-catalogue.md#browser-side)). SPieGeL can keep that, through its same-origin `/sparql` (FR-SPARQL-02), or offer small JSON endpoints per function (counts, a page of relations, the children of a tree node). The second option keeps queries on the server, where they can be configured, cached and authorised (NFR-SEC-03, NFR-SEC-04). → [open question 24](../06-open-questions.md#front-end).
+The interactive components need data from the server. Today they build SPARQL queries in the browser ([query catalogue](../02-current-platform/query-catalogue.md#browser-side)). In SPieGeL they request paged lists instead: Linked Data resources with their own URI, as JSON-LD with a fixed `@context`, for the counts of incoming relations, a page of referring resources, or the children of a node. The queries stay on the server, where they can be configured, cached and authorised (NFR-SEC-03, NFR-SEC-04). → [ADR 0015](../../adr/0015-paged-lists-as-resources.md).
 
 ## Requirements and components
 
@@ -92,7 +92,7 @@ Which Flux components implement which requirement, and where a new component is 
 | FR-CN-02, FR-CN-04 | Links to the other formats and profiles of a resource | `vl-link`, `vl-button`, `vl-pill` | — | Composed |
 | FR-HTML-04 | Data in machine-readable form (subject IRI, `<link rel="alternate">`, JSON-LD) | none: not visible | — | Template |
 | FR-HTML-05 | Incoming relations: count per relation, paged subjects | `vl-accordion`, `vl-pager` | Incoming relations | New |
-| FR-HTML-05 | Thesaurus hierarchy and catalogue structure as a tree | none: Flux has no tree component | Hierarchy tree | New |
+| FR-HTML-05 | Thesaurus hierarchy and catalogue structure | `vl-cascader` (candidate, open question 39) | Hierarchy tree (loads the levels) | Thin layer, open |
 | FR-HTML-05 | Members of a collection, paged, searchable and sortable | `vl-rich-data-table`, `vl-pager`, `vl-search-filter` | Collection table (loads the data) | New, on a Flux base |
 | FR-HTML-07 | Geometries on a map | `vl-map`, `vl-map-features-layer`, `vl-map-baselayer-grb-gray` | Geometry map (reads WKT and CRS from the page; reprojection in the browser) | New, on a Flux base (thin) |
 | FR-HTML-14 | Images of a resource, with alternative text and a link to the full image | an image element (`vl-image`, to check in Flux), `vl-link` | — | Composed (to check with the Flux team) |
@@ -107,7 +107,7 @@ Which Flux components implement which requirement, and where a new component is 
 | FR-AC-01 *(phase 2)* | Login, logout, changing organisation | `vl-header-next` (Digitaal Vlaanderen's global header) | — | Flux |
 | NFR-UI-02 | Skip link, keyboard operation, ARIA | `skip-to-content-id` on `vl-header-next` and `vl-functional-header`; Flux components' own accessibility | WAI-ARIA patterns in every new component | Flux + new |
 
-In summary, Flux covers the page frame, search, errors, the login header, the front page and the portal. **Seven new components** are needed, all of them specific to Linked Data:
+In summary, Flux covers the page frame, search, errors, the login header, the front page and the portal. Seven parts are specific to Linked Data:
 1. resource description;
 2. RDF term;
 3. incoming relations;
@@ -116,7 +116,33 @@ In summary, Flux covers the page frame, search, errors, the login header, the fr
 6. geometry map;
 7. SPARQL editor.
 
-The collection table and the geometry map are thin layers on Flux components (`vl-rich-data-table`, `vl-map`). The hierarchy tree and the SPARQL editor have no Flux base at all. For the SPARQL editor, an existing web component is a candidate: [`@sib-swiss/sparql-editor`](https://github.com/sib-swiss/sparql-editor), which autocompletes from the VoID description that SPieGeL publishes and lists its example queries ([open question 37](../06-open-questions.md#front-end), [UniProt](../04-landscape/uniprot-reference.md#how-it-is-built)). Where the new components live is [open question 23](../06-open-questions.md#front-end).
+The resource description and the RDF term are compositions of Flux components. Incoming relations, the collection table and the geometry map are thin layers on Flux components (`vl-accordion`, `vl-rich-data-table`, `vl-map`). For the hierarchy tree, Flux 2.21.0 has `vl-cascader` as a candidate base. Only the SPARQL editor has no Flux base at all. For the SPARQL editor, an existing web component is a candidate: [`@sib-swiss/sparql-editor`](https://github.com/sib-swiss/sparql-editor), which autocompletes from the VoID description that SPieGeL publishes and lists its example queries ([open question 37](../06-open-questions.md#front-end), [UniProt](../04-landscape/uniprot-reference.md#how-it-is-built)). Where the components live is decided in [ADR 0014](../../adr/0014-placement-of-linked-data-components.md).
+
+## Feedback from the Flux team
+
+The Flux team reviewed the seven components against Flux 2.21.0 in a working document of 16 October 2026 (version 0.1, for discussion). Its findings:
+
+- **Three kinds of component.** The resource description and the RDF term are *compositions*: markup in the server templates, built from Flux components. Incoming relations, the hierarchy, the collection table and the geometry map are *thin layers*: a small component that loads data and passes it to a Flux component. Only the SPARQL editor is *new*. No new visual element is added to the house style.
+- **A base for the hierarchy.** `vl-cascader` shows hierarchical data as a drilldown with a breadcrumb, and loads each level through `itemListFn`. Polyhierarchy is no problem in a drilldown. Whether a drilldown is enough, or whether data structures need another visualisation, has been put back to the Flux team as a broader question ([open question 39](../06-open-questions.md#front-end)).
+- **Placement.** What is specific to Linked Data stays in SPieGeL; what turns out to be generic, such as paging on the server or WKT input for the map, may be contributed to Flux. Adopted in [ADR 0014](../../adr/0014-placement-of-linked-data-components.md).
+
+Points that Flux still has to answer. SPieGeL works around each one until it is settled.
+
+| Component | Question to Flux |
+|---|---|
+| Resource description | Is a nested `vl-properties` inside a `vl-property-data` supported, including its styling? Is the `column--full-width` variant enough for long texts? |
+| RDF term | Is `vl-pill` the right carrier for a language tag, or an annotation style as used with titles? How are long IRIs shown: wrapped or shortened? |
+| Incoming relations | Does `vl-accordion` emit an event when it opens, so that its content can load lazily? Is there a compact `vl-pager` for use inside an accordion? |
+| Hierarchy | Can `vl-cascader` open at the level of the current concept, with its path passed in beforehand? Drilldown or tree: open question 39. |
+| Collection table | Can `vl-pager` work with "there is a next page" instead of `total-items`, since SPieGeL asks for *N*+1 rows instead of counting (FR-RA-07)? Does paging on the server become a reusable Flux pattern? |
+| Geometry map | Does `projection-code` accept EPSG:4326? Otherwise the component reprojects itself and uses `setFeatures()`. Is WKT useful as an input format for other teams? |
+| SPARQL editor | The same CSP check as for `vl-textarea-rich`, whose TinyMCE needs inline styles in places. A way out of the editor for keyboard users, because a code editor uses Tab for indenting (WCAG 2.1.2). See open question 37. |
+| Outside the components | Images (FR-HTML-14): a plain `<img>` with Flux styles? Language choice (FR-HTML-12): links in `vl-functional-header`? Licence on every page (FR-META-02): a fixed place in the footer or the functional header? Read access to Artifactory for external contributors (open question 22). |
+
+Two points in the document needed an answer from SPieGeL itself. Both are answered by [ADR 0015](../../adr/0015-paged-lists-as-resources.md): incoming relations are paged lists with their own URI (`?_inverse=…`), and counts are bounded ("more than 1,000") and cached per data version. `vl-pager` needs no total, because each page says whether there is a next one.
+
+- **Paged incoming relations.** The document assumes that long lists of incoming relations follow the same paging as the RDF, as a paged list with its own URI. FR-RA-07 only pages the subject's own properties; incoming relations are not part of a description ([ADR 0006](../../adr/0006-resources-and-event-streams.md)). How they are paged belongs with [open question 24](../06-open-questions.md#front-end).
+- **Counts per relation.** The block shows a count per incoming relation, from a separate count query. A `COUNT` is costly on a large store (open question 35), so the count must be bounded (for example "more than 1,000") or cached per data version.
 
 ## The same house style elsewhere: data.vlaanderen.be
 

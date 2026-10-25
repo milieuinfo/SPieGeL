@@ -8,6 +8,8 @@ This matrix links every function of the predecessor, and every requirement of th
 | URI template → queries | XML query catalogue | basic (M) | FR-URI-01, FR-RA-01, FR-RA-02 | M | 1 | `spiegel-core` |
 | Content negotiation | yes | basic (M) | FR-CN-01, FR-CN-05 | M | 1 | `spiegel-adapter-web` |
 | Negotiation that caches and HTTP tools understand (`Vary`, `Content-Location`, quality values, `HEAD`) | not checked | — | FR-CN-06 to 09 | M | 1 | `spiegel-adapter-web` |
+| Errors that machines can read (`application/problem+json`) | not checked | — | FR-CN-10 | S | 1 | `spiegel-adapter-web` |
+| JSON-LD for web developers (frame, context per domain) | not checked | — | FR-CN-11 | S | 1 | `spiegel-adapter-web`, tenant configuration, context generator |
 | Links between a thing and its document in the RDF | only where the data has them | — | FR-URI-07 | S | 1 | `spiegel-core` |
 | Moved, withdrawn and removed URIs (`301`, status, `410`) | no | — | FR-URI-08 to 11, NFR-OPEN-02 | M | 2 | `spiegel-core`, `spiegel-adapter-web`, `spiegel-adapter-html`, tenant configuration |
 | Simple HTML pages | XSLT | basic (M) | FR-HTML-01 | M | 1 | `spiegel-adapter-html` |
@@ -19,7 +21,7 @@ This matrix links every function of the predecessor, and every requirement of th
 | Licence findable in data, headers and pages | no | — | FR-META-02 | M | 1 | `spiegel-adapter-config`, `spiegel-adapter-web`, `spiegel-adapter-html` |
 | SPARQL Service Description | no | — | FR-META-03 | S | 2 | `spiegel-adapter-web` |
 | Example queries as data (SHACL), tested against the store | example queries in the editor component | — | FR-SPARQL-04 | S | 2 | `spiegel-adapter-web`, `spiegel-adapter-html`, tenant configuration |
-| `id` → `doc` 303 | at the reverse proxy | — | FR-URI-02 | M | 2 | `spiegel-adapter-web` |
+| `id` → `doc` 303 | at the reverse proxy | — | FR-URI-02 | M | 1 | `spiegel-adapter-web` |
 | `ns` vocabulary pages | yes | — | FR-URI-03, FR-RA-05 | M | 2 | `spiegel-core` |
 | Skolem IRIs | **missing** | — | FR-URI-04 | M | 2 | `spiegel-core` |
 | ELI paths | **missing** | — | FR-URI-05 | S | 2 | `spiegel-core` |
@@ -39,21 +41,24 @@ This matrix links every function of the predecessor, and every requirement of th
 | Departmental design system | no (`omgeving-ld`, Vue 2) | — | NFR-UI-01, NFR-UI-04 | M | 1 | `spiegel-adapter-html` |
 | Accessibility and CSP | not assessed | — | NFR-UI-02, NFR-UI-03 | M | 1 | `spiegel-adapter-html`, `spiegel-adapter-web` |
 | Keyword search | yes (`bif:contains`) | — | FR-SRCH-01 | S | 2 | `spiegel-adapter-sparql` |
-| Non-RDF sources through mappings (RML, R2RML) | no | extended (C) | FR-DS-02 | C | later | `spiegel-adapter-rml`, or none if materialised |
+| Non-RDF sources through mappings (RML, R2RML) | no | extended (C) | FR-DS-02 | C | later | `spiegel-adapter-sparql` (Ontop endpoint); none if materialised ([ADR 0009](../../adr/0009-ontop-for-relational-sources.md)) |
 | Full-text search across sources | no | won't (W) | FR-SRCH-02 | C | later | `spiegel-core`, search adapter |
 | Elasticsearch source | no | won't (W) | FR-DS-03 | W | — | — |
 | Descriptions bounded to their subject | no, queries decide | — | FR-RA-06 | M | 1 | `spiegel-core`, tenant queries |
 | Paging of large properties, in HTML and RDF alike | no | — | FR-RA-07 | M | 1 | `spiegel-core`, `spiegel-adapter-web`, tenant configuration |
 | Links to other distributions (OGC API, WFS, map viewers) | no | — | FR-HTML-13 | S | 2 | `spiegel-core`, `spiegel-adapter-html` |
+| Sitemap, `robots.txt`, canonical and alternate links | not checked | — | FR-HTML-16 | S | 1 | `spiegel-adapter-web`, `spiegel-adapter-html`, tenant configuration |
+| schema.org and Open Graph for search engines and link previews | not checked | — | FR-HTML-17 | S | 1 | `spiegel-adapter-html` |
 | Images of a resource shown on its page | no | — | FR-HTML-14 | S | 2 | `spiegel-adapter-html`, `spiegel-adapter-config` |
 | Discovery of event streams (LDES) | no | — | FR-ES-01 | S | 2 | `spiegel-adapter-html`, `spiegel-core` |
 | Assisted (LLM) query building | no | won't (W) | — | W | — | — |
 | Reconciliation | present, not routed | — | — | — | — | retired unless needed |
 | Linked Data Fragments | present, not routed | — | — | — | — | retired unless needed |
 | Data dump | placeholder | — | — | — | — | covered by event streams (ADR 0006) |
-| Caching | two layers, per script | — | NFR-OPS-03, NFR-SEC-03 | S | 2 | `spiegel-app` |
+| Caching | two layers, per script | — | NFR-OPS-03, NFR-SEC-03 | S | 1 | `spiegel-app` |
 | Concurrency limit per store | yes (5 concurrent, queue of 500) | — | NFR-OPS-02 | M | 1 | `spiegel-adapter-sparql` |
 | Rate limiting per client (`429`) | no | — | NFR-OPS-08 | S | 2 | `spiegel-adapter-web` |
+| Personal data: store's responsibility for the data; minimised in logs, counters and metrics; caching per access level | not assessed | — | NFR-PRIV-01 to 03 | M | 1 | `spiegel-app`, `spiegel-adapter-web`, loading chain |
 | Response time, throughput and availability targets | not defined | — | NFR-PERF-01 to 05 | M | 1 | `spiegel-app`, all adapters |
 | Ceiling on the size of a description | no | — | NFR-OPS-09 | M | 1 | `spiegel-core`, `spiegel-adapter-sparql` |
 | Open CORS | yes | — | NFR-OPEN-01 | M | 1 | `spiegel-adapter-web` |

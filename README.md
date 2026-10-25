@@ -17,7 +17,7 @@ Documentation, including the full analysis and the architecture decisions, is pu
 - **Content negotiation as a first-class concern.** One URI, many representations. This includes [content negotiation by profile](https://www.w3.org/TR/dx-prof-conneg/), so a client can ask for a lighter or a richer view of the same resource.
 - **Configurable URI templates.** Each URI template is bound to its own SPARQL query on a named data source. Adding a new resource type should not require new code.
 - **URI policy out of the box.** SPieGeL follows the `id` / `doc` / `ns` pattern of the Flemish URI standard for data, with `303 See Other` from `/id/` to `/doc/`. Skolem IRIs (`/.well-known/genid/…`) are dereferenceable. A dedicated path structure is planned for [ELI](https://eur-lex.europa.eu/eli-register/about.html) legislative resources.
-- **Hexagonal architecture.** A plain domain core, with data sources (SPARQL endpoints first, non-RDF sources through RML mappings later), renderers and identity providers behind ports and adapters.
+- **Hexagonal architecture.** A plain domain core, with data sources (SPARQL endpoints: triple stores first, relational databases through Ontop later; other non-RDF sources are materialised with RML before loading), renderers and identity providers behind ports and adapters.
 - **Multi-tenant.** One stateless instance can serve several data domains, each selected by host name.
 - **Access levels.** Each access level can be mapped to its own read-only credentials on the data source, so authorisation is enforced by the store as well as by the application.
 - **Open by default.** CORS is open and a public SPARQL endpoint is available, in line with an open data policy.
@@ -30,6 +30,10 @@ Java 21, Spring Boot 4 and Apache Jena 6, built with Maven. See [ADR 0004](docs/
 mvn verify                      # build and test all modules
 mvn -pl spiegel-app spring-boot:run
 ```
+
+## Data sources
+
+SPieGeL only reads. Connect every data source with a **read-only account**, one per access level, that can only read what that level may see. SPieGeL's own checks on queries are defence in depth, not the security boundary. A store that cannot restrict graphs per account, such as QLever, may serve only one access level. See [ADR 0011](docs/adr/0011-query-policy.md).
 
 ## Related work
 

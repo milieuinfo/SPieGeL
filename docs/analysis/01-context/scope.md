@@ -29,10 +29,13 @@ The requirements are prioritised with MoSCoW (see [Traceability](../03-requireme
 Enough to publish a single public catalogue (for example a catalogue of simulation models) from a single SPARQL data source:
 
 - configurable data sources (SPARQL first);
-- configurable URI templates, each bound to its own query;
+- configurable URI templates, each bound to its own query, with the `303` from `id` to `doc`;
+- descriptions bounded to their subject, with paging of large properties and a ceiling on their size;
 - content negotiation over the common RDF serialisations and HTML;
 - simple HTML subject pages that also carry their data as embedded JSON-LD;
-- a front page generated from the data it publishes (catalogues, thesauri, classes).
+- a front page generated from the data it publishes (catalogues, thesauri, classes);
+- a dataset description and a findable licence per domain;
+- caching tied to the data version, and the response-time targets of [Performance and availability](../03-requirements/performance.md).
 
 No authentication is needed in this phase, because the catalogue is public.
 
@@ -49,9 +52,8 @@ Everything needed to switch off the predecessor:
 
 ### Later
 
-- non-RDF data sources (relational databases such as PostgreSQL and Trino, and CSV, JSON or XML files and Web APIs) via RML mappings;
-- full-text search across data sources;
-- assisted query building in the web interface.
+- non-RDF data sources: relational databases such as PostgreSQL and Trino translated per request by Ontop (R2RML), and CSV, JSON or XML files and Web APIs materialised with RML in the loading chain ([ADR 0009](../../adr/0009-ontop-for-relational-sources.md));
+- full-text search across data sources.
 
 !!! note
     Phase 1 alone does **not** replace the predecessor. Switching off the predecessor requires phase 2.

@@ -13,7 +13,7 @@ This chapter lists the predecessor's SPARQL query paths. It covers queries run o
 | Incoming relations panel | browser | active | `objects-inbound(-count).rq` |
 | Expandable property groups | browser | not used: outgoing groups get no `endpoint` (see [Data-dependent HTML rendering](html-rendering.md#observations)) | `objects-outbound(-count).rq` |
 | SKOS tree ("Browse code list") | browser | active | `taxonomy-up.rq`, `taxonomy-down.rq` |
-| DCAT tree ("Browse dataset") | browser | active (repaired in `omgeving-ld` 1.7.27) | `dataset-up.rq`, `dataset-down.rq` |
+| DCAT tree ("Browse dataset") | browser | rendered by the XSLT, but the component is not in the `omgeving-ld` 1.7.27 bundle (see [Client components](client-components.md#observations)); templates repaired in 1.7.27 | `dataset-up.rq`, `dataset-down.rq` |
 | Collection table | browser | active | `list-by-pattern(-count).rq` |
 | SPARQL editor and search form | browser builds, server runs | active | none; navigates to `/sparql?query=…` or `/keywordsearch?search=…` |
 | Reconciliation | — | not routed | Jena `text:query` |

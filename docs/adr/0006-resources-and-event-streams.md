@@ -1,6 +1,6 @@
 # 0006. Publish resources and event streams as complementary forms
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-06
 
 ## Context
@@ -15,13 +15,13 @@ Both forms need one information architecture. Without it, each domain decides fo
 2. **A description is bounded to its subject.** It holds the subject's own properties. An object that is itself a resource appears by its IRI only: it is described at its own endpoint or in its own stream. There are two exceptions:
     - the **label** (and, where needed, the type) of a linked resource, so that it can be presented without a further request (FR-HTML-10);
     - **values without an identity of their own**, such as a measurement with its unit, published as a blank node or a Skolem IRI (FR-RA-04, FR-URI-04).
-3. **Integration happens on the consumer's side.** A consumer that needs more than one resource combines the data itself: by dereferencing the IRIs it finds, by replicating several streams with an LDES client and joining them, or by querying a domain's SPARQL endpoint. SPieGeL does not join data across domains on the consumer's behalf.
+3. **Integration happens on the consumer's side.** A consumer that needs more than one resource combines the data itself: by dereferencing the IRIs it finds, by replicating several streams with an LDES client and joining them, or by querying a domain's SPARQL endpoint. SPieGeL does not join data across domains on the consumer's behalf, and its `/sparql` refuses `SERVICE` ([ADR 0011](0011-query-policy.md)), so a federated query runs in the consumer's own query engine.
 4. **SPieGeL does not serve event streams.** Streams are served by an LDES server, such as OpenLDES's. SPieGeL makes them discoverable from the domains it publishes.
 5. **Streams may feed SPieGeL's stores.** An LDES client that materialises a stream into a store (for example LDIO) is a valid part of the loading chain (open question 15). It also fits the derived public stores of open question 29.
 
 ## Consequences
 
-- Descriptions have a predictable size, and their queries become simpler: they select the subject's own triples plus the agreed exceptions. This limits, but does not remove, the risk of very large resources: a subject can still have many values for one property.
+- Descriptions have a predictable size, and their queries become simpler: they select the subject's own triples plus the agreed exceptions. This limits, but does not remove, the risk of very large resources: a subject can still have many values for one property. Such properties are paged (FR-RA-07), and every description has a ceiling on its size (NFR-OPS-09).
 - **Incoming relations are not part of a description.** The HTML view shows them through follow-up requests (FR-HTML-05). An RDF client finds them through SPARQL or by replicating the stream that holds them.
 - Consumers make more requests, or run an LDES client, to assemble a larger dataset. That is the intended division of work, and it is cacheable on both sides.
 - The state that SPieGeL serves must equal the latest state in the stream. Both forms must therefore come from the same source and the same shapes. Whether SPieGeL also serves version objects and past states is open question 30.

@@ -9,8 +9,7 @@ spiegel/                         (parent POM, packaging pom)
 ├── spiegel-adapter-web          HTTP inbound: dereferencing, 303, content negotiation, /sparql
 ├── spiegel-adapter-html         RendererPort for HTML (template engine, Flux design system, front-end build)
 ├── spiegel-adapter-security     IdentityPort: OIDC, roles → AccessLevel
-├── spiegel-adapter-config       TenantConfigurationPort: YAML + .rq files
-├── spiegel-adapter-rml          DataSourcePort over RML mappings (later)
+├── spiegel-adapter-config       TenantConfigurationPort: Turtle + .rq files, SHACL validation (jena-shacl)
 └── spiegel-app                  Spring Boot application: wiring, caching, health, packaging
 ```
 
@@ -24,7 +23,6 @@ flowchart BT
     html[spiegel-adapter-html] --> core
     sec[spiegel-adapter-security] --> core
     cfg[spiegel-adapter-config] --> core
-    rml[spiegel-adapter-rml] --> core
     app[spiegel-app] --> sparql & web & html & sec & cfg
 ```
 
@@ -37,9 +35,9 @@ flowchart BT
 
 The modules are a direct consequence of the [hexagonal design](hexagonal-design.md): one module for the core, one per adapter, and one that assembles them. Separate Maven modules, rather than packages in one module, are chosen for these reasons:
 
-1. **The compiler guards the boundaries.** A module can only use what its own POM declares. Jena is only in `spiegel-adapter-sparql`, and Spring MVC only in `spiegel-adapter-web`. The core cannot import a Spring or Jena HTTP class by accident, because it would not compile. With packages in one module, such a boundary is only a convention.
+1. **The compiler guards the boundaries.** A module can only use what its own POM declares. Jena's HTTP client is only in `spiegel-adapter-sparql`, Jena's serialisers (RIOT) only in the adapters that render RDF, and Spring MVC only in `spiegel-adapter-web`. The core cannot import a Spring or Jena HTTP class by accident, because it would not compile. With packages in one module, such a boundary is only a convention.
 2. **A test guards what the compiler cannot see.** `ArchitectureTest` (ArchUnit) checks on every build that the core stays free of frameworks and that adapters do not depend on each other.
-3. **Adapters can be replaced.** A non-RDF source arrives as a second implementation of the same `DataSourcePort` (`spiegel-adapter-rml`), without any change to the core. The same holds for the template engine, which is still to be chosen ([open question 9](../06-open-questions.md#front-end)).
+3. **Adapters can be replaced.** A second store type is a second implementation of the same `DataSourcePort`, without any change to the core. A relational source needs not even that: Ontop offers a SPARQL endpoint, so `spiegel-adapter-sparql` reads it ([ADR 0009](../../adr/0009-ontop-for-relational-sources.md)). The same holds for the template engine, which is still to be chosen ([open question 9](../06-open-questions.md#front-end)).
 4. **The core can be tested without infrastructure.** The rules for URI templates, profiles, access levels and merging descriptions are tested without a server, a store or a browser (NFR-Q-01, NFR-Q-02).
 5. **Each technology stays in its own module.** This matters especially for `spiegel-adapter-html`, which gets a front-end build (Node.js, pnpm, Flux; see [Design system: Flux](../03-requirements/design-system.md#consequences-for-the-design)) that must not leak into the rest of the build.
 6. **Modules arrive by phase.** Phase 1 needs no authentication, so `spiegel-adapter-security` arrives in phase 2 ([ADR 0004](../../adr/0004-technology-baseline.md): modules are added when they are needed).
@@ -48,11 +46,11 @@ The modules are a direct consequence of the [hexagonal design](hexagonal-design.
 The split has costs:
 - **More build files.** There are more POMs and some boilerplate.
 - **Some concerns cross modules.** The cache lives in `spiegel-app` but must follow the core's rules (NFR-SEC-03), and logging must be consistent in every module.
-- **One boundary is still open:** whether the core may use Jena's RDF model types, to merge descriptions without conversion ([open question 14](../06-open-questions.md#architecture-and-operations)). If so, `spiegel-core` gains a dependency on `jena-core`, but still none on Jena's HTTP client.
+- **The core depends on `jena-core`.** It uses Jena's graph types to merge descriptions without conversion, but nothing from `jena-arq`, so it has no SPARQL engine, HTTP client or serialisers ([ADR 0010](../../adr/0010-jena-graph-types-in-the-core.md)). `ArchitectureTest` enforces this.
 
 ## Phase 1 subset
 
-Phase 1 (see [Scope](../01-context/scope.md#phasing)) needs `spiegel-core`, `spiegel-adapter-sparql`, `spiegel-adapter-web`, `spiegel-adapter-html`, `spiegel-adapter-config` and `spiegel-app`. `spiegel-adapter-security` arrives in phase 2, and `spiegel-adapter-rml` later.
+Phase 1 (see [Scope](../01-context/scope.md#phasing)) needs `spiegel-core`, `spiegel-adapter-sparql`, `spiegel-adapter-web`, `spiegel-adapter-html`, `spiegel-adapter-config` and `spiegel-app`. `spiegel-adapter-security` arrives in phase 2.
 
 ## Group and artefact identifiers
 

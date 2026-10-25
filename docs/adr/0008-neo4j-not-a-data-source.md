@@ -1,13 +1,13 @@
 # 0008. Do not use Neo4j as a data source for SPieGeL
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-07
 
 ## Context
 
 Neo4j is a property graph database, queried with Cypher. It is strong at traversals and graph algorithms, and has its own full-text and vector indexes. It was raised as a possible store for some of the department's use cases. The question is whether SPieGeL should be able to read from it. The full analysis is [open question 33](../analysis/06-open-questions.md#architecture-and-operations).
 
-SPieGeL is built on SPARQL. Data sources are SPARQL endpoints (FR-DS-01), queries are `.rq` files under version control (FR-RA-02), and every domain offers a public SPARQL 1.1 endpoint (FR-SPARQL-01, FR-SPARQL-02). Neo4j has no SPARQL. A tenant on Neo4j would therefore still need a triple store for `/sparql`, and would maintain its queries in two languages. The data source port also assumes RDF results (open question 14), so a Cypher adapter would have to translate property graph results back to RDF.
+SPieGeL is built on SPARQL. Data sources are SPARQL endpoints (FR-DS-01), queries are `.rq` files under version control (FR-RA-02), and every domain offers a public SPARQL 1.1 endpoint (FR-SPARQL-01, FR-SPARQL-02). Neo4j has no SPARQL. A tenant on Neo4j would therefore still need a triple store for `/sparql`, and would maintain its queries in two languages. The data source port also returns RDF, as Jena graphs ([ADR 0010](0010-jena-graph-types-in-the-core.md)), so a Cypher adapter would have to translate property graph results back to RDF.
 
 RDF reaches Neo4j through the [neosemantics](https://neo4j.com/labs/neosemantics/) plugin (n10s), a Neo4j Labs project that is not a supported product and does not run on the Aura cloud service. By default it keeps triples but not their named graph. Language tags, datatypes, blank nodes and Skolem IRIs, which SPieGeL relies on (FR-HTML-10, FR-URI-04, FR-RA-04), have to be imitated in the property graph.
 

@@ -48,7 +48,7 @@ No project covers the combination SPieGeL needs. Two things are missing everywhe
 
 SPieGeL takes option 3. Its distinguishing features are the four things no other project offers together:
 
-1. a **hexagonal core** with pluggable data sources: SPARQL, and later non-RDF sources through RML;
+1. a **hexagonal core** with pluggable data sources: SPARQL stores, and later relational sources through Ontop and R2RML;
 2. **access levels** mapped to separate read-only credentials per source;
 3. **several tenants** in one stateless instance;
 4. **out-of-the-box conformance to the URI policy**, including dereferenceable Skolem IRIs and ELI paths.
