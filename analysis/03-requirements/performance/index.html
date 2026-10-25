@@ -1,0 +1,2850 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Open-source, configurable Linked Data publishing server">
+      
+      
+      
+        <link rel="canonical" href="https://milieuinfo.github.io/SPieGeL/analysis/03-requirements/performance/">
+      
+      
+        <link rel="prev" href="../traceability/">
+      
+      
+        <link rel="next" href="../design-system/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Performance and availability - SPieGeL</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#performance-and-availability" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="SPieGeL" class="md-header__button md-logo" aria-label="SPieGeL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SPieGeL
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Performance and availability
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/milieuinfo/SPieGeL" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    milieuinfo/SPieGeL
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="SPieGeL" class="md-nav__button md-logo" aria-label="SPieGeL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SPieGeL
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/milieuinfo/SPieGeL" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    milieuinfo/SPieGeL
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analysis
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Analysis
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Context
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-context/background/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Background
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-context/scope/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scope
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-context/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Current platform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Current platform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/functional-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functional overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/data-domains/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data domains
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/uri-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    URI patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/request-flows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Request flows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/query-catalogue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Query catalogue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/client-components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client components
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-current-platform/html-rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data-dependent HTML rendering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Requirements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../functional/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functional
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../non-functional/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Non-functional
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../standards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../traceability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Traceability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance and availability
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance and availability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#reference-uniprot-on-qlever" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference: UniProt on QLever
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-predecessor-today" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The predecessor today
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Targets
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measurement-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measurement script
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../design-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design system (Flux)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Landscape
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Landscape
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-landscape/comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-landscape/lodview-code-review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LodView code review
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-landscape/trifid-code-review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trifid code review
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-landscape/prez-code-review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prez code review
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-landscape/elda-code-review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ELDA code review
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-landscape/uniprot-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UniProt SPARQL service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-architecture/hexagonal-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hexagonal design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-architecture/request-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Request flow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-architecture/module-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Module structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-open-questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../adr/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisions
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0001-record-architecture-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0001 Record architecture decisions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0002-documentation-as-markdown-with-mkdocs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0002 Documentation with MkDocs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0003-build-with-jenkins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0003 Build with Jenkins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0004-technology-baseline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0004 Technology baseline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0005-flux-design-system-for-html/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0005 Flux design system for HTML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0006-resources-and-event-streams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0006 Resources and event streams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0007-uri-as-shared-identifier/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0007 URI as shared identifier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0008-neo4j-not-a-data-source/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0008 Neo4j not a data source
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0009-ontop-for-relational-sources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0009 Ontop for relational sources
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0010-jena-graph-types-in-the-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0010 Jena graph types in the core
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0011-query-policy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0011 Query policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0012-tenant-configuration-as-rdf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0012 Tenant configuration as RDF
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0013-tenant-configuration-delivery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0013 Tenant configuration delivery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0014-placement-of-linked-data-components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0014 Placement of Linked Data components
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0015-paged-lists-as-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0015 Paged lists as resources
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0016-problem-details-for-errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0016 Problem details for errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0017-framed-json-ld-with-a-frozen-context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0017 Framed JSON-LD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0018-personal-data-in-requests-and-caches/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0018 Personal data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0019-findability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0019 Findability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#reference-uniprot-on-qlever" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference: UniProt on QLever
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-predecessor-today" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The predecessor today
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Targets
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measurement-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measurement script
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/milieuinfo/SPieGeL/edit/main/docs/analysis/03-requirements/performance.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="performance-and-availability">Performance and availability<a class="headerlink" href="#performance-and-availability" title="Permanent link">&para;</a></h1>
+<p>The requirements did not yet say how fast SPieGeL must be or how often it must be available. Without targets, neither the choice of store (<a href="../../06-open-questions/#architecture-and-operations">open question 29</a>) nor the cache settings can be judged. This page gives a reference measurement on a very large public dataset, and the targets that follow from it (NFR-PERF-01 to 05 in <a href="../non-functional/#performance-and-availability">Non-functional requirements</a>).</p>
+<h2 id="reference-uniprot-on-qlever">Reference: UniProt on QLever<a class="headerlink" href="#reference-uniprot-on-qlever" title="Permanent link">&para;</a></h2>
+<p><a href="https://www.uniprot.org/">UniProt</a> publishes one of the largest public RDF datasets: 244 billion triples in release 2026_03, according to its endpoint's home page. Its official SPARQL endpoint, <code>https://sparql.uniprot.org/sparql</code>, runs on <a href="https://github.com/ad-freiburg/qlever">QLever</a>, the store that is a candidate to replace Virtuoso (question 29). It is therefore a good indication of what a store of that kind can do under real, public load. What else SPieGeL can learn from the service is in <a href="../../04-landscape/uniprot-reference/">Reference: the UniProt SPARQL service</a>.</p>
+<p>We measured it on 7 October 2026 from a workstation in Flanders, with the <a href="#measurement-script">script below</a>: 20 runs per request after one warm-up run, each on a new connection. SPARQL queries were cache-busted, so that neither an HTTP cache nor QLever's own query cache could answer them.</p>
+<table>
+<thead>
+<tr>
+<th>Request</th>
+<th>Size</th>
+<th>Time to first byte, median</th>
+<th>p95</th>
+<th>Total, median</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Resource description, Turtle (<code>purl.uniprot.org/uniprot/P05067</code>)</td>
+<td>870 kB</td>
+<td>191 ms</td>
+<td>197 ms</td>
+<td>525 ms</td>
+</tr>
+<tr>
+<td>SPARQL <code>ASK</code> on one resource</td>
+<td>41 B</td>
+<td>90 ms</td>
+<td>133 ms</td>
+<td>91 ms</td>
+</tr>
+<tr>
+<td>SPARQL: all properties of one resource (<code>LIMIT 500</code>)</td>
+<td>137 kB</td>
+<td>98 ms</td>
+<td>107 ms</td>
+<td>166 ms</td>
+</tr>
+<tr>
+<td>SPARQL: labels of 50 resources</td>
+<td>12 kB</td>
+<td>262 ms</td>
+<td>467 ms</td>
+<td>276 ms</td>
+</tr>
+<tr>
+<td>SPARQL: count of the reviewed human proteins</td>
+<td>260 B</td>
+<td>90 ms</td>
+<td>113 ms</td>
+<td>90 ms</td>
+</tr>
+</tbody>
+</table>
+<p>How to read these figures:</p>
+<ul>
+<li><strong>The network floor is about 65 ms.</strong> Setting up TCP (about 32 ms) and TLS (about 33 ms) to Switzerland is part of every figure. What remains for the server is <strong>about 25 to 40 ms</strong> for a lookup on one resource, and <strong>about 200 ms</strong> for the label query, uncached.</li>
+<li><strong>Caches matter, but the store is fast without them.</strong> Without cache busting, the label query took 84 ms instead of 262 ms (median). The other queries hardly changed.</li>
+<li><strong>The resource description is not served from the store.</strong> <code>purl.uniprot.org</code> redirects (<code>301</code>) to UniProt's REST service, which serves the 870 kB Turtle file. Its time to first byte (191 ms) includes the redirect.</li>
+<li><strong>UniProt ties caching to its data release.</strong> Responses carry <code>ETag: W/"2026_03"</code> (the release), <code>Cache-Control: public</code> and an <code>Expires</code> one day later. A cache can keep a response until the data changes. This fits SPieGeL, whose domains are loaded in batches: an entity tag per data version makes validation (<code>304 Not Modified</code>) cheap (NFR-OPS-03).</li>
+</ul>
+<p>What this means for SPieGeL: a store like QLever answers bounded lookups, which is what SPieGeL's description queries are (FR-RA-06, FR-RA-07), in a few tens of milliseconds, even on a dataset far larger than any of the department's domains. SPieGeL's own share, running several queries, fetching labels and rendering HTML, must stay in proportion to that.</p>
+<h2 id="the-predecessor-today">The predecessor today<a class="headerlink" href="#the-predecessor-today" title="Permanent link">&para;</a></h2>
+<p>Aggregated figures from the predecessor's own logs, to set the targets against. They are a first baseline, not a measurement of peak load: the application log covers only one afternoon, because it is reset on every deployment.</p>
+<p><strong>Resource descriptions (<code>/doc</code>)</strong>, from the duration the predecessor logs per request, in two samples: 48 minutes on the afternoon of 7 October 2026 (13:55 to 14:42 UTC) and 85 minutes on the morning of 8 October 2026 (07:31 to 08:56 UTC), all domains together:</p>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>7 Oct: requests</th>
+<th>median</th>
+<th>p95</th>
+<th>8 Oct: requests</th>
+<th>median</th>
+<th>p95</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>algemeen</code></td>
+<td>1,205</td>
+<td>4.9 s</td>
+<td>9.4 s</td>
+<td>466</td>
+<td>4.2 s</td>
+<td>18.3 s</td>
+</tr>
+<tr>
+<td><code>cbb</code></td>
+<td>1,090</td>
+<td>0.6 s</td>
+<td>22.8 s</td>
+<td>803</td>
+<td>4.8 s</td>
+<td>10.2 s</td>
+</tr>
+<tr>
+<td><code>dba</code></td>
+<td>691</td>
+<td>1.3 s</td>
+<td>28.6 s</td>
+<td>45</td>
+<td>3.5 s</td>
+<td>8.4 s</td>
+</tr>
+<tr>
+<td><code>imjv</code></td>
+<td>530</td>
+<td>0.9 s</td>
+<td>29.0 s</td>
+<td>9</td>
+<td>7.6 s</td>
+<td>9.2 s</td>
+</tr>
+<tr>
+<td><code>dsi</code></td>
+<td>419</td>
+<td>16.6 s</td>
+<td>33.1 s</td>
+<td>641</td>
+<td>4.7 s</td>
+<td>22.4 s</td>
+</tr>
+<tr>
+<td>All domains</td>
+<td>3,977</td>
+<td>4.0 s</td>
+<td>27 s</td>
+<td>1,984</td>
+<td>4.6 s</td>
+<td>17.0 s</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Load:</strong> on the afternoon of 7 October about one <code>/doc</code> request per second (median 62, maximum 214 per minute); on the morning of 8 October a median of 14 per minute, with a burst of up to 274 per minute in the first five minutes. The load comes in bursts, each mostly from one domain.</li>
+<li><strong>Slow requests:</strong> 16 % and 10 % took longer than 10 seconds; the longest took 52 seconds.</li>
+<li><strong>Every request is slow, not only under load.</strong> In quiet minutes (20 requests or fewer) the median is still 4.9 s; bursts mainly lengthen the tail (p95 from 9.6 s to 22 s). Rendering HTML with XSLT takes a median of 2 to 4 s on its own. The stores themselves cancel few queries: the store of <code>algemeen</code> aborted or cancelled 125 queries in two years. Most of the time is therefore spent <strong>above the store</strong>, in the predecessor's own work per request: several queries per page and the XSLT rendering. The queue (5 concurrent queries per store, with a queue of 500) adds to the tail during bursts. A faster store alone would not fix this (question 29).</li>
+<li><strong>Little repetition.</strong> In the 85 minutes of 8 October, only 22 % of the requests asked for a resource that had already been asked for (1,531 distinct resources in 1,964 requests), and asking for the same resource in another format was rare. The requests are spread almost evenly over Turtle, HTML, RDF/XML, plain text, JSON-LD and XML, which suggests crawlers, but crawlers that each fetch a different resource. A response cache therefore helps less than the slow data suggests: <strong>the uncached response time is what matters</strong> (NFR-PERF-01). Caching the assembled description per resource, and serialising it per format, still saves work when the same resource is asked for in several formats.</li>
+</ul>
+<p><strong>Loading patterns differ per domain</strong> (from the store logs):</p>
+<ul>
+<li><code>zendantennes</code> is loaded <strong>incrementally every night</strong>: at 22:00, about 50 update requests. Its data changes every day.</li>
+<li><code>algemeen</code> is <strong>mostly static</strong>. One graph is cleared every night at 22:00. The rest changes when the store is set up again, which happened on 14 days since January 2025, during office hours, for example when code lists are released.</li>
+</ul>
+<p>A fixed cache lifetime therefore fits neither domain well. Responses can stay cached until the tenant's data changes, if the loading chain signals a new data version (NFR-OPS-03).</p>
+<p><strong>Availability of the stores:</strong> the store of <code>zendantennes</code> restarted 65 times in seven years, each time online again after about 1.5 minutes; that of <code>algemeen</code> 17 times in two years, after about 10 seconds. The logs do not show outages of the proxy, the network or the predecessor itself, so they are not enough to measure NFR-PERF-05.</p>
+<p><strong>External traffic on the umbrella domain</strong> (<code>data.omgeving.vlaanderen.be</code>, the domain <code>algemeen</code>), from the reverse proxy's access log. The export held two complete days; the health check, which runs once a minute, shows that no minutes are missing:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Friday 2 October 2026</th>
+<th>Sunday 4 October 2026</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Requests, without health checks</td>
+<td>3,732</td>
+<td>1,202</td>
+</tr>
+<tr>
+<td>of which <code>/doc</code> and <code>/id</code></td>
+<td>1,846 (1,177 distinct resources)</td>
+<td>406</td>
+</tr>
+<tr>
+<td>Busiest minute / busiest hour</td>
+<td>139 / 542</td>
+<td>101 / 188</td>
+</tr>
+<tr>
+<td>Client addresses</td>
+<td>1,071</td>
+<td>311</td>
+</tr>
+<tr>
+<td>Answered <code>4xx</code></td>
+<td>31 %</td>
+<td>49 %</td>
+</tr>
+<tr>
+<td>Answered <code>5xx</code></td>
+<td>27</td>
+<td>24</td>
+</tr>
+<tr>
+<td>Health checks that failed</td>
+<td>43 of 1,441 (<strong>97.0 %</strong> available)</td>
+<td>35 of 1,440 (<strong>97.6 %</strong> available)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>External load is low:</strong> a few thousand requests a day, on average fewer than three per minute, with short bursts of up to about two per second.</li>
+<li><strong>Many requests are for paths that do not exist:</strong> a third to half of the requests get a <code>4xx</code>, mostly from automated clients.</li>
+<li><strong>Availability falls short of NFR-PERF-05:</strong> the failed health checks cluster in periods of one to one and a half hours (Friday morning, Sunday evening), during which the proxy answers <code>502</code>. At 97 % per day, a month would have about 20 hours of downtime, against the 3.6 hours that 99.5 % allows.</li>
+<li><strong>The predecessor handles far more <code>algemeen</code> descriptions than the proxy passes on:</strong> its own log counted 1,205 <code>/doc</code> requests for <code>algemeen</code> in 48 minutes on 7 October and 466 in 85 minutes on 8 October (about 36,000 and 7,900 a day at those rates), while the proxy passes on about 1,850 <code>/doc</code> and <code>/id</code> requests on a whole weekday. The most repeated requests are for the code lists of <code>algemeen</code> (<code>conceptscheme</code>). If these figures are typical, most of the predecessor's work for <code>algemeen</code> does not come from outside through this host name, but from inside: probably pages of other domains that fetch descriptions of shared resources, such as concepts from code lists, to show their labels. The samples are from different days, so this still has to be confirmed. If it holds, the throughput SPieGeL needs is set less by external visitors than by how labels of other domains' resources are resolved, which SPieGeL does from configured label sources and a cache rather than a request per label (FR-HTML-11, NFR-OPS-09).</li>
+</ul>
+<p><strong>Still needed</strong> (<a href="../../06-open-questions/#architecture-and-operations">open question 36</a>): request counts over several weeks, including busy days, from the reverse proxy's access log in the central logging. That log has no request duration today. Recording it (for example Apache's <code>%D</code>) would give response times from the outside from now on.</p>
+<h2 id="targets">Targets<a class="headerlink" href="#targets" title="Permanent link">&para;</a></h2>
+<p>The targets are measured <strong>on the server</strong>, from SPieGeL's own metrics (NFR-OPS-05), so that they do not depend on the client's network. They apply under normal load, for public requests, with the store on the same network as SPieGeL.</p>
+<table>
+<thead>
+<tr>
+<th>Kind of request</th>
+<th>Target</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Resource description (RDF or HTML) from the cache</td>
+<td>p95 ≤ 50 ms</td>
+<td>NFR-PERF-01</td>
+</tr>
+<tr>
+<td>Resource description (RDF or HTML), not cached</td>
+<td>median ≤ 150 ms, p95 ≤ 500 ms</td>
+<td>NFR-PERF-01</td>
+</tr>
+<tr>
+<td>One description query on the store</td>
+<td>p95 ≤ 100 ms</td>
+<td>NFR-PERF-01</td>
+</tr>
+<tr>
+<td>Front page and portal</td>
+<td>p95 ≤ 100 ms, always from the cache</td>
+<td>NFR-PERF-02</td>
+</tr>
+<tr>
+<td><code>/sparql</code>: bounded lookup on one resource</td>
+<td>p95 ≤ 300 ms</td>
+<td>NFR-PERF-03</td>
+</tr>
+<tr>
+<td><code>/sparql</code>: any query</td>
+<td>stopped at the configured timeout</td>
+<td>NFR-PERF-03</td>
+</tr>
+<tr>
+<td>Throughput</td>
+<td>the targets above hold at twice the measured peak load; the 48-minute sample above gives at least 8 <code>/doc</code> requests per second over all domains, including the predecessor's internal requests; external traffic on the umbrella domain is far lower</td>
+<td>NFR-PERF-04</td>
+</tr>
+<tr>
+<td>Availability</td>
+<td>99.5 % per month for public requests</td>
+<td>NFR-PERF-05</td>
+</tr>
+</tbody>
+</table>
+<p>The throughput target needs the predecessor's actual load and response times as a baseline (<a href="../../06-open-questions/#architecture-and-operations">open question 36</a>).</p>
+<h2 id="measurement-script">Measurement script<a class="headerlink" href="#measurement-script" title="Permanent link">&para;</a></h2>
+<p>The script measures the response times of any Linked Data service from the client's side: the minimum, median, 95th percentile and maximum of the time to first byte and of the total time. It uses only the Python standard library. Without arguments it runs the UniProt requests above. With <code>--cases</code> it reads other requests from a JSON file, so the same queries can be run against the predecessor and against candidate stores (question 29).</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>tools/latency/measure_latency.py<span class="w"> </span>--runs<span class="w"> </span><span class="m">20</span>
+python3<span class="w"> </span>tools/latency/measure_latency.py<span class="w"> </span>--runs<span class="w"> </span><span class="m">20</span><span class="w"> </span>--cases<span class="w"> </span>my-cases.json<span class="w"> </span>--csv<span class="w"> </span>results.csv
+</code></pre></div>
+<p>A client-side measurement includes the network. Use it to compare services under the same conditions, not to check the server-side targets above.</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">"""Measure the response times of a Linked Data service from the client's side.</span>
+
+<span class="sd">Runs a set of typical requests (resource descriptions and SPARQL queries)</span>
+<span class="sd">several times and reports, per request, the time to first byte and the total</span>
+<span class="sd">time as minimum, median, 95th percentile and maximum.</span>
+
+<span class="sd">Only the Python standard library is used. Example:</span>
+
+<span class="sd">    python3 tools/latency/measure_latency.py --runs 20</span>
+<span class="sd">    python3 tools/latency/measure_latency.py --runs 20 --no-cache-busting</span>
+<span class="sd">    python3 tools/latency/measure_latency.py --cases my-cases.json --csv out.csv</span>
+
+<span class="sd">Cache busting (the default) appends a unique, harmless VALUES clause to every</span>
+<span class="sd">SPARQL query. The results do not change, but neither an HTTP cache nor the</span>
+<span class="sd">store's own query cache can recognise the query, so the measurement shows the</span>
+<span class="sd">work of the store. (A unique comment is not enough: a store that parses the</span>
+<span class="sd">query before looking it up in its cache ignores comments.) Resource</span>
+<span class="sd">descriptions cannot be cache-busted this way, so their figures may include a</span>
+<span class="sd">cache.</span>
+
+<span class="sd">Every request opens a new connection, as a one-off client would. The time</span>
+<span class="sd">for TCP and TLS set-up is therefore part of every figure; measure it once with</span>
+<span class="sd">for example `curl -w '%{time_appconnect}'` to know the network floor.</span>
+
+<span class="sd">A cases file is a JSON list of objects with the keys "name", "url", "accept"</span>
+<span class="sd">and, for SPARQL, "query" (sent as a GET parameter to "url").</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statistics</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.parse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+
+<span class="c1"># Default cases: UniProt, a public SPARQL service over a very large dataset.</span>
+<span class="n">UNIPROT_SPARQL</span> <span class="o">=</span> <span class="s2">"https://sparql.uniprot.org/sparql"</span>
+<span class="n">DEFAULT_CASES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"resource description (Turtle)"</span><span class="p">,</span>
+        <span class="s2">"url"</span><span class="p">:</span> <span class="s2">"https://purl.uniprot.org/uniprot/P05067"</span><span class="p">,</span>
+        <span class="s2">"accept"</span><span class="p">:</span> <span class="s2">"text/turtle"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"SPARQL: ASK on one resource"</span><span class="p">,</span>
+        <span class="s2">"url"</span><span class="p">:</span> <span class="n">UNIPROT_SPARQL</span><span class="p">,</span>
+        <span class="s2">"accept"</span><span class="p">:</span> <span class="s2">"application/sparql-results+json"</span><span class="p">,</span>
+        <span class="s2">"query"</span><span class="p">:</span> <span class="s2">"PREFIX up: &lt;http://purl.uniprot.org/core/&gt;</span><span class="se">\n</span><span class="s2">"</span>
+                 <span class="s2">"ASK { &lt;http://purl.uniprot.org/uniprot/P05067&gt; a up:Protein }"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"SPARQL: properties of one resource"</span><span class="p">,</span>
+        <span class="s2">"url"</span><span class="p">:</span> <span class="n">UNIPROT_SPARQL</span><span class="p">,</span>
+        <span class="s2">"accept"</span><span class="p">:</span> <span class="s2">"application/sparql-results+json"</span><span class="p">,</span>
+        <span class="s2">"query"</span><span class="p">:</span> <span class="s2">"SELECT ?p ?o WHERE { &lt;http://purl.uniprot.org/uniprot/P05067&gt; ?p ?o } LIMIT 500"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"SPARQL: label lookup for 50 resources"</span><span class="p">,</span>
+        <span class="s2">"url"</span><span class="p">:</span> <span class="n">UNIPROT_SPARQL</span><span class="p">,</span>
+        <span class="s2">"accept"</span><span class="p">:</span> <span class="s2">"application/sparql-results+json"</span><span class="p">,</span>
+        <span class="s2">"query"</span><span class="p">:</span> <span class="s2">"PREFIX up: &lt;http://purl.uniprot.org/core/&gt;</span><span class="se">\n</span><span class="s2">"</span>
+                 <span class="s2">"SELECT ?protein ?name WHERE {</span><span class="se">\n</span><span class="s2">"</span>
+                 <span class="s2">"  ?protein a up:Protein ; up:reviewed true ; up:mnemonic ?name .</span><span class="se">\n</span><span class="s2">"</span>
+                 <span class="s2">"} LIMIT 50"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"SPARQL: count over a large set"</span><span class="p">,</span>
+        <span class="s2">"url"</span><span class="p">:</span> <span class="n">UNIPROT_SPARQL</span><span class="p">,</span>
+        <span class="s2">"accept"</span><span class="p">:</span> <span class="s2">"application/sparql-results+json"</span><span class="p">,</span>
+        <span class="s2">"query"</span><span class="p">:</span> <span class="s2">"PREFIX up: &lt;http://purl.uniprot.org/core/&gt;</span><span class="se">\n</span><span class="s2">"</span>
+                 <span class="s2">"PREFIX taxon: &lt;http://purl.uniprot.org/taxonomy/&gt;</span><span class="se">\n</span><span class="s2">"</span>
+                 <span class="s2">"SELECT (COUNT(?protein) AS ?n) WHERE {</span><span class="se">\n</span><span class="s2">"</span>
+                 <span class="s2">"  ?protein a up:Protein ; up:reviewed true ; up:organism taxon:9606 .</span><span class="se">\n</span><span class="s2">"</span>
+                 <span class="s2">"}"</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_request</span><span class="p">(</span><span class="n">case</span><span class="p">,</span> <span class="n">bust_cache</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">case</span><span class="p">[</span><span class="s2">"url"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s2">"query"</span> <span class="ow">in</span> <span class="n">case</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">case</span><span class="p">[</span><span class="s2">"query"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">bust_cache</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="se">\n</span><span class="s1">VALUES ?cache_buster </span><span class="se">{{</span><span class="s1"> "</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="si">}</span><span class="s1">" </span><span class="se">}}</span><span class="s1">'</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">?</span><span class="si">{</span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">({</span><span class="s1">'query'</span><span class="p">:</span><span class="w"> </span><span class="n">query</span><span class="p">})</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">return</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">"Accept"</span><span class="p">:</span> <span class="n">case</span><span class="p">[</span><span class="s2">"accept"</span><span class="p">],</span>
+        <span class="s2">"User-Agent"</span><span class="p">:</span> <span class="s2">"spiegel-latency-measurement/1.0"</span><span class="p">,</span>
+    <span class="p">})</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">measure_once</span><span class="p">(</span><span class="n">case</span><span class="p">,</span> <span class="n">bust_cache</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="n">build_request</span><span class="p">(</span><span class="n">case</span><span class="p">,</span> <span class="n">bust_cache</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ttfb</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">first</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">status</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+    <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">ttfb</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">size</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">percentile</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">fraction</span><span class="p">):</span>
+    <span class="n">ordered</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ordered</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">fraction</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ordered</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))))</span>
+    <span class="k">return</span> <span class="n">ordered</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">summarise</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"min"</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">values</span><span class="p">),</span>
+        <span class="s2">"median"</span><span class="p">:</span> <span class="n">statistics</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">values</span><span class="p">),</span>
+        <span class="s2">"p95"</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">),</span>
+        <span class="s2">"max"</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">),</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="vm">__doc__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--cases"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"JSON file with the cases (default: UniProt)"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--runs"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"measured runs per case (default 10)"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--warm-up"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"unmeasured runs per case first (default 1)"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--timeout"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"timeout per request in seconds"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--no-cache-busting"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">"send identical SPARQL queries, so HTTP caches may answer"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--csv"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"also write every measurement to this CSV file"</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">cases</span> <span class="o">=</span> <span class="n">DEFAULT_CASES</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">cases</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">cases</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+            <span class="n">cases</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'case'</span><span class="si">:</span><span class="s2">42</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'n'</span><span class="si">:</span><span class="s2">&gt;3</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'size'</span><span class="si">:</span><span class="s2">&gt;9</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="s1">'TTFB min/median/p95/max (ms)'</span><span class="si">:</span><span class="s2">32</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'total median/p95 (ms)'</span><span class="si">:</span><span class="s2">&gt;22</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">cases</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">warm_up</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">measure_once</span><span class="p">(</span><span class="n">case</span><span class="p">,</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">no_cache_busting</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># the measured runs report errors</span>
+                <span class="k">pass</span>
+        <span class="n">ttfbs</span><span class="p">,</span> <span class="n">totals</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">runs</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">status</span><span class="p">,</span> <span class="n">ttfb</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">measure_once</span><span class="p">(</span><span class="n">case</span><span class="p">,</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">no_cache_busting</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="n">errors</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">case</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">run</span><span class="p">,</span> <span class="s2">"error"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)])</span>
+                <span class="k">continue</span>
+            <span class="n">ttfbs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ttfb</span><span class="p">)</span>
+            <span class="n">totals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">total</span><span class="p">)</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">case</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">run</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">ttfb</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">total</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">size</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ttfbs</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">case</span><span class="p">[</span><span class="s1">'name'</span><span class="p">][:</span><span class="mi">42</span><span class="p">]</span><span class="si">:</span><span class="s2">42</span><span class="si">}</span><span class="s2"> all </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">runs</span><span class="si">}</span><span class="s2"> runs failed"</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">t</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">summarise</span><span class="p">(</span><span class="n">ttfbs</span><span class="p">),</span> <span class="n">summarise</span><span class="p">(</span><span class="n">totals</span><span class="p">)</span>
+        <span class="n">ms</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">s</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">"</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">case</span><span class="p">[</span><span class="s1">'name'</span><span class="p">][:</span><span class="mi">42</span><span class="p">]</span><span class="si">:</span><span class="s2">42</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ttfbs</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;3</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">size</span><span class="si">:</span><span class="s2">&gt;9</span><span class="si">}</span><span class="s2">   "</span>
+              <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">ms</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">'min'</span><span class="p">])</span><span class="si">:</span><span class="s2">&gt;6</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ms</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">'median'</span><span class="p">])</span><span class="si">:</span><span class="s2">&gt;6</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ms</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">'p95'</span><span class="p">])</span><span class="si">:</span><span class="s2">&gt;6</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ms</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">'max'</span><span class="p">])</span><span class="si">:</span><span class="s2">&gt;6</span><span class="si">}</span><span class="s2">       "</span>
+              <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">ms</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s1">'median'</span><span class="p">])</span><span class="si">:</span><span class="s2">&gt;8</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ms</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s1">'p95'</span><span class="p">])</span><span class="si">:</span><span class="s2">&gt;8</span><span class="si">}</span><span class="s2">"</span>
+              <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"   (</span><span class="si">{</span><span class="n">errors</span><span class="si">}</span><span class="s2"> errors)"</span> <span class="k">if</span> <span class="n">errors</span> <span class="k">else</span> <span class="s2">""</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">csv</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">csv</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">"case"</span><span class="p">,</span> <span class="s2">"run"</span><span class="p">,</span> <span class="s2">"status"</span><span class="p">,</span> <span class="s2">"ttfb_s"</span><span class="p">,</span> <span class="s2">"total_s"</span><span class="p">,</span> <span class="s2">"size_or_error"</span><span class="p">])</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../traceability/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Traceability">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Traceability
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../design-system/" class="md-footer__link md-footer__link--next" aria-label="Next: Design system (Flux)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Design system (Flux)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © 2026 Vlaamse Overheid, Departement Omgeving · MIT licence
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "navigation.footer", "search.highlight", "content.code.copy", "content.action.edit"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>
