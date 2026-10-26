@@ -1685,6 +1685,8 @@
       
         
       
+        
+      
     
     
     
@@ -2418,6 +2420,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0025-federated-query-in-the-portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0025 Federated query in the portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2940,7 +2970,7 @@
 </tr>
 <tr>
 <td>FR-HTML-08</td>
-<td>A <strong>portal page</strong> on the umbrella domain's host name (<code>algemeen</code>, <code>https://data.omgeving.vlaanderen.be/</code>) lists every published domain, with its name, a short description and a link to its own front page (FR-HTML-02). The list is <strong>discovered</strong>, not maintained by hand. It comes from the tenant configuration, from the actual publication (for example a description of each domain in the umbrella domain's open data catalogue), or from both. The source is configurable. Domains published by other services (for example the newer record-page domains, see <a href="../../02-current-platform/data-domains/#newer-domains">Data domains</a>) can be added as configured entries. A new domain appears without editing the portal (FR-MT-02).</td>
+<td>A <strong>portal page</strong> on the umbrella domain's host name (<code>algemeen</code>, <code>https://data.omgeving.vlaanderen.be/</code>) lists every published domain, with its name, a short description and a link to its own front page (FR-HTML-02). The list is <strong>discovered</strong>, not maintained by hand. It comes from the tenant configuration, from the actual publication (for example a description of each domain in the umbrella domain's open data catalogue), or from both. The source is configurable. Domains published by other services (for example the newer record-page domains, see <a href="../../02-current-platform/data-domains/#newer-domains">Data domains</a>) can be added as configured entries. A new domain appears without editing the portal (FR-MT-02). The portal also offers a SPARQL editor that queries the listed domains' public endpoints together, run by Comunica in the visitor's browser (<a href="../../../adr/0025-federated-query-in-the-portal/">ADR 0025</a>).</td>
 <td>S</td>
 <td>2</td>
 <td>G</td>

@@ -1595,6 +1595,8 @@
       
         
       
+        
+      
     
     
     
@@ -2328,6 +2330,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../adr/0025-federated-query-in-the-portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0025 Federated query in the portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../adr/template/" class="md-nav__link">
         
   
@@ -2488,6 +2518,9 @@
 <li>
 <p><strong>Keyboard:</strong> a code editor uses Tab for indenting, so keyboard users need a documented way out of it (WCAG 2.1.2, raised by the Flux team).</p>
 </li>
+<li>
+<p><strong>Federation:</strong> whether its query engine can be replaced by Comunica, so that the same editor serves the portal's federated queries (<a href="../../adr/0025-federated-query-in-the-portal/">ADR 0025</a>).</p>
+</li>
 </ul>
 <p>The options are to use it as it is, to fork it with Flux styling, or to build an editor on YASGUI or another editor library directly.</p>
 </li>
@@ -2551,7 +2584,7 @@
 <p>Option 4 fits when most data and traffic are public, and the non-public part is small. It moves the security boundary to the loading chain (question 15). The public export must start from an explicit allowlist of graphs, never from "everything except the non-public ones". A check, for example a SHACL shape or a query for forbidden predicates, must reject any artefact that contains non-public data. Personal data such as names then stays in Virtuoso alone (<a href="../../adr/0018-personal-data-in-requests-and-caches/">ADR 0018</a>, NFR-PRIV-01), so a deletion request does not have to be traced through derived artefacts and their releases. Labels of linked resources follow the same rule: for anonymous callers they come from the public store only. If Elasticsearch ever returns (FR-DS-03), it needs a separate index per level rather than a level field and a filter, because suggestions, highlighting and aggregations can leak values.</p>
 <p>A static domain such as <code>dba</code> (question 6) can be served entirely from a snapshot. Open points: which domains hold non-public data at all (question 2), and whether SPieGeL needs a kind of data source other than a SPARQL endpoint, such as an HDT file read in-process (FR-DS-01 only covers endpoints).
 30. <strong>How do resources and their event streams meet?</strong> Two points follow from <a href="../../adr/0006-resources-and-event-streams/">ADR 0006</a>. First, discovery: a resource needs a way to point to the stream that publishes it, for example a <code>Link</code> header or a triple, and a domain needs a way to list its streams, for example as a DCAT data service in its dataset description (FR-ES-01). Second, versions: LDES members are often version objects with IRIs of their own (<code>dct:isVersionOf</code> the resource). Should SPieGeL dereference those IRIs, and serve past states of a resource, or only the current state? <em>Answered by <a href="../../adr/0023-event-stream-discovery-and-versions/">ADR 0023</a>:</em> the dataset description lists each stream as a <code>dcat:DataService</code>, and the tenant configuration names the stream per URI template or resource type, which SPieGeL sends as <code>Link: &lt;stream&gt;; rel="collection"</code> and shows in HTML. Version objects are ordinary resources: described when the store holds them, with no mechanism of their own and no Memento.
-31. <strong>Does a federating query engine have a role on the consumer's side?</strong> Integration across domains and stores is left to consumers (<a href="../../adr/0006-resources-and-event-streams/">ADR 0006</a>). A query engine such as Comunica can query several SPARQL endpoints, files and streams in one query. Do we document or offer such a set-up, for example in the SPARQL editor (FR-SPARQL-03)?
+31. <strong>Does a federating query engine have a role on the consumer's side?</strong> Integration across domains and stores is left to consumers (<a href="../../adr/0006-resources-and-event-streams/">ADR 0006</a>). A query engine such as Comunica can query several SPARQL endpoints, files and streams in one query. Do we document or offer such a set-up, for example in the SPARQL editor (FR-SPARQL-03)? <em>Answered by <a href="../../adr/0025-federated-query-in-the-portal/">ADR 0025</a>:</em> the portal offers a federated SPARQL editor over the domains' public <code>/sparql</code> endpoints, run by Comunica in the visitor's browser, with a polite <code>fetch</code> that bounds parallel requests and honours <code>Retry-After</code>. SPieGeL runs no federation on the server and makes no exception in its rate limits.
 32. <strong>Where is the convention for URIs in other distributions documented, and who owns it?</strong> <a href="../../adr/0007-uri-as-shared-identifier/">ADR 0007</a> asks GIS layers, downloads and APIs to carry each thing's URI. They need a shared convention: the attribute name (a <code>gml:id</code> cannot hold a URI), and how a feature in OGC API Features links to it. Does that belong to the Flemish URI standard, to OSLO, or to the department's own GIS guidelines? And which layers come first, for example the river segments?
 33. <strong>Does Neo4j have a role for certain use cases?</strong> Neo4j is a property graph database, queried with Cypher. As a store <strong>for SPieGeL itself</strong> it fits poorly, mostly for reasons already in the requirements:</p>
 <ul>
