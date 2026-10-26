@@ -1624,6 +1624,8 @@
       
         
       
+        
+      
     
     
     
@@ -2273,6 +2275,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0022-edge-concerns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0022 Edge concerns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2552,7 +2582,7 @@
 </tr>
 <tr>
 <td>NFR-OPS-08</td>
-<td><strong>Rate limiting per client.</strong> A client that exceeds its limit gets <code>429 Too Many Requests</code> with <code>Retry-After</code>, before any query is run. Limits are configurable per tenant and per kind of request, with a stricter limit for <code>/sparql</code>. An authenticated client is identified by its identity. For public access, which is unauthenticated, the client is identified by its address as reported by a trusted reverse proxy. Limits hold across all nodes, without sticky sessions (NFR-OPS-01). <code>429</code> (this client asks too much) is distinct from <code>503</code> (the service or a data source is overloaded, NFR-OPS-02). Whether SPieGeL or the reverse proxy enforces the limit is still to be decided (<a href="../../06-open-questions/#architecture-and-operations">open question 13</a>).</td>
+<td><strong>Rate limiting per client.</strong> A client that exceeds its limit gets <code>429 Too Many Requests</code> with <code>Retry-After</code>, before any query is run. Limits are configurable per tenant and per kind of request, with a stricter limit for <code>/sparql</code>. An authenticated client is identified by its identity. For public access, which is unauthenticated, the client is identified by its address as reported by a trusted reverse proxy. Limits hold across all nodes, without sticky sessions (NFR-OPS-01); in phase 1 approximately, with each node counting up to its share of the limit. <code>429</code> (this client asks too much) is distinct from <code>503</code> (the service or a data source is overloaded, NFR-OPS-02). SPieGeL enforces these limits; the reverse proxy only protects against floods, with a generous limit per address (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>).</td>
 <td>S</td>
 </tr>
 <tr>

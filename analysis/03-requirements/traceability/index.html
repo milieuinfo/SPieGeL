@@ -1558,6 +1558,8 @@
       
         
       
+        
+      
     
     
     
@@ -2207,6 +2209,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0022-edge-concerns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0022 Edge concerns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2472,7 +2502,7 @@
 <td>FR-URI-02</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-web</code></td>
+<td><code>spiegel-adapter-web</code> (moved from the proxy, <a href="../../../adr/0022-edge-concerns/">ADR 0022</a>)</td>
 </tr>
 <tr>
 <td><code>ns</code> vocabulary pages</td>
@@ -2795,8 +2825,8 @@
 <td>—</td>
 <td>NFR-OPS-08</td>
 <td>S</td>
-<td>2</td>
-<td><code>spiegel-adapter-web</code></td>
+<td>1</td>
+<td><code>spiegel-adapter-web</code>, <code>RateLimitPort</code> (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>)</td>
 </tr>
 <tr>
 <td>Personal data: store's responsibility for the data; minimised in logs, counters and metrics; caching per access level</td>
@@ -2832,7 +2862,7 @@
 <td>NFR-OPEN-01</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-web</code></td>
+<td><code>spiegel-adapter-web</code>, not at the proxy (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>)</td>
 </tr>
 </tbody>
 </table>

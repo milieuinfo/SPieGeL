@@ -1602,6 +1602,8 @@
       
         
       
+        
+      
     
     
     
@@ -2251,6 +2253,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0022-edge-concerns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0022 Edge concerns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2521,6 +2551,10 @@
 <tr>
 <td><code>IdentityPort</code></td>
 <td>OIDC through Spring Security</td>
+</tr>
+<tr>
+<td><code>RateLimitPort</code></td>
+<td>In memory per node, each counting up to its share of the limit; later a shared store, falling back to the count per node when it fails (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>)</td>
 </tr>
 <tr>
 <td><code>RendererPort</code></td>

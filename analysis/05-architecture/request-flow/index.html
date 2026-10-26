@@ -1663,6 +1663,8 @@
       
         
       
+        
+      
     
     
     
@@ -2312,6 +2314,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0022-edge-concerns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0022 Edge concerns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2533,11 +2563,11 @@
     participant D as Data source
     participant R as Renderer
     C-&gt;&gt;P: GET https://{host}/doc/{concept}/{id}
-    Note over P: TLS, HSTS, X-Forwarded-*&lt;br/&gt;rate limit? (open question 13)
+    Note over P: TLS, HSTS, X-Forwarded-*&lt;br/&gt;flood protection per address
     P-&gt;&gt;W: GET /doc/{concept}/{id} (Accept, Accept-Profile)
     W-&gt;&gt;T: tenant for host name
     W-&gt;&gt;I: caller → access level (phase 2)
-    W-&gt;&gt;W: rate limit per client, if not at the proxy (429)
+    W-&gt;&gt;W: rate limit per client, tenant and kind (429)
     W-&gt;&gt;W: match URI template
     alt id template
         W--&gt;&gt;P: 303 See Other → doc URI
@@ -2570,7 +2600,7 @@
 <tbody>
 <tr>
 <td>0</td>
-<td><strong>Edge.</strong> The reverse proxy terminates TLS, adds HSTS and passes the original host and scheme in <code>X-Forwarded-*</code> headers. SPieGeL trusts those headers only from the proxy. Which other concerns stay at the edge (the <code>303</code>, CORS, input filtering, rate limiting) is <a href="../../06-open-questions/#architecture-and-operations">open question 13</a>.</td>
+<td><strong>Edge.</strong> The reverse proxy terminates TLS, adds HSTS and passes the original host, scheme and client address in <code>X-Forwarded-*</code> headers. SPieGeL trusts those headers only from the proxy's configured addresses. The proxy also sets generic limits (sizes, connections, time-outs) and protects against floods with a generous limit per address. It does not filter on content, answer the <code>303</code> or set CORS headers: SPieGeL does (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>).</td>
 <td>reverse proxy</td>
 <td>NFR-OPS-08</td>
 </tr>
@@ -2594,8 +2624,8 @@
 </tr>
 <tr>
 <td>3a</td>
-<td><strong>Check the rate limit</strong> for this client, tenant and kind of request, unless the proxy already does so (step 0). Over the limit gives <code>429</code> with <code>Retry-After</code> (step E7). No query has been run yet. A limit per authenticated client can only be applied after step 3.</td>
-<td>web adapter or reverse proxy</td>
+<td><strong>Check the rate limit</strong> for this client, tenant and kind of request, through <code>RateLimitPort</code>. Over the limit gives <code>429</code> with <code>Retry-After</code> (step E7). No query has been run yet. A limit per authenticated client can only be applied after step 3. In phase 1 each node counts up to its share of the limit (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>).</td>
+<td>web adapter → <code>RateLimitPort</code></td>
 <td>NFR-OPS-08</td>
 </tr>
 <tr>
@@ -2859,7 +2889,7 @@
 <li>A failed or timed-out query makes the request fail, never a partial page. A description cut off at the ceiling is served, but always marked as incomplete (step 12, NFR-OPS-09).</li>
 <li>Labels for HTML come from a query declared by the HTML profile (rendering step 1).</li>
 </ul>
-<p>Related open questions: edge concerns such as the <code>303</code> and HSTS (<a href="../../06-open-questions/#architecture-and-operations">13</a>), generated versus hand-written queries (<a href="../../06-open-questions/#architecture-and-operations">19</a>), presentation rules (<a href="../../06-open-questions/#front-end">21</a>).</p>
+<p>Related decisions: edge concerns (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>), default and hand-written queries (<a href="../../../adr/0012-tenant-configuration-as-rdf/">ADR 0012</a>). Related open question: presentation rules (<a href="../../06-open-questions/#front-end">21</a>).</p>
 
 
 

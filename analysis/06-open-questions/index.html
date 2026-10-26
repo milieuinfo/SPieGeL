@@ -1589,6 +1589,8 @@
       
         
       
+        
+      
     
     
     
@@ -2238,6 +2240,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../adr/0022-edge-concerns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0022 Edge concerns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../adr/template/" class="md-nav__link">
         
   
@@ -2426,7 +2456,7 @@
 </ol>
 <h2 id="architecture-and-operations">Architecture and operations<a class="headerlink" href="#architecture-and-operations" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Which edge concerns move into SPieGeL?</strong> The <code>303</code> redirect, CORS, HSTS and input filtering are currently handled by the reverse proxy. Rate limiting (NFR-OPS-08) is a new concern for the same choice. At the edge it protects SPieGeL before any work is done, but it only knows addresses. That is enough for public access, which is unauthenticated, but not for limits per authenticated client. In SPieGeL it can also limit per authenticated client, per tenant and per kind of request, but it needs a counter shared between nodes. See <a href="../05-architecture/request-flow/#steps">Request flow</a>.</li>
+<li><strong>Which edge concerns move into SPieGeL?</strong> The <code>303</code> redirect, CORS, HSTS and input filtering are currently handled by the reverse proxy. Rate limiting (NFR-OPS-08) is a new concern for the same choice. At the edge it protects SPieGeL before any work is done, but it only knows addresses. That is enough for public access, which is unauthenticated, but not for limits per authenticated client. In SPieGeL it can also limit per authenticated client, per tenant and per kind of request, but it needs a counter shared between nodes. See <a href="../05-architecture/request-flow/#steps">Request flow</a>. <em>Answered by <a href="../../adr/0022-edge-concerns/">ADR 0022</a>:</em> the proxy keeps TLS, HSTS, generic limits and flood protection per address; SPieGeL answers the <code>303</code>, sets CORS and enforces the real rate limits, counting per node in phase 1 behind a <code>RateLimitPort</code>.</li>
 <li><strong>Does the core use Jena's model types,</strong> or its own RDF abstraction? See <a href="../05-architecture/hexagonal-design/#rules-that-keep-the-core-clean">Hexagonal design</a>. <em>Answered by <a href="../../adr/0010-jena-graph-types-in-the-core/">ADR 0010</a>:</em> the core uses Jena's graph types from <code>jena-core</code>, and nothing from <code>jena-arq</code>.</li>
 <li><strong>Is the data loading (ETL) chain in scope</strong> of this project at all, or a separate line of work?</li>
 <li><strong>Which configuration mechanism in production?</strong> For example environment variables, mounted files or a configuration server. <em>Answered by <a href="../../adr/0013-tenant-configuration-delivery/">ADR 0013</a>:</em> a versioned artefact built from one central configuration repository, validated in CI, mounted read-only and rolled out with a rolling restart; credentials come from the platform's secret store.</li>
