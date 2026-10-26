@@ -2405,6 +2405,97 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specifications
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Specifications
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../specs/001-dereference-resource-as-rdf/spec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    001 Dereference a resource as RDF
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -2493,6 +2584,7 @@
 <ul>
 <li><strong>Status:</strong> Accepted</li>
 <li><strong>Date:</strong> 2026-10-25</li>
+<li><strong>Amended:</strong> 2026-10-26: added <code>method-not-allowed</code>, <code>internal-error</code>, and the <code>406</code> for a description that cannot be written in the format asked for (<a href="../../specs/001-dereference-resource-as-rdf/spec/">spec 001</a>)</li>
 </ul>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>The <a href="../../analysis/05-architecture/request-flow/#errors">request flow</a> lists SPieGeL's errors (E1 to E7) and how HTML shows them (<code>vl-http-error-message</code>), but not what a client gets that asked for Turtle, JSON-LD or SPARQL results. Some rules already hold:</p>
@@ -2534,14 +2626,24 @@
 <td>no template, no resource, or a resource the caller may not see</td>
 </tr>
 <tr>
+<td><code>405</code></td>
+<td><code>…/problem/method-not-allowed</code></td>
+<td>a method other than those the resource allows, with <code>Allow</code></td>
+</tr>
+<tr>
 <td><code>406</code></td>
 <td><code>…/problem/not-acceptable</code></td>
-<td>no acceptable media type</td>
+<td>no acceptable media type, or the description cannot be written in the format asked for</td>
 </tr>
 <tr>
 <td><code>429</code></td>
 <td><code>…/problem/rate-limited</code></td>
 <td>this client is over its limit</td>
+</tr>
+<tr>
+<td><code>500</code></td>
+<td><code>…/problem/internal-error</code></td>
+<td>an unexpected failure inside SPieGeL itself</td>
 </tr>
 <tr>
 <td><code>502</code></td>
@@ -2562,7 +2664,7 @@
 </table>
 </li>
 <li>
-<p><strong>The body is safe by construction.</strong> <code>title</code> and <code>detail</code> are written by SPieGeL, in English, and never copy a store's message, a stack trace or a query text. The <code>404</code> body is the same for a resource that does not exist and for one the caller may not see.</p>
+<p><strong>The body is safe by construction.</strong> <code>title</code> and <code>detail</code> are written by SPieGeL, in English, and never copy a store's message, a stack trace or a query text. An <code>internal-error</code> has a generic title and no <code>detail</code>; the cause is in the logs, under the request identifier. The <code>404</code> body is the same for a resource that does not exist and for one the caller may not see.</p>
 </li>
 <li><strong><code>instance</code> carries the request identifier</strong> as a <code>urn:uuid:</code> URI, the same identifier that the logs use (NFR-OPS-05), so that a report can be traced without exposing anything else.</li>
 <li><strong>A query error on <code>/sparql</code> says where.</strong> An <code>invalid-query</code> problem adds <code>line</code> and <code>column</code> from the parser, or the policy rule that was broken, such as "<code>SERVICE</code> is not allowed". It does not echo the query.</li>

@@ -224,4 +224,8 @@
          <loc>https://milieuinfo.github.io/SPieGeL/analysis/05-architecture/request-flow/</loc>
          <lastmod>2026-10-26</lastmod>
     </url>
+    <url>
+         <loc>https://milieuinfo.github.io/SPieGeL/specs/001-dereference-resource-as-rdf/spec/</loc>
+         <lastmod>2026-10-26</lastmod>
+    </url>
 </urlset>
