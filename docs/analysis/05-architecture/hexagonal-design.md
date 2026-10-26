@@ -91,6 +91,7 @@ Outbound ports:
 | `TenantConfigurationPort` | Turtle in SPieGeL's configuration vocabulary, validated with SHACL, with `.rq` files for queries ([ADR 0012](../../adr/0012-tenant-configuration-as-rdf.md)). Delivered as a versioned artefact, mounted read-only ([ADR 0013](../../adr/0013-tenant-configuration-delivery.md)) |
 | `CachePort` | In-memory; later a shared cache |
 | `IdentityPort` | OIDC through Spring Security |
+| `RateLimitPort` | In memory per node, each counting up to its share of the limit; later a shared store, falling back to the count per node when it fails ([ADR 0022](../../adr/0022-edge-concerns.md)) |
 | `RendererPort` | Jena RIOT for RDF formats; a template engine for HTML |
 
 ## Mapping from the predecessor

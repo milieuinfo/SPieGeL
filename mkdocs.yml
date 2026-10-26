@@ -112,4 +112,5 @@ nav:
       - 0019 Findability: adr/0019-findability.md
       - 0020 Cache key and entity tag: adr/0020-cache-key-and-entity-tag.md
       - 0021 Labels of external vocabularies: adr/0021-labels-of-external-vocabularies.md
+      - 0022 Edge concerns: adr/0022-edge-concerns.md
       - Template: adr/template.md

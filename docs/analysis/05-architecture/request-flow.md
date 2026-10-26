@@ -27,11 +27,11 @@ sequenceDiagram
     participant D as Data source
     participant R as Renderer
     C->>P: GET https://{host}/doc/{concept}/{id}
-    Note over P: TLS, HSTS, X-Forwarded-*<br/>rate limit? (open question 13)
+    Note over P: TLS, HSTS, X-Forwarded-*<br/>flood protection per address
     P->>W: GET /doc/{concept}/{id} (Accept, Accept-Profile)
     W->>T: tenant for host name
     W->>I: caller → access level (phase 2)
-    W->>W: rate limit per client, if not at the proxy (429)
+    W->>W: rate limit per client, tenant and kind (429)
     W->>W: match URI template
     alt id template
         W-->>P: 303 See Other → doc URI
@@ -57,11 +57,11 @@ sequenceDiagram
 
 | # | Step | Part | Requirements |
 |---|---|---|---|
-| 0 | **Edge.** The reverse proxy terminates TLS, adds HSTS and passes the original host and scheme in `X-Forwarded-*` headers. SPieGeL trusts those headers only from the proxy. Which other concerns stay at the edge (the `303`, CORS, input filtering, rate limiting) is [open question 13](../06-open-questions.md#architecture-and-operations). | reverse proxy | NFR-OPS-08 |
+| 0 | **Edge.** The reverse proxy terminates TLS, adds HSTS and passes the original host, scheme and client address in `X-Forwarded-*` headers. SPieGeL trusts those headers only from the proxy's configured addresses. The proxy also sets generic limits (sizes, connections, time-outs) and protects against floods with a generous limit per address. It does not filter on content, answer the `303` or set CORS headers: SPieGeL does ([ADR 0022](../../adr/0022-edge-concerns.md)). | reverse proxy | NFR-OPS-08 |
 | 1 | **Receive.** Assign a request identifier, start timing, and log in a structured format, without personal data from the request (NFR-PRIV-02). | web adapter | NFR-OPS-05, NFR-PRIV-02 |
 | 2 | **Resolve the tenant** from the host name. An unknown host gets `404`. | web adapter, `TenantConfigurationPort` | FR-MT-01, FR-MT-02 |
 | 3 | **Identify the caller** *(phase 2)*. A bearer token (OpenID Connect or client credentials) is validated on every request, with no server-side session. A caller without a token is an unauthenticated client and gets the *public* level, the lowest. In phase 1 every caller is one. The level is the highest one granted by the caller's roles. | web adapter, `IdentityPort` | FR-AC-01, FR-AC-02, NFR-OPS-01 |
-| 3a | **Check the rate limit** for this client, tenant and kind of request, unless the proxy already does so (step 0). Over the limit gives `429` with `Retry-After` (step E7). No query has been run yet. A limit per authenticated client can only be applied after step 3. | web adapter or reverse proxy | NFR-OPS-08 |
+| 3a | **Check the rate limit** for this client, tenant and kind of request, through `RateLimitPort`. Over the limit gives `429` with `Retry-After` (step E7). No query has been run yet. A limit per authenticated client can only be applied after step 3. In phase 1 each node counts up to its share of the limit ([ADR 0022](../../adr/0022-edge-concerns.md)). | web adapter → `RateLimitPort` | NFR-OPS-08 |
 | 4 | **Match the URI template.** When several match, the most specific wins: more literal characters, then more variables. Variables are typed by a pattern, so an invalid value gives `404` (no match) without a query, not an error. No match gives `404`. A value that matches is not checked against a list: the data decides whether the resource exists (step 12), and a negative result is cached per data version ([ADR 0012](../../adr/0012-tenant-configuration-as-rdf.md)). | core (`UriTemplate`) | FR-URI-01, FR-URI-03 to 05 |
 | 5 | **`id` → `doc`.** If the template is an `id` template, answer `303 See Other` with the matching `doc` URI in `Location`, for every media type. The data is not consulted, so the redirect reveals nothing about whether the resource exists or is visible. | core (`UriTemplate`), web adapter | FR-URI-02, NFR-SEC-07 |
 | 6 | **Negotiate the media type.** A format suffix or `_format` overrides `Accept`. Otherwise the client's quality values are weighed against SPieGeL's quality per format; no `Accept`, or only `*/*`, gives HTML. Nothing acceptable gives `406`. | web adapter | FR-CN-01, FR-CN-02, FR-CN-05, FR-CN-08 |
@@ -155,4 +155,4 @@ These follow from the requirements, but deserve confirmation in an ADR when the 
 - A failed or timed-out query makes the request fail, never a partial page. A description cut off at the ceiling is served, but always marked as incomplete (step 12, NFR-OPS-09).
 - Labels for HTML come from a query declared by the HTML profile (rendering step 1).
 
-Related open questions: edge concerns such as the `303` and HSTS ([13](../06-open-questions.md#architecture-and-operations)), generated versus hand-written queries ([19](../06-open-questions.md#architecture-and-operations)), presentation rules ([21](../06-open-questions.md#front-end)).
+Related decisions: edge concerns ([ADR 0022](../../adr/0022-edge-concerns.md)), default and hand-written queries ([ADR 0012](../../adr/0012-tenant-configuration-as-rdf.md)). Related open question: presentation rules ([21](../06-open-questions.md#front-end)).

@@ -21,7 +21,7 @@ This matrix links every function of the predecessor, and every requirement of th
 | Licence findable in data, headers and pages | no | — | FR-META-02 | M | 1 | `spiegel-adapter-config`, `spiegel-adapter-web`, `spiegel-adapter-html` |
 | SPARQL Service Description | no | — | FR-META-03 | S | 2 | `spiegel-adapter-web` |
 | Example queries as data (SHACL), tested against the store | example queries in the editor component | — | FR-SPARQL-04 | S | 2 | `spiegel-adapter-web`, `spiegel-adapter-html`, tenant configuration |
-| `id` → `doc` 303 | at the reverse proxy | — | FR-URI-02 | M | 1 | `spiegel-adapter-web` |
+| `id` → `doc` 303 | at the reverse proxy | — | FR-URI-02 | M | 1 | `spiegel-adapter-web` (moved from the proxy, [ADR 0022](../../adr/0022-edge-concerns.md)) |
 | `ns` vocabulary pages | yes | — | FR-URI-03, FR-RA-05 | M | 2 | `spiegel-core` |
 | Skolem IRIs | **missing** | — | FR-URI-04 | M | 2 | `spiegel-core` |
 | ELI paths | **missing** | — | FR-URI-05 | S | 2 | `spiegel-core` |
@@ -57,11 +57,11 @@ This matrix links every function of the predecessor, and every requirement of th
 | Data dump | placeholder | — | — | — | — | covered by event streams (ADR 0006) |
 | Caching | two layers, per script | — | NFR-OPS-03, NFR-SEC-03 | S | 1 | `spiegel-app` |
 | Concurrency limit per store | yes (5 concurrent, queue of 500) | — | NFR-OPS-02 | M | 1 | `spiegel-adapter-sparql` |
-| Rate limiting per client (`429`) | no | — | NFR-OPS-08 | S | 2 | `spiegel-adapter-web` |
+| Rate limiting per client (`429`) | no | — | NFR-OPS-08 | S | 1 | `spiegel-adapter-web`, `RateLimitPort` ([ADR 0022](../../adr/0022-edge-concerns.md)) |
 | Personal data: store's responsibility for the data; minimised in logs, counters and metrics; caching per access level | not assessed | — | NFR-PRIV-01 to 03 | M | 1 | `spiegel-app`, `spiegel-adapter-web`, loading chain |
 | Response time, throughput and availability targets | not defined | — | NFR-PERF-01 to 05 | M | 1 | `spiegel-app`, all adapters |
 | Ceiling on the size of a description | no | — | NFR-OPS-09 | M | 1 | `spiegel-core`, `spiegel-adapter-sparql` |
-| Open CORS | yes | — | NFR-OPEN-01 | M | 1 | `spiegel-adapter-web` |
+| Open CORS | yes | — | NFR-OPEN-01 | M | 1 | `spiegel-adapter-web`, not at the proxy ([ADR 0022](../../adr/0022-edge-concerns.md)) |
 
 ## Reading the "X-Cite" column
 

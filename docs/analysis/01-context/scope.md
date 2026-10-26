@@ -18,7 +18,7 @@ SPieGeL is a **read-only Linked Data publishing server**. It:
 - **Serving event streams.** Linked Data Event Streams publish the same resources and are served by an LDES server, such as OpenLDES's. SPieGeL makes them discoverable ([ADR 0006](../../adr/0006-resources-and-event-streams.md)).
 - **Integrating data across domains.** Consumers combine resources themselves, by dereferencing, by replicating event streams or with SPARQL ([ADR 0006](../../adr/0006-resources-and-event-streams.md)).
 - **Other distributions of the data**, such as OGC API Features or WFS layers and downloads. They carry the things' URIs, so that SPieGeL's subject pages serve as their landing pages ([ADR 0007](../../adr/0007-uri-as-shared-identifier.md)).
-- **Edge concerns that belong to the reverse proxy**, such as TLS termination and HSTS. Which edge concerns move into SPieGeL is an [open question](../06-open-questions.md).
+- **Edge concerns that belong to the reverse proxy**, such as TLS termination, HSTS, generic request limits and flood protection. The `303`, CORS and the real rate limits move into SPieGeL ([ADR 0022](../../adr/0022-edge-concerns.md)).
 
 ## Phasing
 
@@ -35,7 +35,8 @@ Enough to publish a single public catalogue (for example a catalogue of simulati
 - simple HTML subject pages that also carry their data as embedded JSON-LD;
 - a front page generated from the data it publishes (catalogues, thesauri, classes);
 - a dataset description and a findable licence per domain;
-- caching tied to the data version, and the response-time targets of [Performance and availability](../03-requirements/performance.md).
+- caching tied to the data version, and the response-time targets of [Performance and availability](../03-requirements/performance.md);
+- rate limits per client, so that one client, such as a crawler, cannot take the data source's capacity from everyone else ([ADR 0022](../../adr/0022-edge-concerns.md)).
 
 No authentication is needed in this phase, because the catalogue is public.
 
