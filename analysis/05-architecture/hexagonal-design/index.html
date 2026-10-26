@@ -1610,6 +1610,8 @@
       
         
       
+        
+      
     
     
     
@@ -2371,6 +2373,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0026-system-boundary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0026 System boundary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2514,15 +2544,23 @@
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>SPieGeL reads RDF from data sources, which are SPARQL endpoints (FR-DS-01). Whether it may also read a file such as HDT in-process is <a href="../../06-open-questions/#architecture-and-operations">open question 29</a>. A triple store holds RDF that is loaded into it, including RDF that the loading chain has materialised from non-RDF sources with RML. A relational source that must be current is translated per request by Ontop, which offers its own SPARQL endpoint, so SPieGeL reads it like a store (<a href="../../../adr/0009-ontop-for-relational-sources/">ADR 0009</a>).</p>
 <pre class="mermaid"><code>flowchart LR
-    CL[Clients] --&gt; PX[Reverse proxy] --&gt; S[SPieGeL]
+    CL[Clients and browsers] --&gt; PX[Reverse proxy] --&gt; S[SPieGeL]
     S --&gt;|SPARQL| TS[(Triple store)]
     S --&gt;|SPARQL| OT[Ontop endpoint]
     OT --&gt;|R2RML, SQL per query| RDB[(PostgreSQL, Trino)]
+    S --&gt;|SPARQL| CX[(Cross-domain index, if any)]
     S --&gt; IDP[OIDC provider]
+    S -.-&gt;|Link rel=collection| LDES[LDES server]
+    subgraph cfg [Configuration, outside SPieGeL]
+        REPO[Configuration repository] --&gt;|CI with spiegel-tools| ART[Configuration artefact]
+    end
+    ART --&gt; S
     subgraph lc [Loading chain, outside SPieGeL]
         SRC[CSV, JSON, XML, Web APIs, periodic relational extracts] --&gt; RML[RML processor]
     end
-    RML --&gt;|materialised RDF| TS</code></pre>
+    RML --&gt;|materialised RDF| TS
+    RML --&gt;|labels, search terms| CX</code></pre>
+<p>The portal and its federated SPARQL editor are pages of the umbrella domain's tenant, not separate services; the editor's queries run in the visitor's browser (<a href="../../../adr/0025-federated-query-in-the-portal/">ADR 0025</a>). An index of data from several domains, such as labels or search terms, is never held by SPieGeL: it is a store of its own, filled by the loading chain, and read like any data source. Tools for writing and checking configuration are a separate artefact, <code>spiegel-tools</code> (<a href="../../../adr/0026-system-boundary/">ADR 0026</a>).</p>
 <h2 id="ports-and-adapters">Ports and adapters<a class="headerlink" href="#ports-and-adapters" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     subgraph inbound [Inbound adapters]

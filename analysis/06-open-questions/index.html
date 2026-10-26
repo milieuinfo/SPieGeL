@@ -1597,6 +1597,8 @@
       
         
       
+        
+      
     
     
     
@@ -2358,6 +2360,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../adr/0026-system-boundary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0026 System boundary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../adr/template/" class="md-nav__link">
         
   
@@ -2626,7 +2656,7 @@
 <p>Recommendation: <strong>Hydra</strong>, because the pages of FR-RA-07 are plain, ordered lists and Hydra describes them directly. TREE remains the vocabulary for event streams. Open points: the default page size, whether pages show a total count (a <code>COUNT</code> is costly on a large store, so at most cached), and whether a page has its own URI under the resource or is a profile of it (FR-CN-03).
 36. <strong>What are the predecessor's actual load and response times?</strong> The throughput target (NFR-PERF-04) is relative to the peak load per tenant, and the store choice (question 29) needs a baseline. From the predecessor's access logs: requests per second at peak, per domain and per kind of request (<code>/doc</code>, <code>/sparql</code>, front page), and the share of each media type. Its response times can be measured from outside with the <a href="../03-requirements/performance/#measurement-script">measurement script</a> and the same requests as on candidate stores. <em>Partly answered</em> on <a href="../03-requirements/performance/#the-predecessor-today">Performance and availability</a>: a 48-minute sample of the predecessor's own log gives about one <code>/doc</code> request per second at a median of 4 s, with most of the time spent above the store. Two complete days of the umbrella domain's proxy log show low external traffic (a few thousand requests a day) and an availability of about 97 %. Still open: the same for the other domains and over several weeks (the log export stops at 10,000 rows, so counts per day, path and status are better aggregated in the central logging itself); response times measured from now on; and whether most of the predecessor's requests for <code>algemeen</code> come from inside, from other domains resolving labels.
 41. <strong>Is JSON-LD from <code>CONSTRUCT</code> on <code>/sparql</code> compacted with the tenant's context?</strong> <a href="../../adr/0017-framed-json-ld-with-a-frozen-context/">ADR 0017</a> frames and compacts <em>descriptions</em>. A <code>CONSTRUCT</code> or <code>DESCRIBE</code> result has no single subject, so the frame does not apply, but the tenant's context could still give it short keys and stable shapes. Without it, the result is plain JSON-LD with full IRIs, the same on every tenant. Compacting needs the whole result in memory, which the result limit bounds; JSON-LD is not streamed either way (see <a href="../05-architecture/request-flow/#sparql">Request flow</a>). A client that wants other keys can compact the result itself with its own context. <em>Answered by <a href="../../adr/0024-json-ld-from-sparql-construct/">ADR 0024</a>:</em> SPieGeL follows the JSON-LD <code>profile</code> parameter. Without one, or with <code>compacted</code>, the result is compacted with the tenant's context; <code>expanded</code> and <code>flattened</code> are served as asked; <code>framed</code> is not supported.
-42. <strong>Where do the labels of resources of other domains come from?</strong> Data often links to resources of another tenant, such as a concept from a code list of <code>algemeen</code> on an IMJV page. FR-HTML-10 shows such a link by its label only if the domain's own store holds one; otherwise the IRI is shown. <a href="../../adr/0021-labels-of-external-vocabularies/">ADR 0021</a> does not cover this: these labels change with the other tenant's data, and that data has its own access levels. The options are: the loading chain copies the labels into each store that links to them (question 15); SPieGeL looks them up in the other tenant's data source, at the public level only, as a configured label source; one shared label store, fed by the loading chain; or the IRI as it is. The predecessor's logs suggest that resolving such labels causes much of its load on <code>algemeen</code> (question 36, <a href="../03-requirements/performance/#the-predecessor-today">Performance and availability</a>).</p>
+42. <strong>Where do the labels of resources of other domains come from?</strong> Data often links to resources of another tenant, such as a concept from a code list of <code>algemeen</code> on an IMJV page. FR-HTML-10 shows such a link by its label only if the domain's own store holds one; otherwise the IRI is shown. <a href="../../adr/0021-labels-of-external-vocabularies/">ADR 0021</a> does not cover this: these labels change with the other tenant's data, and that data has its own access levels. The options are: the loading chain copies the labels into each store that links to them (question 15); SPieGeL looks them up in the other tenant's data source, at the public level only, as a configured label source; one shared label store, fed by the loading chain; or the IRI as it is. An index built and held by SPieGeL itself is ruled out by <a href="../../adr/0026-system-boundary/">ADR 0026</a>. The predecessor's logs suggest that resolving such labels causes much of its load on <code>algemeen</code> (question 36, <a href="../03-requirements/performance/#the-predecessor-today">Performance and availability</a>).</p>
 </li>
 </ol>
 

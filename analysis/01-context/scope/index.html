@@ -1627,6 +1627,8 @@
       
         
       
+        
+      
     
     
     
@@ -2388,6 +2390,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0026-system-boundary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0026 System boundary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2548,14 +2578,17 @@
 <li>serialises that description in the representation the client negotiates (HTML, Turtle, RDF/XML, N-Triples, JSON-LD), optionally per profile;</li>
 <li>exposes a public, read-only SPARQL endpoint;</li>
 <li>serves several data domains (tenants) from one stateless deployment;</li>
-<li>enforces access levels on non-public data.</li>
+<li>enforces access levels on non-public data;</li>
+<li>offers a portal over its domains, as a page of the umbrella domain's tenant;</li>
+<li>ships command-line tools for writing and checking configuration (<code>spiegel-tools</code>).</li>
 </ul>
 <h2 id="out-of-scope">Out of scope<a class="headerlink" href="#out-of-scope" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Writing data.</strong> SPieGeL never modifies a data source. Loading and transforming data (ETL) is a separate concern.</li>
 <li><strong>Managing vocabularies.</strong> Ontologies, concept schemes, SHACL shapes and catalogues are maintained elsewhere and loaded into the data sources. SPieGeL publishes them.</li>
 <li><strong>Serving event streams.</strong> Linked Data Event Streams publish the same resources and are served by an LDES server, such as OpenLDES's. SPieGeL makes them discoverable (<a href="../../../adr/0006-resources-and-event-streams/">ADR 0006</a>).</li>
-<li><strong>Integrating data across domains.</strong> Consumers combine resources themselves, by dereferencing, by replicating event streams or with SPARQL (<a href="../../../adr/0006-resources-and-event-streams/">ADR 0006</a>).</li>
+<li><strong>Integrating data across domains.</strong> Consumers combine resources themselves, by dereferencing, by replicating event streams or with SPARQL (<a href="../../../adr/0006-resources-and-event-streams/">ADR 0006</a>). The portal's federated SPARQL editor does so in the visitor's browser (<a href="../../../adr/0025-federated-query-in-the-portal/">ADR 0025</a>).</li>
+<li><strong>Indexes across domains</strong>, such as labels or search terms gathered from several domains. They are stores of their own, filled by the loading chain; SPieGeL reads them like any data source (<a href="../../../adr/0026-system-boundary/">ADR 0026</a>).</li>
 <li><strong>Other distributions of the data</strong>, such as OGC API Features or WFS layers and downloads. They carry the things' URIs, so that SPieGeL's subject pages serve as their landing pages (<a href="../../../adr/0007-uri-as-shared-identifier/">ADR 0007</a>).</li>
 <li><strong>Edge concerns that belong to the reverse proxy</strong>, such as TLS termination, HSTS, generic request limits and flood protection. The <code>303</code>, CORS and the real rate limits move into SPieGeL (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>).</li>
 </ul>

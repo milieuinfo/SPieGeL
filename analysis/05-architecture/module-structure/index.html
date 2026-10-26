@@ -1599,6 +1599,8 @@
       
         
       
+        
+      
     
     
     
@@ -2360,6 +2362,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0026-system-boundary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0026 System boundary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2492,7 +2522,9 @@
 ├── spiegel-adapter-html         RendererPort for HTML (template engine, Flux design system, front-end build)
 ├── spiegel-adapter-security     IdentityPort: OIDC, roles → AccessLevel
 ├── spiegel-adapter-config       TenantConfigurationPort: Turtle + .rq files, SHACL validation (jena-shacl)
-└── spiegel-app                  Spring Boot application: wiring, caching, health, packaging
+├── spiegel-app                  Spring Boot application: wiring, caching, health, packaging
+└── spiegel-tools                command-line tools for configuration and CI: context generator,
+                                 vocabulary extractor, configuration validator
 </code></pre></div>
 <h2 id="dependency-rules">Dependency rules<a class="headerlink" href="#dependency-rules" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart BT
@@ -2502,10 +2534,12 @@
     html[spiegel-adapter-html] --&gt; core
     sec[spiegel-adapter-security] --&gt; core
     cfg[spiegel-adapter-config] --&gt; core
-    app[spiegel-app] --&gt; sparql &amp; web &amp; html &amp; sec &amp; cfg</code></pre>
+    app[spiegel-app] --&gt; sparql &amp; web &amp; html &amp; sec &amp; cfg
+    tools[spiegel-tools] --&gt; core &amp; cfg</code></pre>
 <ul>
 <li><code>spiegel-core</code> depends on nothing in this project, and only on a minimal set of libraries.</li>
 <li>Adapters depend on <code>spiegel-core</code> only, never on each other.</li>
+<li><code>spiegel-tools</code> is not part of the server. It reuses the configuration model and validation of <code>spiegel-adapter-config</code>, so that CI and the server check the same rules, and is delivered as a command-line tool (<a href="../../../adr/0026-system-boundary/">ADR 0026</a>).</li>
 <li>Only <code>spiegel-app</code> knows all modules. It is the only module that depends on Spring Boot's auto-configuration.</li>
 <li>These rules are enforced by a test (for example with ArchUnit), not only by convention.</li>
 </ul>
@@ -2525,7 +2559,7 @@
 - <strong>Some concerns cross modules.</strong> The cache lives in <code>spiegel-app</code> but must follow the core's rules (NFR-SEC-03), and logging must be consistent in every module.
 - <strong>The core depends on <code>jena-core</code>.</strong> It uses Jena's graph types to merge descriptions without conversion, but nothing from <code>jena-arq</code>, so it has no SPARQL engine, HTTP client or serialisers (<a href="../../../adr/0010-jena-graph-types-in-the-core/">ADR 0010</a>). <code>ArchitectureTest</code> enforces this.</p>
 <h2 id="phase-1-subset">Phase 1 subset<a class="headerlink" href="#phase-1-subset" title="Permanent link">&para;</a></h2>
-<p>Phase 1 (see <a href="../../01-context/scope/#phasing">Scope</a>) needs <code>spiegel-core</code>, <code>spiegel-adapter-sparql</code>, <code>spiegel-adapter-web</code>, <code>spiegel-adapter-html</code>, <code>spiegel-adapter-config</code> and <code>spiegel-app</code>. <code>spiegel-adapter-security</code> arrives in phase 2.</p>
+<p>Phase 1 (see <a href="../../01-context/scope/#phasing">Scope</a>) needs <code>spiegel-core</code>, <code>spiegel-adapter-sparql</code>, <code>spiegel-adapter-web</code>, <code>spiegel-adapter-html</code>, <code>spiegel-adapter-config</code> and <code>spiegel-app</code>. <code>spiegel-adapter-security</code> arrives in phase 2. <code>spiegel-tools</code> arrives with its first tool, such as the context generator of <a href="../../../adr/0017-framed-json-ld-with-a-frozen-context/">ADR 0017</a>.</p>
 <h2 id="group-and-artefact-identifiers">Group and artefact identifiers<a class="headerlink" href="#group-and-artefact-identifiers" title="Permanent link">&para;</a></h2>
 <p>Decided in <a href="../../../adr/0004-technology-baseline/">ADR 0004</a>: group <code>be.vlaanderen.omgeving.spiegel</code>, artefacts as listed above, with <code>spiegel-parent</code> as the parent POM.</p>
 
