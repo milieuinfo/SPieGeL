@@ -10,7 +10,9 @@ spiegel/                         (parent POM, packaging pom)
 ├── spiegel-adapter-html         RendererPort for HTML (template engine, Flux design system, front-end build)
 ├── spiegel-adapter-security     IdentityPort: OIDC, roles → AccessLevel
 ├── spiegel-adapter-config       TenantConfigurationPort: Turtle + .rq files, SHACL validation (jena-shacl)
-└── spiegel-app                  Spring Boot application: wiring, caching, health, packaging
+├── spiegel-app                  Spring Boot application: wiring, caching, health, packaging
+└── spiegel-tools                command-line tools for configuration and CI: context generator,
+                                 vocabulary extractor, configuration validator
 ```
 
 ## Dependency rules
@@ -24,10 +26,12 @@ flowchart BT
     sec[spiegel-adapter-security] --> core
     cfg[spiegel-adapter-config] --> core
     app[spiegel-app] --> sparql & web & html & sec & cfg
+    tools[spiegel-tools] --> core & cfg
 ```
 
 - `spiegel-core` depends on nothing in this project, and only on a minimal set of libraries.
 - Adapters depend on `spiegel-core` only, never on each other.
+- `spiegel-tools` is not part of the server. It reuses the configuration model and validation of `spiegel-adapter-config`, so that CI and the server check the same rules, and is delivered as a command-line tool ([ADR 0026](../../adr/0026-system-boundary.md)).
 - Only `spiegel-app` knows all modules. It is the only module that depends on Spring Boot's auto-configuration.
 - These rules are enforced by a test (for example with ArchUnit), not only by convention.
 
@@ -50,7 +54,7 @@ The split has costs:
 
 ## Phase 1 subset
 
-Phase 1 (see [Scope](../01-context/scope.md#phasing)) needs `spiegel-core`, `spiegel-adapter-sparql`, `spiegel-adapter-web`, `spiegel-adapter-html`, `spiegel-adapter-config` and `spiegel-app`. `spiegel-adapter-security` arrives in phase 2.
+Phase 1 (see [Scope](../01-context/scope.md#phasing)) needs `spiegel-core`, `spiegel-adapter-sparql`, `spiegel-adapter-web`, `spiegel-adapter-html`, `spiegel-adapter-config` and `spiegel-app`. `spiegel-adapter-security` arrives in phase 2. `spiegel-tools` arrives with its first tool, such as the context generator of [ADR 0017](../../adr/0017-framed-json-ld-with-a-frozen-context.md).
 
 ## Group and artefact identifiers
 

@@ -11,16 +11,25 @@ SPieGeL reads RDF from data sources, which are SPARQL endpoints (FR-DS-01). Whet
 
 ```mermaid
 flowchart LR
-    CL[Clients] --> PX[Reverse proxy] --> S[SPieGeL]
+    CL[Clients and browsers] --> PX[Reverse proxy] --> S[SPieGeL]
     S -->|SPARQL| TS[(Triple store)]
     S -->|SPARQL| OT[Ontop endpoint]
     OT -->|R2RML, SQL per query| RDB[(PostgreSQL, Trino)]
+    S -->|SPARQL| CX[(Cross-domain index, if any)]
     S --> IDP[OIDC provider]
+    S -.->|Link rel=collection| LDES[LDES server]
+    subgraph cfg [Configuration, outside SPieGeL]
+        REPO[Configuration repository] -->|CI with spiegel-tools| ART[Configuration artefact]
+    end
+    ART --> S
     subgraph lc [Loading chain, outside SPieGeL]
         SRC[CSV, JSON, XML, Web APIs, periodic relational extracts] --> RML[RML processor]
     end
     RML -->|materialised RDF| TS
+    RML -->|labels, search terms| CX
 ```
+
+The portal and its federated SPARQL editor are pages of the umbrella domain's tenant, not separate services; the editor's queries run in the visitor's browser ([ADR 0025](../../adr/0025-federated-query-in-the-portal.md)). An index of data from several domains, such as labels or search terms, is never held by SPieGeL: it is a store of its own, filled by the loading chain, and read like any data source. Tools for writing and checking configuration are a separate artefact, `spiegel-tools` ([ADR 0026](../../adr/0026-system-boundary.md)).
 
 ## Ports and adapters
 

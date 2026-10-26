@@ -31,3 +31,4 @@ Use [`template.md`](template.md) for new records.
 | [0023](0023-event-stream-discovery-and-versions.md) | Link resources to their event streams from configuration, and serve versions as ordinary resources | Accepted |
 | [0024](0024-json-ld-from-sparql-construct.md) | Compact JSON-LD from CONSTRUCT and DESCRIBE with the tenant's context, unless another form is asked for | Accepted |
 | [0025](0025-federated-query-in-the-portal.md) | Offer federated queries in the portal, run by Comunica in the visitor's browser | Accepted |
+| [0026](0026-system-boundary.md) | Draw SPieGeL's boundary by what answers requests, what runs in CI, what holds data, and what runs at the consumer | Accepted |
