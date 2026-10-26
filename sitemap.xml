@@ -225,7 +225,15 @@
          <lastmod>2026-10-26</lastmod>
     </url>
     <url>
+         <loc>https://milieuinfo.github.io/SPieGeL/specs/001-dereference-resource-as-rdf/plan/</loc>
+         <lastmod>2026-10-26</lastmod>
+    </url>
+    <url>
          <loc>https://milieuinfo.github.io/SPieGeL/specs/001-dereference-resource-as-rdf/spec/</loc>
+         <lastmod>2026-10-26</lastmod>
+    </url>
+    <url>
+         <loc>https://milieuinfo.github.io/SPieGeL/specs/001-dereference-resource-as-rdf/contracts/api/</loc>
          <lastmod>2026-10-26</lastmod>
     </url>
 </urlset>
