@@ -1661,6 +1661,8 @@
       
         
       
+        
+      
     
     
     
@@ -2282,6 +2284,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0021-labels-of-external-vocabularies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0021 Labels of external vocabularies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2658,7 +2688,7 @@
 <h3 id="rendering-html">Rendering HTML<a class="headerlink" href="#rendering-html" title="Permanent link">&para;</a></h3>
 <p>HTML is rendered from the same <code>ResourceDescription</code>, after the cache. The steps are:</p>
 <ol>
-<li><strong>Labels.</strong> Labels of the properties and of the linked resources, and their types, must be present, because every IRI on the page becomes a link labelled with its label (FR-HTML-10). Labels of external vocabularies come from the configured label sources (FR-HTML-11). They come from a query that the HTML profile declares for that purpose, not from whatever the main queries happen to return (see <a href="../../02-current-platform/html-rendering/#observations">Data-dependent HTML rendering</a>). That query is one of the profile's <code>QuerySpec</code>s: the core runs it in step 11, at the caller's access level, and caches its result with the description. The renderer itself queries nothing.</li>
+<li><strong>Labels.</strong> Labels of the properties and of the linked resources, and their types, must be present, because every IRI on the page becomes a link labelled with its label (FR-HTML-10). Labels from the domain come from a query that the HTML profile declares for that purpose, not from whatever the main queries happen to return (see <a href="../../02-current-platform/html-rendering/#observations">Data-dependent HTML rendering</a>). That query is one of the profile's <code>QuerySpec</code>s: the core runs it in step 11, at the caller's access level, and caches its result with the description. Terms without a label in the domain's data get one from the index of vocabulary extracts that SPieGeL builds at start-up from the configuration (FR-HTML-11, <a href="../../../adr/0021-labels-of-external-vocabularies/">ADR 0021</a>), with no query. The renderer itself queries nothing.</li>
 <li><strong>Presentation rules.</strong> The tenant's rules, combined with the shared defaults, choose the presentation blocks and components: by type, by predicate, by the predicate's own type and by datatype. → FR-HTML-06. How the rules are expressed is <a href="../../06-open-questions/#front-end">open question 21</a>.</li>
 <li><strong>Geometries.</strong> WKT literals are written into the page as they are, with their CRS (the GeoSPARQL CRS IRI, or WGS84 when there is none). The geometry map component reads them from the page and reprojects them in the browser. The server does no conversion, and the map needs no follow-up request. → FR-HTML-07.</li>
 <li><strong>Template.</strong> A template per URI template or resource type, falling back to the generic subject page, writes Flux markup with the content inside the tags (in the light DOM or in slots), so that the page is readable without JavaScript. → FR-HTML-03, NFR-UI-01, NFR-UI-04, <a href="../../03-requirements/design-system/">Design system: Flux</a>. The template engine is <a href="../../06-open-questions/#front-end">open question 9</a>.</li>

@@ -1677,6 +1677,8 @@
       
         
       
+        
+      
     
     
     
@@ -2298,6 +2300,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0021-labels-of-external-vocabularies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0021 Labels of external vocabularies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2841,7 +2871,7 @@
 </tr>
 <tr>
 <td>FR-HTML-11</td>
-<td><strong>Labels of external vocabularies are available.</strong> Pages also show readable labels for terms of external vocabularies (for example DCTERMS, SKOS, DCAT, schema.org). The labels come from configured label sources, consulted in order: the domain's own data source; a shared vocabulary source for all tenants (a data source, or vocabulary files in the configuration); otherwise the fallback of FR-HTML-10: a prefixed name if the prefix is known, else the full IRI. Vocabularies are never fetched from the web while a request is handled (NFR-SEC-06). Which sources are the default is <a href="../../06-open-questions/#architecture-and-operations">open question 26</a>.</td>
+<td><strong>Labels of external vocabularies are available.</strong> Pages also show readable labels for terms of external vocabularies (for example DCTERMS, SKOS, DCAT, schema.org). The labels come from configured label sources, consulted in order: the domain's own data source; a shared vocabulary source for all tenants (a data source, or vocabulary files in the configuration); otherwise the fallback of FR-HTML-10: a prefixed name if the prefix is known, else the full IRI. Vocabularies are never fetched from the web while a request is handled (NFR-SEC-06). The shared source is a set of reviewed extracts of external vocabularies in the configuration (<a href="../../../adr/0021-labels-of-external-vocabularies/">ADR 0021</a>). Labels of resources of other domains are <a href="../../06-open-questions/#architecture-and-operations">open question 42</a>.</td>
 <td>S</td>
 <td>1</td>
 <td>G, L</td>
