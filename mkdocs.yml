@@ -111,4 +111,5 @@ nav:
       - 0018 Personal data: adr/0018-personal-data-in-requests-and-caches.md
       - 0019 Findability: adr/0019-findability.md
       - 0020 Cache key and entity tag: adr/0020-cache-key-and-entity-tag.md
+      - 0021 Labels of external vocabularies: adr/0021-labels-of-external-vocabularies.md
       - Template: adr/template.md

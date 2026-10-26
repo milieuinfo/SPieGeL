@@ -31,7 +31,7 @@ This matrix links every function of the predecessor, and every requirement of th
 | Authentication and access levels | yes, five levels | extended (C) | FR-AC-01 to 03, NFR-SEC-02 | M | 2 | `spiegel-adapter-security`, `spiegel-core` |
 | Public `/sparql` | yes | — | FR-SPARQL-01 to 04 | M | 2 | `spiegel-adapter-web`, `spiegel-adapter-sparql` |
 | Properties, values and types as links to their IRIs | yes (XSLT `set-label`, `set-content`) | — | FR-HTML-10 | M | 1 | `spiegel-adapter-html` |
-| Labels for terms of external vocabularies | only if the vocabulary is in the domain's store | — | FR-HTML-11 | S | 1 | `spiegel-adapter-html`, `spiegel-adapter-config` |
+| Labels for terms of external vocabularies | only if the vocabulary is in the domain's store | — | FR-HTML-11 | S | 1 | `spiegel-adapter-html`, `spiegel-adapter-config` (extracts in the configuration, [ADR 0021](../../adr/0021-labels-of-external-vocabularies.md)) |
 | Multilingual HTML (data labels and interface texts) | no; fixed label order, Dutch interface texts in the XSLT | — | FR-HTML-12 | S | 2 | `spiegel-adapter-html`, `spiegel-adapter-web` |
 | Machine-readable HTML (subject IRI, alternate links, embedded JSON-LD) | partly (`ld-subject` convention) | — | FR-HTML-04 | S | 1 | `spiegel-adapter-html` |
 | Standard SPARQL result formats | partly (SPARQL JSON for the old components) | — | FR-SPARQL-02 | M | 2 | `spiegel-adapter-web` |
