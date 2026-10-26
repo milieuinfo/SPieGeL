@@ -29,3 +29,4 @@ Use [`template.md`](template.md) for new records.
 | [0021](0021-labels-of-external-vocabularies.md) | Take labels of external vocabularies from reviewed extracts in the configuration | Accepted |
 | [0022](0022-edge-concerns.md) | Keep TLS and flood protection at the edge; move the 303, CORS and real rate limits into SPieGeL | Accepted |
 | [0023](0023-event-stream-discovery-and-versions.md) | Link resources to their event streams from configuration, and serve versions as ordinary resources | Accepted |
+| [0024](0024-json-ld-from-sparql-construct.md) | Compact JSON-LD from CONSTRUCT and DESCRIBE with the tenant's context, unless another form is asked for | Accepted |
