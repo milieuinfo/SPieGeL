@@ -1667,6 +1667,8 @@
       
         
       
+        
+      
     
     
     
@@ -2372,6 +2374,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0024-json-ld-from-sparql-construct/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0024 JSON-LD from SPARQL CONSTRUCT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2899,7 +2929,7 @@
 </table>
 <p>No acceptable format for this form gives <code>406</code> (<code>not-acceptable</code>), and the store is not queried. A client that does not know the form in advance can accept both kinds, for example <code>application/sparql-results+json, text/turtle;q=0.9</code>.
 5. <strong>Run it</strong> on the data source the tenant names for <code>/sparql</code> (by default its triple store; an Ontop source for a tenant whose data is only relational), with the credentials for the caller's access level, within the same bounded pool, and with a timeout and a result limit (FR-AC-03, NFR-OPS-02). <strong>The store gets the query unchanged, but not the caller's <code>Accept</code>.</strong> The SPARQL adapter asks the store for a fixed format that it reads as a stream, such as N-Triples for graphs and SPARQL JSON for results. SPieGeL therefore offers the same formats on every store, can count against the result limit, and never passes on the store's own error bodies (<a href="../../../adr/0016-problem-details-for-errors/">ADR 0016</a>).
-6. <strong>Serialise and respond.</strong> The core neither holds nor writes the results (<a href="../../../adr/0010-jena-graph-types-in-the-core/">ADR 0010</a>). <code>RunSparqlQuery</code> returns a handle from the SPARQL adapter that writes the results, as they arrive, in the negotiated media type to the response. CSV, TSV, SPARQL JSON, Turtle and N-Triples are streamed; JSON-LD and RDF/XML are written once the result is complete, within the result limit. Whether JSON-LD from <code>CONSTRUCT</code> is compacted with the tenant's context (<a href="../../../adr/0017-framed-json-ld-with-a-frozen-context/">ADR 0017</a>) is <a href="../../06-open-questions/#architecture-and-operations">open question 41</a>; a frame does not apply, because the result has no single subject. The response has <code>Vary: Accept</code> and CORS for public use (NFR-OPEN-01), and is not cached by default. A timeout gives <code>504</code> (<code>source-timeout</code>).</p>
+6. <strong>Serialise and respond.</strong> The core neither holds nor writes the results (<a href="../../../adr/0010-jena-graph-types-in-the-core/">ADR 0010</a>). <code>RunSparqlQuery</code> returns a handle from the SPARQL adapter that writes the results, as they arrive, in the negotiated media type to the response. CSV, TSV, SPARQL JSON, Turtle and N-Triples are streamed; JSON-LD and RDF/XML are written once the result is complete, within the result limit. JSON-LD from <code>CONSTRUCT</code> and <code>DESCRIBE</code> follows the JSON-LD <code>profile</code> parameter: without one, or with <code>compacted</code>, it is compacted with the tenant's context (<a href="../../../adr/0017-framed-json-ld-with-a-frozen-context/">ADR 0017</a>); <code>expanded</code> and <code>flattened</code> are written as asked, without context (<a href="../../../adr/0024-json-ld-from-sparql-construct/">ADR 0024</a>). A frame does not apply, because the result has no single subject. The response has <code>Vary: Accept</code> and CORS for public use (NFR-OPEN-01), and is not cached by default. A timeout gives <code>504</code> (<code>source-timeout</code>).</p>
 </li>
 </ol>
 <h2 id="follow-up-requests-from-the-browser">Follow-up requests from the browser<a class="headerlink" href="#follow-up-requests-from-the-browser" title="Permanent link">&para;</a></h2>
