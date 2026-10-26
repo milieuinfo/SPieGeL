@@ -28,3 +28,4 @@ Use [`template.md`](template.md) for new records.
 | [0020](0020-cache-key-and-entity-tag.md) | Key the cache by profile, and tag responses with data and configuration version | Accepted |
 | [0021](0021-labels-of-external-vocabularies.md) | Take labels of external vocabularies from reviewed extracts in the configuration | Accepted |
 | [0022](0022-edge-concerns.md) | Keep TLS and flood protection at the edge; move the 303, CORS and real rate limits into SPieGeL | Accepted |
+| [0023](0023-event-stream-discovery-and-versions.md) | Link resources to their event streams from configuration, and serve versions as ordinary resources | Accepted |

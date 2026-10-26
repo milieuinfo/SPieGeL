@@ -50,7 +50,7 @@ This matrix links every function of the predecessor, and every requirement of th
 | Sitemap, `robots.txt`, canonical and alternate links | not checked | — | FR-HTML-16 | S | 1 | `spiegel-adapter-web`, `spiegel-adapter-html`, tenant configuration |
 | schema.org and Open Graph for search engines and link previews | not checked | — | FR-HTML-17 | S | 1 | `spiegel-adapter-html` |
 | Images of a resource shown on its page | no | — | FR-HTML-14 | S | 2 | `spiegel-adapter-html`, `spiegel-adapter-config` |
-| Discovery of event streams (LDES) | no | — | FR-ES-01 | S | 2 | `spiegel-adapter-html`, `spiegel-core` |
+| Discovery of event streams (LDES) | no | — | FR-ES-01 | S | 2 | `spiegel-adapter-html`, `spiegel-core` ([ADR 0023](../../adr/0023-event-stream-discovery-and-versions.md)) |
 | Assisted (LLM) query building | no | won't (W) | — | W | — | — |
 | Reconciliation | present, not routed | — | — | — | — | retired unless needed |
 | Linked Data Fragments | present, not routed | — | — | — | — | retired unless needed |
