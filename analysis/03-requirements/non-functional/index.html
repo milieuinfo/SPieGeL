@@ -1620,6 +1620,8 @@
       
         
       
+        
+      
     
     
     
@@ -2213,6 +2215,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0020-cache-key-and-entity-tag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0020 Cache key and entity tag
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2467,7 +2497,7 @@
 </tr>
 <tr>
 <td>NFR-OPS-03</td>
-<td><strong>Caching</strong> is centralised, configurable per tenant, and respects NFR-SEC-03. Responses stay valid until the tenant's data changes: the loading chain signals a new <strong>data version</strong> per tenant, which also serves as the entity tag (<code>ETag</code>), so that clients and caches can revalidate cheaply (<code>304 Not Modified</code>). A fixed lifetime is only a fallback, because domains change at very different rates: some every night, others a few times a year (see <a href="../performance/#the-predecessor-today">Performance and availability</a>).</td>
+<td><strong>Caching</strong> is centralised, configurable per tenant, and respects NFR-SEC-03. Responses stay valid until the tenant's data changes: the loading chain signals a new <strong>data version</strong> per tenant, which is part of the entity tag (<code>ETag</code>), together with the configuration version, the SPieGeL version and the variant (<a href="../../../adr/0020-cache-key-and-entity-tag/">ADR 0020</a>), so that clients and caches can revalidate cheaply (<code>304 Not Modified</code>). A fixed lifetime is only a fallback, because domains change at very different rates: some every night, others a few times a year (see <a href="../performance/#the-predecessor-today">Performance and availability</a>).</td>
 <td>S</td>
 </tr>
 <tr>

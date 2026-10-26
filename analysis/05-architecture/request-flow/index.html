@@ -1659,6 +1659,8 @@
       
         
       
+        
+      
     
     
     
@@ -2252,6 +2254,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0020-cache-key-and-entity-tag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0020 Cache key and entity tag
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2582,7 +2612,7 @@
 </tr>
 <tr>
 <td>10</td>
-<td><strong>Look up the cache</strong> under (tenant, resource IRI, profile, access level). The media type is not part of the key, because the cache holds RDF.</td>
+<td><strong>Look up the cache</strong> under (tenant, resource IRI, profile, access level). The media type is not part of the key, because the cache holds RDF: a read-only description that every format of the profile is serialised from (<a href="../../../adr/0020-cache-key-and-entity-tag/">ADR 0020</a>).</td>
 <td>core → <code>CachePort</code></td>
 <td>NFR-SEC-03, NFR-OPS-03</td>
 </tr>
@@ -2600,7 +2630,7 @@
 </tr>
 <tr>
 <td>13</td>
-<td><strong>Store</strong> a complete description in the cache, under the tenant's current data version. It stays valid until the loading chain signals a new version; the tenant's fixed lifetime is only a fallback.</td>
+<td><strong>Store</strong> a complete description in the cache, under the tenant's current data version, configuration version and SPieGeL version. It stays valid until one of them changes, usually because the loading chain signals a new data version; the tenant's fixed lifetime is only a fallback.</td>
 <td>core → <code>CachePort</code></td>
 <td>NFR-OPS-03</td>
 </tr>
@@ -2624,7 +2654,7 @@
 </tr>
 </tbody>
 </table>
-<p>A conditional request (<code>If-None-Match</code>) whose <code>ETag</code> still matches gets <code>304 Not Modified</code> after step 13, without rendering.</p>
+<p>A conditional request (<code>If-None-Match</code>) whose <code>ETag</code> still matches gets <code>304 Not Modified</code> after step 13, without rendering. The tag is computed from versions and the negotiated variant alone.</p>
 <h3 id="rendering-html">Rendering HTML<a class="headerlink" href="#rendering-html" title="Permanent link">&para;</a></h3>
 <p>HTML is rendered from the same <code>ResourceDescription</code>, after the cache. The steps are:</p>
 <ol>
@@ -2677,9 +2707,9 @@
 </tr>
 <tr>
 <td><code>ETag</code>, <code>Cache-Control</code></td>
-<td><code>200</code> and <code>304</code></td>
-<td>the tenant's data version, combined with the variant (media type, profile, language); <code>Cache-Control</code> follows the fixed lifetime only as a fallback. <code>private</code> for non-public access levels; for public responses a short <code>max-age</code> of minutes, then revalidation</td>
+<td><code>200</code> and <code>304</code> a weak tag (<code>W/"…"</code>): a short hash of the tenant's data version, its configuration version, the SPieGeL version and the variant (media type, profile, language), so that a rollout without new data still changes it (<a href="../../../adr/0020-cache-key-and-entity-tag/">ADR 0020</a>); <code>Cache-Control</code> follows the fixed lifetime only as a fallback. <code>private</code> for non-public access levels; for public responses a short <code>max-age</code> of minutes, then revalidation</td>
 <td>NFR-OPS-03, NFR-SEC-03, NFR-PRIV-03</td>
+<td></td>
 </tr>
 <tr>
 <td><code>Access-Control-Allow-Origin</code></td>
@@ -2796,7 +2826,6 @@
 <p>These follow from the requirements, but deserve confirmation in an ADR when the code is written:</p>
 <ul>
 <li>The <code>303</code> does not check whether the resource exists (step 5).</li>
-<li>The media type is not part of the cache key; the profile is (step 10).</li>
 <li>A failed or timed-out query makes the request fail, never a partial page. A description cut off at the ceiling is served, but always marked as incomplete (step 12, NFR-OPS-09).</li>
 <li>Labels for HTML come from a query declared by the HTML profile (rendering step 1).</li>
 </ul>
