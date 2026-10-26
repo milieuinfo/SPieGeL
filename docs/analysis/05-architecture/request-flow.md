@@ -69,15 +69,15 @@ sequenceDiagram
 | 7a | **Choose the language** for HTML: `?lang=`, then `Accept-Language`, then the tenant's default, among the languages the tenant offers. It affects rendering only, not the queries or the cache. | web adapter | FR-HTML-12 |
 | 8 | **Call the use case** `DereferenceResource` with the tenant, the template match (resource IRI and type), the profile and the access level. | web adapter → core | — |
 | 9 | **Select the queries.** Those `QuerySpec`s of the resource type whose conditions hold for the profile. The conditions are typed and tested. | core (`ResourceType`, `QuerySpec`) | FR-RA-01 to 03 |
-| 10 | **Look up the cache** under (tenant, resource IRI, profile, access level). The media type is not part of the key, because the cache holds RDF. | core → `CachePort` | NFR-SEC-03, NFR-OPS-03 |
+| 10 | **Look up the cache** under (tenant, resource IRI, profile, access level). The media type is not part of the key, because the cache holds RDF: a read-only description that every format of the profile is serialised from ([ADR 0020](../../adr/0020-cache-key-and-entity-tag.md)). | core → `CachePort` | NFR-SEC-03, NFR-OPS-03 |
 | 11 | **Run the queries** on a miss, on each query's named data source, with the credentials for the caller's access level. The resource IRI is bound as a term, not pasted into text. Queries run concurrently, within a bounded pool per data source and with a timeout. | core → `DataSourcePort` | FR-DS-01, FR-AC-03, NFR-SEC-02, NFR-SEC-04, NFR-OPS-02 |
 | 12 | **Merge and check.** Merge the results into one `ResourceDescription`, with blank nodes to the configured depth and `owl:unionOf` lists expanded for vocabularies. If a query failed or timed out, the request fails (step E2), and nothing is cached. A description that reaches the tenant's ceiling on triples is not a failure: it is served and cached, marked as incomplete in the RDF and in a header (NFR-OPS-09). If the description is empty, SPieGeL looks for a recorded move or removal of this URI: a move gives `301` to the new URI, a removal gives `410` with its tombstone (FR-URI-08, FR-URI-10, FR-URI-11). Otherwise the result is *not found*: the resource does not exist, or the caller may not see it. Otherwise, add the links between the document and the thing it describes (`foaf:primaryTopic`, `foaf:page`). | core | FR-RA-01, FR-RA-04, FR-RA-05, FR-URI-06 to 08, FR-URI-10, FR-URI-11, NFR-OPS-09, NFR-SEC-07 |
-| 13 | **Store** a complete description in the cache, under the tenant's current data version. It stays valid until the loading chain signals a new version; the tenant's fixed lifetime is only a fallback. | core → `CachePort` | NFR-OPS-03 |
+| 13 | **Store** a complete description in the cache, under the tenant's current data version, configuration version and SPieGeL version. It stays valid until one of them changes, usually because the loading chain signals a new data version; the tenant's fixed lifetime is only a fallback. | core → `CachePort` | NFR-OPS-03 |
 | 14 | **Render.** For RDF formats, serialise with Jena RIOT, streaming where possible. For HTML, see [Rendering HTML](#rendering-html). | `RendererPort` | FR-CN-01, FR-HTML-01 |
 | 15 | **Set the headers** and send the response. See [Response headers](#response-headers). A `HEAD` request gets the same status and headers, without the body. | web adapter | FR-CN-04, FR-CN-09, NFR-OPEN-01, NFR-UI-03 |
 | 16 | **Log and measure:** status, duration, and cache hit or miss, per tenant and data source. | web adapter | NFR-OPS-05 |
 
-A conditional request (`If-None-Match`) whose `ETag` still matches gets `304 Not Modified` after step 13, without rendering.
+A conditional request (`If-None-Match`) whose `ETag` still matches gets `304 Not Modified` after step 13, without rendering. The tag is computed from versions and the negotiated variant alone.
 
 ### Rendering HTML
 
@@ -98,7 +98,7 @@ HTML is rendered from the same `ResourceDescription`, after the cache. The steps
 | `Vary` | when the format, profile or language was negotiated from headers | `Accept`, `Accept-Profile`, `Accept-Language` (HTML, when no `?lang=` is given) and, in phase 2, `Authorization`. Omitted for a suffix or `_format`, whose URL already fixes the format | FR-CN-06, NFR-SEC-03 |
 | `Content-Location` | when negotiated | the format-specific URL, for example `/doc/x.ttl` | FR-CN-02, FR-CN-07 |
 | `Link` | always | `rel="alternate"` per format and profile; `rel="profile"` for the profile used | FR-CN-03, FR-CN-04 |
-| `ETag`, `Cache-Control` | `200` and `304` | the tenant's data version, combined with the variant (media type, profile, language); `Cache-Control` follows the fixed lifetime only as a fallback. `private` for non-public access levels; for public responses a short `max-age` of minutes, then revalidation | NFR-OPS-03, NFR-SEC-03, NFR-PRIV-03 |
+| `ETag`, `Cache-Control` | `200` and `304` a weak tag (`W/"…"`): a short hash of the tenant's data version, its configuration version, the SPieGeL version and the variant (media type, profile, language), so that a rollout without new data still changes it ([ADR 0020](../../adr/0020-cache-key-and-entity-tag.md)); `Cache-Control` follows the fixed lifetime only as a fallback. `private` for non-public access levels; for public responses a short `max-age` of minutes, then revalidation | NFR-OPS-03, NFR-SEC-03, NFR-PRIV-03 |
 | `Access-Control-Allow-Origin` | public responses | `*`. Credentialed requests follow normal CORS rules | NFR-OPEN-01 |
 | `Content-Security-Policy` | HTML | as strict as Flux allows | NFR-UI-03 |
 | `X-Robots-Tag` | responses to authenticated callers | `noindex` | FR-HTML-16 |
@@ -152,7 +152,6 @@ A list follows the same steps as dereferencing: tenant, identity, rate limit, ca
 These follow from the requirements, but deserve confirmation in an ADR when the code is written:
 
 - The `303` does not check whether the resource exists (step 5).
-- The media type is not part of the cache key; the profile is (step 10).
 - A failed or timed-out query makes the request fail, never a partial page. A description cut off at the ceiling is served, but always marked as incomplete (step 12, NFR-OPS-09).
 - Labels for HTML come from a query declared by the HTML profile (rendering step 1).
 

@@ -25,3 +25,4 @@ Use [`template.md`](template.md) for new records.
 | [0017](0017-framed-json-ld-with-a-frozen-context.md) | Serve framed JSON-LD with a generated, frozen context | Accepted |
 | [0018](0018-personal-data-in-requests-and-caches.md) | Minimise personal data from requests; leave personal data in the data to the store | Accepted |
 | [0019](0019-findability.md) | Advertise entry points to search engines, with schema.org for datasets and terms | Accepted |
+| [0020](0020-cache-key-and-entity-tag.md) | Key the cache by profile, and tag responses with data and configuration version | Accepted |
