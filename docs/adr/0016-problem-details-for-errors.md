@@ -2,6 +2,7 @@
 
 - **Status:** Accepted
 - **Date:** 2026-10-25
+- **Amended:** 2026-10-26: added `method-not-allowed`, `internal-error`, and the `406` for a description that cannot be written in the format asked for ([spec 001](../specs/001-dereference-resource-as-rdf/spec.md))
 
 ## Context
 
@@ -26,13 +27,15 @@ On `/sparql`, a `400` is most useful when it says where the query went wrong, or
     | `400` | `…/problem/invalid-query` | `/sparql`: a syntax error, an update, or a query that breaks the query policy |
     | `400` | `…/problem/invalid-request` | an invalid parameter, such as `_page` or `_property` |
     | `404` | `…/problem/not-found` | no template, no resource, or a resource the caller may not see |
-    | `406` | `…/problem/not-acceptable` | no acceptable media type |
+    | `405` | `…/problem/method-not-allowed` | a method other than those the resource allows, with `Allow` |
+    | `406` | `…/problem/not-acceptable` | no acceptable media type, or the description cannot be written in the format asked for |
     | `429` | `…/problem/rate-limited` | this client is over its limit |
+    | `500` | `…/problem/internal-error` | an unexpected failure inside SPieGeL itself |
     | `502` | `…/problem/source-error` | a data source failed |
     | `503` | `…/problem/overloaded` | the pool or queue of a data source is full |
     | `504` | `…/problem/source-timeout` | a data source did not answer in time |
 
-3. **The body is safe by construction.** `title` and `detail` are written by SPieGeL, in English, and never copy a store's message, a stack trace or a query text. The `404` body is the same for a resource that does not exist and for one the caller may not see.
+3. **The body is safe by construction.** `title` and `detail` are written by SPieGeL, in English, and never copy a store's message, a stack trace or a query text. An `internal-error` has a generic title and no `detail`; the cause is in the logs, under the request identifier. The `404` body is the same for a resource that does not exist and for one the caller may not see.
 4. **`instance` carries the request identifier** as a `urn:uuid:` URI, the same identifier that the logs use (NFR-OPS-05), so that a report can be traced without exposing anything else.
 5. **A query error on `/sparql` says where.** An `invalid-query` problem adds `line` and `column` from the parser, or the policy rule that was broken, such as "`SERVICE` is not allowed". It does not echo the query.
 6. **Error responses keep the response rules:** CORS as for any public response (NFR-OPEN-01), so that scripts in a browser can read the error; `Retry-After` on `429` and `503`; `Vary` where the format was negotiated; and `Cache-Control: no-store` on `429` and every `5xx`.
