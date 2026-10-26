@@ -115,4 +115,5 @@ nav:
       - 0022 Edge concerns: adr/0022-edge-concerns.md
       - 0023 Event stream discovery and versions: adr/0023-event-stream-discovery-and-versions.md
       - 0024 JSON-LD from SPARQL CONSTRUCT: adr/0024-json-ld-from-sparql-construct.md
+      - 0025 Federated query in the portal: adr/0025-federated-query-in-the-portal.md
       - Template: adr/template.md
