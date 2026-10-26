@@ -1681,6 +1681,8 @@
       
         
       
+        
+      
     
     
     
@@ -2338,6 +2340,34 @@
     
   
     0022 Edge concerns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0023-event-stream-discovery-and-versions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0023 Event stream discovery and versions
   
 
     
@@ -3098,7 +3128,7 @@
 <tbody>
 <tr>
 <td>FR-META-01</td>
-<td><strong>A dataset description per domain</strong>, in DCAT (DCAT-AP and the OSLO profile) and VoID, available as RDF by content negotiation and linked from the front page (FR-HTML-02). It is served at <code>/.well-known/void</code> on the domain's host name, as the VoID specification proposes. It covers title, description, publisher, contact point and licence (FR-META-02); the URI space (<code>void:uriSpace</code>) and example resources; the vocabularies used; the access points that exist in the current phase: the SPARQL endpoint (<code>void:sparqlEndpoint</code>, FR-META-03), dumps where they exist, and event streams (FR-ES-01); and the structure of the data as VoID class and property partitions (FR-HTML-15). Fixed facts come from the tenant configuration, the rest is derived from the data and cached. The umbrella catalogue can harvest these descriptions, which also lets the portal discover domains (FR-HTML-08). The description carries the version of the data (<code>pav:version</code> and its release date). Its key facts, such as the number of triples, the version, the named graphs, the query timeout and the licence, are also shown in HTML, on the front page and the <code>/sparql</code> page. Reference: <a href="../../04-landscape/uniprot-reference/">UniProt</a>.</td>
+<td><strong>A dataset description per domain</strong>, in DCAT (DCAT-AP and the OSLO profile) and VoID, available as RDF by content negotiation and linked from the front page (FR-HTML-02). It is served at <code>/.well-known/void</code> on the domain's host name, as the VoID specification proposes. It covers title, description, publisher, contact point and licence (FR-META-02); the URI space (<code>void:uriSpace</code>) and example resources; the vocabularies used; the access points that exist in the current phase: the SPARQL endpoint (<code>void:sparqlEndpoint</code>, FR-META-03), dumps where they exist, and event streams, each as a <code>dcat:DataService</code> (FR-ES-01, <a href="../../../adr/0023-event-stream-discovery-and-versions/">ADR 0023</a>); and the structure of the data as VoID class and property partitions (FR-HTML-15). Fixed facts come from the tenant configuration, the rest is derived from the data and cached. The umbrella catalogue can harvest these descriptions, which also lets the portal discover domains (FR-HTML-08). The description carries the version of the data (<code>pav:version</code> and its release date). Its key facts, such as the number of triples, the version, the named graphs, the query timeout and the licence, are also shown in HTML, on the front page and the <code>/sparql</code> page. Reference: <a href="../../04-landscape/uniprot-reference/">UniProt</a>.</td>
 <td>S</td>
 <td>1</td>
 <td>G, L</td>
@@ -3134,7 +3164,7 @@
 <tbody>
 <tr>
 <td>FR-ES-01</td>
-<td>A domain's event streams can be discovered from what SPieGeL publishes: from the domain's front page and its dataset description, and from a resource to the stream that publishes it. How a resource points to its stream is <a href="../../06-open-questions/#architecture-and-operations">open question 30</a>.</td>
+<td>A domain's event streams can be discovered from what SPieGeL publishes: from the domain's front page and its dataset description, and from a resource to the stream that publishes it. The tenant configuration names the stream per URI template or resource type; SPieGeL sends it as <code>Link: &lt;stream&gt;; rel="collection"</code> with every format and shows it on the HTML page, without adding triples to the data. Version objects in a stream are described like any resource when the store holds them (<a href="../../../adr/0023-event-stream-discovery-and-versions/">ADR 0023</a>).</td>
 <td>S</td>
 <td>2</td>
 <td>G</td>

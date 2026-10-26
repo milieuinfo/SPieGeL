@@ -1665,6 +1665,8 @@
       
         
       
+        
+      
     
     
     
@@ -2342,6 +2344,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0023-event-stream-discovery-and-versions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0023 Event stream discovery and versions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2762,8 +2792,8 @@
 <tr>
 <td><code>Link</code></td>
 <td>always</td>
-<td><code>rel="alternate"</code> per format and profile; <code>rel="profile"</code> for the profile used</td>
-<td>FR-CN-03, FR-CN-04</td>
+<td><code>rel="alternate"</code> per format and profile, and per other distribution with a media type; <code>rel="profile"</code> for the profile used; <code>rel="describedby"</code> to the domain's dataset description (<a href="../../../adr/0019-findability/">ADR 0019</a>); <code>rel="collection"</code> to the event stream that publishes the resource, where configured (<a href="../../../adr/0023-event-stream-discovery-and-versions/">ADR 0023</a>)</td>
+<td>FR-CN-03, FR-CN-04, FR-ES-01, FR-META-01</td>
 </tr>
 <tr>
 <td><code>ETag</code>, <code>Cache-Control</code></td>
