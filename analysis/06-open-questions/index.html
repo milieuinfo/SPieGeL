@@ -1599,6 +1599,8 @@
       
         
       
+        
+      
     
     
     
@@ -2388,6 +2390,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../adr/0027-html-rendered-on-the-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0027 HTML rendered on the server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../adr/template/" class="md-nav__link">
         
   
@@ -2738,7 +2768,7 @@
 <h2 id="front-end">Front end<a class="headerlink" href="#front-end" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>Do the <code>omgeving-ld</code> browser components stay?</strong> <em>Answered by <a href="../../adr/0005-flux-design-system-for-html/">ADR 0005</a>: no.</em> They are replaced by Flux components where those exist (accordion, rich data table, pager, map, properties), and by new components built to Flux's conventions where they do not: the hierarchy tree, incoming relations, the collection table and the SPARQL editor (FR-HTML-05; see <a href="../03-requirements/design-system/#from-omgeving-ld-to-flux">Design system: Flux</a>). <strong>Still open:</strong> must the same-origin <code>/sparql</code> and the HTML conventions in <a href="../02-current-platform/client-components/">Client components</a> (<code>ld-subject</code>, the <code>.rq</code> templates under <code>/queries/</code>) stay for a transition period, for pages elsewhere that still embed the old components?</li>
-<li><strong>Which template engine for HTML?</strong> The design system is decided: Flux (<a href="../../adr/0005-flux-design-system-for-html/">ADR 0005</a>). The template engine must emit custom elements, slots and attributes cleanly, and encode output by context (NFR-SEC-05). It must also work without Spring, because <code>spiegel-adapter-html</code> has no Spring dependency (<a href="../../adr/0004-technology-baseline/">ADR 0004</a>), and support translation files (FR-HTML-12) and reusable fragments, such as the RDF term. FreeMarker and Pebble do not encode by context, which leaves Thymeleaf (templates loaded at run time) and JTE (templates compiled, type-safe). Which of the two fits depends on whether tenants write templates of their own or configure their layout (FR-HTML-03). <em>On hold:</em> the question waits for question 40, because a page built in the browser needs no template engine on the server.</li>
+<li><strong>Which template engine for HTML?</strong> The design system is decided: Flux (<a href="../../adr/0005-flux-design-system-for-html/">ADR 0005</a>). The template engine must emit custom elements, slots and attributes cleanly, and encode output by context (NFR-SEC-05). It must also work without Spring, because <code>spiegel-adapter-html</code> has no Spring dependency (<a href="../../adr/0004-technology-baseline/">ADR 0004</a>), and support translation files (FR-HTML-12) and reusable fragments, such as the RDF term. FreeMarker and Pebble do not encode by context, which leaves Thymeleaf (templates loaded at run time) and JTE (templates compiled, type-safe). Which of the two fits depends on whether tenants write templates of their own or configure their layout (FR-HTML-03). Question 40 is answered by <a href="../../adr/0027-html-rendered-on-the-server/">ADR 0027</a>: HTML is rendered on the server, so a template engine is needed.</li>
 <li><strong>Where are the domain-specific explorer scripts</strong> for <code>imjv</code>, <code>cbb</code> and <code>dba</code>, and are they still needed?</li>
 <li><strong>How are presentation rules expressed?</strong> The predecessor chooses blocks and components with XSLT rules by type and predicate (see <a href="../02-current-platform/html-rendering/">Data-dependent HTML rendering</a>). FR-HTML-06 makes these rules configuration. Candidates: rules attached to profiles (as in Prez), viewers per URI template (as in ELDA), or a small rule format of our own.</li>
 <li><strong>Under which licence is Flux published, and can external contributors build SPieGeL?</strong> The Flux repository has no licence file, and its packages come from the department's Artifactory, not from the public npm registry. SPieGeL is public and MIT-licensed, and its release would bundle Flux code (see <a href="../03-requirements/design-system/#consequences-for-the-design">Design system: Flux</a>).</li>
@@ -2781,7 +2811,7 @@
 <li><strong><a href="../../adr/0019-findability/">ADR 0019</a>:</strong> search engines index reliably what is in the HTML as sent: the schema.org block, Open Graph tags and canonical links (FR-HTML-16, FR-HTML-17).</li>
 <li><strong>Rendering on the server with Lit</strong> needs Node.js, a second runtime next to the Java server.</li>
 </ul>
-<p>What a one-page application would gain: no templating in Java, one code base in the Flux team's own stack, richer interaction, and a server that only serves RDF and JSON-LD, which fits the paged lists of <a href="../../adr/0015-paged-lists-as-resources/">ADR 0015</a>. A middle way keeps the content rendered on the server and moves more of the interaction into JavaScript components. Question 9 waits for this answer.</p>
+<p>What a one-page application would gain: no templating in Java, one code base in the Flux team's own stack, richer interaction, and a server that only serves RDF and JSON-LD, which fits the paged lists of <a href="../../adr/0015-paged-lists-as-resources/">ADR 0015</a>. A middle way keeps the content rendered on the server and moves more of the interaction into JavaScript components. <em>Answered by <a href="../../adr/0027-html-rendered-on-the-server/">ADR 0027</a>, on the Flux team's advice of 26 October 2026:</em> HTML is rendered on the server as one more format of the same description, with the content in the light DOM, and interaction comes as islands (the map, the global header and footer, the thin layers of ADR 0014). Every page must work with JavaScript switched off.</p>
 </li>
 </ol>
 <h2 id="uri-policy">URI policy<a class="headerlink" href="#uri-policy" title="Permanent link">&para;</a></h2>
