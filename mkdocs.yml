@@ -117,6 +117,7 @@ nav:
       - 0024 JSON-LD from SPARQL CONSTRUCT: adr/0024-json-ld-from-sparql-construct.md
       - 0025 Federated query in the portal: adr/0025-federated-query-in-the-portal.md
       - 0026 System boundary: adr/0026-system-boundary.md
+      - 0027 HTML rendered on the server: adr/0027-html-rendered-on-the-server.md
       - Template: adr/template.md
   - Specifications:
       - 001 Dereference a resource as RDF:
