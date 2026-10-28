@@ -2721,7 +2721,6 @@
         direction TB
         controller["ResourceController&lt;br/&gt;«@RestController»"]
         restMapper["RestMapper&lt;br/&gt;SpiegelModel → Jena Model"]
-        jenaRest[("Jena Model&lt;br/&gt;(REST model)")]
         subgraph views["Views (content negotiation)"]
             direction TB
             turtle["Turtle&lt;br/&gt;text/turtle"]
@@ -2746,42 +2745,45 @@
         direction TB
         repo["VirtuosoResourceRepository&lt;br/&gt;implements ResourceRepository"]
         virtuosoMapper["VirtuosoMapper&lt;br/&gt;Jena Model → SpiegelModel"]
-        jenaRaw[("Jena Model&lt;br/&gt;(raw triples)")]
     end
 
     store[("Virtuoso&lt;br/&gt;triplestore")]
 
-    client -- "HTTP GET + Accept header" --&gt; controller
-    controller -- "getResource(Resource id)" --&gt; inPort
+    client -- "(1) HTTP GET + Accept header" --&gt; controller
+    controller -- "(2) getResource(Resource id)" --&gt; inPort
     inPort -. "implemented by" .-&gt; service
-    service -- "findById(Resource id)" --&gt; outPort
+    service -- "(3) findById(Resource id)" --&gt; outPort
     outPort -. "implemented by" .-&gt; repo
-    repo -- "SPARQL query" --&gt; store
-    store -- "triples" --&gt; jenaRaw
-    jenaRaw --&gt; virtuosoMapper
-    virtuosoMapper -- "SpiegelModel" --&gt; repo
-    repo -- "SpiegelModel" --&gt; service
-    service -- "SpiegelModel" --&gt; controller
-    controller --&gt; restMapper
-    restMapper --&gt; jenaRest
-    jenaRest --&gt; turtle
-    jenaRest --&gt; jsonld
-    jenaRest --&gt; html
-    views -- "HTTP response" --&gt; client
+    repo -- "(4) SPARQL query" --&gt; store
+    store -- "(5) triples as Jena Model" --&gt; repo
+    repo -- "(6) map(Jena Model)" --&gt; virtuosoMapper
+    virtuosoMapper -- "(7) returns SpiegelModel" --&gt; repo
+    repo -- "(8) SpiegelModel" --&gt; service
+    service -- "(9) SpiegelModel" --&gt; controller
+    controller -- "(10) map(SpiegelModel)" --&gt; restMapper
+    restMapper -- "(11) returns Jena Model" --&gt; controller
+    controller -- "(12) render(Jena Model)" --&gt; views
+    views -- "(13) HTTP response" --&gt; client
 
     service -. "uses" .- domain</code></pre>
 <h2 id="flow">Flow<a class="headerlink" href="#flow" title="Permanent link">&para;</a></h2>
+<p>The numbers match the numbered arrows in the diagram.</p>
 <ol>
 <li>The <strong>client</strong> sends an HTTP request to the <code>ResourceController</code>; the <code>Accept</code> header determines the representation it wants.</li>
 <li>The <code>ResourceController</code> builds a <code>Resource</code> (structured identifier) and calls the input port <code>GetResourceUseCase.getResource(Resource id)</code>.</li>
 <li>The core application asks the output port <code>ResourceRepository.findById(Resource id)</code> for the description of that resource.</li>
-<li><code>VirtuosoResourceRepository</code>, the concrete implementation of <code>ResourceRepository</code>, queries the triplestore with Apache Jena. The raw triples arrive in a Jena <code>Model</code>.</li>
-<li><code>VirtuosoMapper</code> maps that Jena <code>Model</code> to a <code>SpiegelModel</code>, which is returned to the hexagon.</li>
+<li><code>VirtuosoResourceRepository</code>, the concrete implementation of <code>ResourceRepository</code>, queries the triplestore with Apache Jena.</li>
+<li>It receives the raw triples as a Jena <code>Model</code>.</li>
+<li><code>VirtuosoResourceRepository</code> calls <code>VirtuosoMapper</code>, passing the Jena <code>Model</code>.</li>
+<li><code>VirtuosoMapper</code> returns a <code>SpiegelModel</code>.</li>
+<li><code>VirtuosoResourceRepository</code> returns the <code>SpiegelModel</code> to the hexagon.</li>
 <li>The hexagon returns the <code>SpiegelModel</code> to the <code>ResourceController</code>.</li>
-<li><code>RestMapper</code> maps the <code>SpiegelModel</code> back to a Jena <code>Model</code>, the REST model.</li>
-<li>Based on content negotiation, the controller selects the view that renders the Jena <code>Model</code>: an RDF serialisation (Turtle, JSON-LD) or an HTML representation.</li>
+<li><code>ResourceController</code> calls <code>RestMapper</code>, passing the <code>SpiegelModel</code>.</li>
+<li><code>RestMapper</code> returns a Jena <code>Model</code>.</li>
+<li>Based on content negotiation, <code>ResourceController</code> selects the matching view, which is generated from that Jena <code>Model</code>: an RDF serialisation (Turtle, JSON-LD) or an HTML representation.</li>
+<li>The view is sent to the client as the HTTP response.</li>
 </ol>
-<p>The core depends only on its own model (<code>SpiegelModel</code>, <code>Resource</code>) and its ports; Apache Jena appears only in the adapters.</p>
+<p>Like <code>SpiegelModel</code>, a Jena <code>Model</code> is an in-memory Java object model, not a store. The core depends only on its own model (<code>SpiegelModel</code>, <code>Resource</code>) and its ports; Apache Jena appears only in the adapters.</p>
 
 
 
