@@ -124,3 +124,4 @@ nav:
           - Specification: specs/001-dereference-resource-as-rdf/spec.md
           - Plan: specs/001-dereference-resource-as-rdf/plan.md
           - API contract: specs/001-dereference-resource-as-rdf/contracts/api.md
+          - Content negotiation by Spring MVC: specs/001-dereference-resource-as-rdf/spring-content-negotiation.md
