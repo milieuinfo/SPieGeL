@@ -56,6 +56,7 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Hexagonal architecture: hexagonal-architecture.md
   - Analysis:
       - analysis/README.md
       - Context:
