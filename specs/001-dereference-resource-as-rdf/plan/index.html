@@ -2455,6 +2455,8 @@
       
         
       
+        
+      
     
     
     
@@ -2821,6 +2823,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../spring-content-negotiation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Content negotiation by Spring MVC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -3113,6 +3143,7 @@
 <li><strong>A raw path segment must consist of URI characters only</strong> (unreserved, sub-delims, <code>:</code>, <code>@</code>, percent-encoding). A test showed that Jena's <code>substitution</code> writes an IRI containing <code>&gt;</code> unescaped, so a segment such as <code>a%3E</code> is matched on its decoded value but the IRI is built from the raw, still-encoded segment.</li>
 <li><strong>Descriptions are serialised to a byte array before the status is sent.</strong> That makes the RDF/XML check and "never <code>200</code> then fail" simple; streaming arrives with the size ceiling of feature 002.</li>
 <li><strong>RDF serialisation stays in the web adapter</strong> with Jena RIOT. A <code>RendererPort</code> is introduced with HTML in feature 005, when a second renderer exists (Anti-Abstraction Gate).</li>
+<li><strong>The format is negotiated by <code>FormatNegotiator</code>, not by Spring MVC's content negotiation</strong> (<code>ContentNegotiationManager</code>, <code>produces</code>, a message converter per format). A test on Spring Boot 4.1.1 showed that Spring follows the client's order at equal quality (AC-3.6), answers <code>500</code>, or <code>200</code> broken off halfway, when RDF/XML cannot be written (AC-3.14, AC-3.15, FR-3), describes a non-existent resource for a format suffix (AC-3.2), sets neither <code>Vary</code> nor <code>Content-Location</code> (AC-3.7), copies media type parameters into <code>Content-Type</code> (AC-3.16), and answers an unknown <code>_format</code> or an unreadable <code>Accept</code> with an empty <code>406</code> (AC-3.12). Spring MVC still does the routing, <code>ResponseEntity</code> and the exception handlers, and Spring's <code>MediaType</code> parses and compares media types. See <a href="../spring-content-negotiation/">Content negotiation by Spring MVC</a>.</li>
 </ol>
 <h2 id="pre-implementation-gates">Pre-implementation gates<a class="headerlink" href="#pre-implementation-gates" title="Permanent link">&para;</a></h2>
 <ul>
