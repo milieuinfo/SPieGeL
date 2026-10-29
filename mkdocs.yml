@@ -89,6 +89,7 @@ nav:
           - Hexagonal design: analysis/05-architecture/hexagonal-design.md
           - Request flow: analysis/05-architecture/request-flow.md
           - Module structure: analysis/05-architecture/module-structure.md
+          - Project modules: analysis/05-architecture/project-modules.md
       - Open questions: analysis/06-open-questions.md
   - Decisions:
       - adr/README.md

@@ -40,12 +40,10 @@
   </scm>
 
   <modules>
-    <module>spiegel-core</module>
-    <module>spiegel-adapter-config</module>
-    <module>spiegel-adapter-sparql</module>
-    <module>spiegel-adapter-web</module>
-    <module>spiegel-adapter-html</module>
-    <module>spiegel-app</module>
+    <module>spiegel-model</module>
+    <module>spiegel-application</module>
+    <module>spiegel-adapter</module>
+    <module>spiegel-bootstrap</module>
   </modules>
 
   <properties>
@@ -62,27 +60,27 @@
     <dependencies>
       <dependency>
         <groupId>be.vlaanderen.omgeving.spiegel</groupId>
-        <artifactId>spiegel-core</artifactId>
+        <artifactId>spiegel-model</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>be.vlaanderen.omgeving.spiegel</groupId>
-        <artifactId>spiegel-adapter-config</artifactId>
+        <artifactId>spiegel-application</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>be.vlaanderen.omgeving.spiegel</groupId>
-        <artifactId>spiegel-adapter-sparql</artifactId>
+        <artifactId>spiegel-adapter-in-rest</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>be.vlaanderen.omgeving.spiegel</groupId>
-        <artifactId>spiegel-adapter-web</artifactId>
+        <artifactId>spiegel-adapter-out-virtuoso</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>be.vlaanderen.omgeving.spiegel</groupId>
-        <artifactId>spiegel-adapter-html</artifactId>
+        <artifactId>spiegel-adapter-out-elastic</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

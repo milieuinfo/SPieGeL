@@ -28,7 +28,7 @@ Java 21, Spring Boot 4 and Apache Jena 6, built with Maven. See [ADR 0004](docs/
 
 ```shell
 mvn verify                      # build and test all modules
-mvn -pl spiegel-app spring-boot:run
+mvn -pl spiegel-bootstrap spring-boot:run
 ```
 
 ## Data sources

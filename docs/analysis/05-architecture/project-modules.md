@@ -1,14 +1,18 @@
+# Project modules
+
+The Maven modules and the packages in each. See [Module structure](module-structure.md) for the dependency rules.
+
 ## Maven modules
 
-- model
-- application
-- bootstrap
-- adapter
-  - in
-    - rest
-  - out
-    - virtuoso
-    - postgres (?)
+- spiegel-model
+- spiegel-application
+- spiegel-bootstrap
+- spiegel-adapter
+  - spiegel-adapter-in
+    - spiegel-adapter-in-rest
+  - spiegel-adapter-out
+    - spiegel-adapter-out-virtuoso
+    - spiegel-adapter-out-elastic
     - ...
 
 ## Packages

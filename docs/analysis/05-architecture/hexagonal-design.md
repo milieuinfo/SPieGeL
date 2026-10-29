@@ -95,7 +95,7 @@ Outbound ports:
 | Port | Adapters |
 |---|---|
 | `DataSourcePort` | SPARQL over HTTP (Jena), for triple stores and for Ontop endpoints over relational sources ([ADR 0009](../../adr/0009-ontop-for-relational-sources.md)) |
-| `QueryInspector` | Checks query text against a `QueryPolicy`: strict SPARQL 1.1 parsing and a walk over the syntax tree, in `spiegel-adapter-sparql` ([ADR 0011](../../adr/0011-query-policy.md)) |
+| `QueryInspector` | Checks query text against a `QueryPolicy`: strict SPARQL 1.1 parsing and a walk over the syntax tree, in `spiegel-adapter-out-virtuoso` ([ADR 0011](../../adr/0011-query-policy.md)) |
 | `SearchPort` | The data source's own full-text index through SPARQL, such as `bif:contains` or `ql:contains-word` (FR-SRCH-01) |
 | `TenantConfigurationPort` | Turtle in SPieGeL's configuration vocabulary, validated with SHACL, with `.rq` files for queries ([ADR 0012](../../adr/0012-tenant-configuration-as-rdf.md)). Delivered as a versioned artefact, mounted read-only ([ADR 0013](../../adr/0013-tenant-configuration-delivery.md)) |
 | `CachePort` | In-memory; later a shared cache |
