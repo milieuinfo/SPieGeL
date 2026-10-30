@@ -35,10 +35,12 @@ The portal and its federated SPARQL editor are pages of the umbrella domain's te
 
 ```mermaid
 flowchart LR
-    subgraph inbound [Inbound adapters]
+    subgraph inbound [Inbound adapter: web, Spring MVC]
         WEB[HTTP: /id /doc /ns /eli /.well-known/genid]
         SPQ[HTTP: /sparql]
         SRCH[HTTP: /keywordsearch]
+        AUTH[Authentication: token → AccessLevel]
+        REN[Rendering: RDF formats, HTML]
     end
     subgraph core [Domain core]
         UC1([DereferenceResource])
@@ -48,8 +50,6 @@ flowchart LR
     end
     subgraph outbound [Outbound adapters]
         CFG[Tenant configuration]
-        IDP[Identity: token → AccessLevel]
-        REN[Renderers: RDF formats, HTML]
         CACHE[Cache]
         DS[(SPARQL data source: triple store or Ontop)]
         SI[Search: the store's full-text index]
@@ -58,15 +58,15 @@ flowchart LR
     SPQ --> UC2
     SRCH --> UC3
     inbound -.-> CFG
-    inbound -.-> IDP
-    inbound -.-> REN
     UC1 --> CACHE
     UC1 --> DS
     UC2 --> DS
     UC3 --> SI
 ```
 
-Solid arrows are calls from a use case. Dotted arrows are calls that an inbound adapter makes through a port of the core, before or after the use case: it resolves the tenant and the caller's access level first, and renders the result last (see [Request flow](request-flow.md)). These ports are defined in the core so that the web adapter does not depend on the HTML or security adapter. The use cases receive the tenant and the access level as input; they do not call the identity provider themselves.
+Solid arrows are calls from a use case. The dotted arrow is a call that the inbound adapter makes through a port of the core before the use case: it resolves the tenant first (see [Request flow](request-flow.md)).
+
+Authentication and rendering are not ports of the core and not adapters of their own. They belong to the web adapter, `spiegel-adapter-in-rest`, which is implemented with Spring MVC: it validates the caller's token with Spring Security and maps the caller's roles to an `AccessLevel` before it calls the use case, and it renders the `ResourceDescription` that the use case returns in the negotiated media type, with Jena RIOT for RDF formats and a template engine for HTML. The use cases receive the tenant and the access level as input; they do not know how the caller was authenticated, nor in which format the result is written.
 
 The order in which these parts act on a request is described in [Request flow](request-flow.md).
 
@@ -99,9 +99,7 @@ Outbound ports:
 | `SearchPort` | The data source's own full-text index through SPARQL, such as `bif:contains` or `ql:contains-word` (FR-SRCH-01) |
 | `TenantConfigurationPort` | Turtle in SPieGeL's configuration vocabulary, validated with SHACL, with `.rq` files for queries ([ADR 0012](../../adr/0012-tenant-configuration-as-rdf.md)). Delivered as a versioned artefact, mounted read-only ([ADR 0013](../../adr/0013-tenant-configuration-delivery.md)) |
 | `CachePort` | In-memory; later a shared cache |
-| `IdentityPort` | OIDC through Spring Security |
 | `RateLimitPort` | In memory per node, each counting up to its share of the limit; later a shared store, falling back to the count per node when it fails ([ADR 0022](../../adr/0022-edge-concerns.md)) |
-| `RendererPort` | Jena RIOT for RDF formats; a template engine for HTML |
 
 ## Mapping from the predecessor
 
@@ -111,10 +109,10 @@ Outbound ports:
 | Scripts for `/doc`, `/ns`, `/sparql` and search | Use cases in the core | Currently mix caching, security and domain logic; to be separated |
 | Routes generated at runtime per domain | One set of controllers with `Tenant` resolved from the host name | No per-domain code |
 | XML query catalogue and query templates | `ResourceType` + `QuerySpec` + `Profile` | The most hidden business logic of the predecessor. Now typed and tested |
-| RDF serialisation | Renderer adapter (Jena RIOT) | — |
-| XSLT HTML rendering | HTML renderer adapter | Template engine to be decided |
+| RDF serialisation | Web adapter (`spiegel-adapter-in-rest`, Jena RIOT) | — |
+| XSLT HTML rendering | Web adapter (`spiegel-adapter-in-rest`) | Template engine to be decided |
 | File-based second-level cache | `CachePort` | The key includes the access level and profile (NFR-SEC-03) |
-| OIDC flow scripts | Spring Security OAuth2 resource server / client | Large simplification |
+| OIDC flow scripts | Spring Security OAuth2 resource server / client in the web adapter | Large simplification |
 | Environment variables → configuration | `@ConfigurationProperties` + tenant configuration files | — |
 | Concurrency throttle | Bounded executor or bulkhead per data source | NFR-OPS-02 |
 

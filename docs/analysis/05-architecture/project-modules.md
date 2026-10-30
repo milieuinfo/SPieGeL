@@ -35,6 +35,8 @@ The Maven modules and the packages in each. See [Module structure](module-struct
 - be.vlaanderen.omgeving.spiegel.adapter.in.rest.mapper.ResourceMapper (maps domain model to REST model)
 - be.vlaanderen.omgeving.spiegel.adapter.in.rest.model (REST model)
 - be.vlaanderen.omgeving.spiegel.adapter.in.rest.model.exception (exceptions in REST model)
+- be.vlaanderen.omgeving.spiegel.adapter.in.rest.view (planned: RDF serialisation with Jena RIOT, HTML templates)
+- be.vlaanderen.omgeving.spiegel.adapter.in.rest.security (planned, phase 2: Spring Security, roles → AccessLevel)
 
 
 ### Adapter out: Virtuoso

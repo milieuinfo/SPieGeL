@@ -28,6 +28,8 @@ Modules are added when they are needed. Phase 1 starts with `spiegel-core`, `spi
 
 *Amended on 2026-10-28:* the modules are restructured along the hexagonal layers: `spiegel-core` is split into `spiegel-model` and `spiegel-application`, adapters are grouped under `spiegel-adapter-in` and `spiegel-adapter-out` (`spiegel-adapter-web` becomes `spiegel-adapter-in-rest`, `spiegel-adapter-sparql` becomes `spiegel-adapter-out-virtuoso`), and `spiegel-app` becomes `spiegel-bootstrap`. `spiegel-adapter-config` and `spiegel-adapter-html` are removed until they are needed. See [Module structure](../analysis/05-architecture/module-structure.md).
 
+*Amended on 2026-10-30:* HTML rendering and authentication are not adapters of their own in the hexagonal design. They belong to the web adapter, so `spiegel-adapter-html` and `spiegel-adapter-security` will not be added: rendering (Jena RIOT, the template engine and the front-end build) and authentication (Spring Security) live in `spiegel-adapter-in-rest`. See [Hexagonal design](../analysis/05-architecture/hexagonal-design.md#ports-and-adapters).
+
 ## Consequences
 
 - `spiegel-core` inherits Spring Boot's plug-in and dependency management through the parent POM, but has no Spring dependency. `ArchitectureTest` checks this on every build.

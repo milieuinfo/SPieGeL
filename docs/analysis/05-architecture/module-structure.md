@@ -8,7 +8,10 @@ spiegel/                                 (parent POM, packaging pom)
 ├── spiegel-application                  Use cases (i.e. inbound ports), outbound ports, services implementing use cases and using outbound ports. No Spring.
 ├── spiegel-adapter                      (packaging pom)
 │   ├── spiegel-adapter-in               (packaging pom) adapters that drive the application
-│   │   └── spiegel-adapter-in-rest      HTTP inbound: dereferencing, 303, content negotiation, Spring MVC
+│   │   └── spiegel-adapter-in-rest      web adapter, Spring MVC: dereferencing, 303, content negotiation,
+│   │                                    rendering (Jena RIOT for RDF formats; template engine, Flux and
+│   │                                    front-end build for HTML), authentication (Spring Security, OIDC,
+│   │                                    roles → AccessLevel; phase 2)
 │   └── spiegel-adapter-out              (packaging pom) adapters behind the outbound ports
 │       ├── spiegel-adapter-out-virtuoso ResourceRepository over SPARQL 1.1 against Virtuoso, using Apache Jena
 │       └── spiegel-adapter-out-elastic  outbound adapter for Elasticsearch
@@ -19,8 +22,6 @@ Planned modules, added when they are needed:
 
 ```
 spiegel-adapter-out-config               TenantConfigurationPort: Turtle + .rq files, SHACL validation (jena-shacl)
-spiegel-adapter-out-html                 RendererPort for HTML (template engine, Flux design system, front-end build)
-spiegel-adapter-out-security             IdentityPort: OIDC, roles → AccessLevel
 spiegel-tools                            command-line tools for configuration and CI: context generator,
                                          vocabulary extractor, configuration validator
 ```
@@ -50,12 +51,12 @@ flowchart BT
 
 The modules are a direct consequence of the [hexagonal design](hexagonal-design.md): one module for the domain model, one for the use cases and ports, one per adapter, and one that assembles them. Separate Maven modules, rather than packages in one module, are chosen for these reasons:
 
-1. **The compiler guards the boundaries.** A module can only use what its own POM declares. Jena's HTTP client is only in `spiegel-adapter-out-virtuoso`, Jena's serialisers (RIOT) only in the adapters that render RDF, and Spring MVC only in `spiegel-adapter-in-rest`. The model and application modules cannot import a Spring or Jena HTTP class by accident, because it would not compile. With packages in one module, such a boundary is only a convention.
+1. **The compiler guards the boundaries.** A module can only use what its own POM declares. Jena's HTTP client is only in `spiegel-adapter-out-virtuoso`, Jena's serialisers (RIOT), the template engine, Spring MVC and Spring Security only in `spiegel-adapter-in-rest`. The model and application modules cannot import a Spring or Jena HTTP class by accident, because it would not compile. With packages in one module, such a boundary is only a convention.
 2. **A test guards what the compiler cannot see.** `ArchitectureTest` (ArchUnit) checks on every build that the model and application modules stay free of frameworks and that adapters do not depend on each other.
-3. **Adapters can be replaced.** A second store type is a second implementation of the same outbound port, without any change to the model or application modules. A relational source needs not even that: Ontop offers a SPARQL endpoint, so the SPARQL adapter reads it ([ADR 0009](../../adr/0009-ontop-for-relational-sources.md)). The same holds for the template engine, which is still to be chosen ([open question 9](../06-open-questions.md#front-end)).
+3. **Adapters can be replaced.** A second store type is a second implementation of the same outbound port, without any change to the model or application modules. A relational source needs not even that: Ontop offers a SPARQL endpoint, so the SPARQL adapter reads it ([ADR 0009](../../adr/0009-ontop-for-relational-sources.md)). The template engine, which is still to be chosen ([open question 9](../06-open-questions.md#front-end)), is used only inside `spiegel-adapter-in-rest`, so choosing or replacing it changes no other module.
 4. **The model and use cases can be tested without infrastructure.** The rules for URI templates, profiles, access levels and merging descriptions are tested without a server, a store or a browser (NFR-Q-01, NFR-Q-02).
-5. **Each technology stays in its own module.** This matters especially for `spiegel-adapter-out-html`, which gets a front-end build (Node.js, pnpm, Flux; see [Design system: Flux](../03-requirements/design-system.md#consequences-for-the-design)) that must not leak into the rest of the build.
-6. **Modules arrive by phase.** Phase 1 needs no authentication, so `spiegel-adapter-out-security` arrives in phase 2 ([ADR 0004](../../adr/0004-technology-baseline.md): modules are added when they are needed).
+5. **Each technology stays in its own module.** Rendering and authentication are part of the web adapter, not adapters of their own, so their technology stays in `spiegel-adapter-in-rest`. This matters especially for the front-end build (Node.js, pnpm, Flux; see [Design system: Flux](../03-requirements/design-system.md#consequences-for-the-design)), which runs in that module and must not leak into the rest of the build.
+6. **Modules and dependencies arrive by phase.** Modules are added when they are needed ([ADR 0004](../../adr/0004-technology-baseline.md)), and so are dependencies within a module: phase 1 needs no authentication, so Spring Security is added to `spiegel-adapter-in-rest` in phase 2.
 7. **It prevents what the predecessor shows.** There, caching, security and domain logic are mixed in scripts, and the query catalogue lives outside any type system or test (see [Mapping from the predecessor](hexagonal-design.md#mapping-from-the-predecessor)). Module boundaries keep these concerns apart.
 
 The split has costs:
@@ -65,7 +66,7 @@ The split has costs:
 
 ## Phase 1 subset
 
-Phase 1 (see [Scope](../01-context/scope.md#phasing)) needs `spiegel-model`, `spiegel-application`, `spiegel-adapter-in-rest`, `spiegel-adapter-out-virtuoso`, `spiegel-adapter-out-html`, `spiegel-adapter-out-config` and `spiegel-bootstrap`. `spiegel-adapter-out-security` arrives in phase 2. `spiegel-tools` arrives with its first tool, such as the context generator of [ADR 0017](../../adr/0017-framed-json-ld-with-a-frozen-context.md).
+Phase 1 (see [Scope](../01-context/scope.md#phasing)) needs `spiegel-model`, `spiegel-application`, `spiegel-adapter-in-rest`, `spiegel-adapter-out-virtuoso`, `spiegel-adapter-out-config` and `spiegel-bootstrap`. Authentication arrives in phase 2, in `spiegel-adapter-in-rest`. `spiegel-tools` arrives with its first tool, such as the context generator of [ADR 0017](../../adr/0017-framed-json-ld-with-a-frozen-context.md).
 
 ## Group and artefact identifiers
 

@@ -19,18 +19,16 @@ sequenceDiagram
     autonumber
     participant C as Client
     participant P as Reverse proxy
-    participant W as Web adapter
+    participant W as Web adapter (Spring MVC)
     participant T as Tenant configuration
-    participant I as Identity adapter
     participant U as DereferenceResource (core)
     participant K as Cache
     participant D as Data source
-    participant R as Renderer
     C->>P: GET https://{host}/doc/{concept}/{id}
     Note over P: TLS, HSTS, X-Forwarded-*<br/>flood protection per address
     P->>W: GET /doc/{concept}/{id} (Accept, Accept-Profile)
     W->>T: tenant for host name
-    W->>I: caller → access level (phase 2)
+    W->>W: authenticate caller → access level (phase 2)
     W->>W: rate limit per client, tenant and kind (429)
     W->>W: match URI template
     alt id template
@@ -47,8 +45,7 @@ sequenceDiagram
         U->>K: store
     end
     U-->>W: ResourceDescription or not found
-    W->>R: render (media type, profile, presentation rules)
-    R-->>W: body
+    W->>W: render (media type, profile, presentation rules)
     W-->>P: 200 with Vary, Link, Content-Location, ETag, CORS, CSP
     P-->>C: 200
 ```
@@ -60,7 +57,7 @@ sequenceDiagram
 | 0 | **Edge.** The reverse proxy terminates TLS, adds HSTS and passes the original host, scheme and client address in `X-Forwarded-*` headers. SPieGeL trusts those headers only from the proxy's configured addresses. The proxy also sets generic limits (sizes, connections, time-outs) and protects against floods with a generous limit per address. It does not filter on content, answer the `303` or set CORS headers: SPieGeL does ([ADR 0022](../../adr/0022-edge-concerns.md)). | reverse proxy | NFR-OPS-08 |
 | 1 | **Receive.** Assign a request identifier, start timing, and log in a structured format, without personal data from the request (NFR-PRIV-02). | web adapter | NFR-OPS-05, NFR-PRIV-02 |
 | 2 | **Resolve the tenant** from the host name. An unknown host gets `404`. | web adapter, `TenantConfigurationPort` | FR-MT-01, FR-MT-02 |
-| 3 | **Identify the caller** *(phase 2)*. A bearer token (OpenID Connect or client credentials) is validated on every request, with no server-side session. A caller without a token is an unauthenticated client and gets the *public* level, the lowest. In phase 1 every caller is one. The level is the highest one granted by the caller's roles. | web adapter, `IdentityPort` | FR-AC-01, FR-AC-02, NFR-OPS-01 |
+| 3 | **Identify the caller** *(phase 2)*. A bearer token (OpenID Connect or client credentials) is validated on every request, with no server-side session. A caller without a token is an unauthenticated client and gets the *public* level, the lowest. In phase 1 every caller is one. The level is the highest one granted by the caller's roles. | web adapter (Spring Security) | FR-AC-01, FR-AC-02, NFR-OPS-01 |
 | 3a | **Check the rate limit** for this client, tenant and kind of request, through `RateLimitPort`. Over the limit gives `429` with `Retry-After` (step E7). No query has been run yet. A limit per authenticated client can only be applied after step 3. In phase 1 each node counts up to its share of the limit ([ADR 0022](../../adr/0022-edge-concerns.md)). | web adapter → `RateLimitPort` | NFR-OPS-08 |
 | 4 | **Match the URI template.** When several match, the most specific wins: more literal characters, then more variables. Variables are typed by a pattern, so an invalid value gives `404` (no match) without a query, not an error. No match gives `404`. A value that matches is not checked against a list: the data decides whether the resource exists (step 12), and a negative result is cached per data version ([ADR 0012](../../adr/0012-tenant-configuration-as-rdf.md)). | core (`UriTemplate`) | FR-URI-01, FR-URI-03 to 05 |
 | 5 | **`id` → `doc`.** If the template is an `id` template, answer `303 See Other` with the matching `doc` URI in `Location`, for every media type. The data is not consulted, so the redirect reveals nothing about whether the resource exists or is visible. | core (`UriTemplate`), web adapter | FR-URI-02, NFR-SEC-07 |
@@ -73,7 +70,7 @@ sequenceDiagram
 | 11 | **Run the queries** on a miss, on each query's named data source, with the credentials for the caller's access level. The resource IRI is bound as a term, not pasted into text. Queries run concurrently, within a bounded pool per data source and with a timeout. | core → `DataSourcePort` | FR-DS-01, FR-AC-03, NFR-SEC-02, NFR-SEC-04, NFR-OPS-02 |
 | 12 | **Merge and check.** Merge the results into one `ResourceDescription`, with blank nodes to the configured depth and `owl:unionOf` lists expanded for vocabularies. If a query failed or timed out, the request fails (step E2), and nothing is cached. A description that reaches the tenant's ceiling on triples is not a failure: it is served and cached, marked as incomplete in the RDF and in a header (NFR-OPS-09). If the description is empty, SPieGeL looks for a recorded move or removal of this URI: a move gives `301` to the new URI, a removal gives `410` with its tombstone (FR-URI-08, FR-URI-10, FR-URI-11). Otherwise the result is *not found*: the resource does not exist, or the caller may not see it. Otherwise, add the links between the document and the thing it describes (`foaf:primaryTopic`, `foaf:page`). | core | FR-RA-01, FR-RA-04, FR-RA-05, FR-URI-06 to 08, FR-URI-10, FR-URI-11, NFR-OPS-09, NFR-SEC-07 |
 | 13 | **Store** a complete description in the cache, under the tenant's current data version, configuration version and SPieGeL version. It stays valid until one of them changes, usually because the loading chain signals a new data version; the tenant's fixed lifetime is only a fallback. | core → `CachePort` | NFR-OPS-03 |
-| 14 | **Render.** For RDF formats, serialise with Jena RIOT, streaming where possible. For HTML, see [Rendering HTML](#rendering-html). | `RendererPort` | FR-CN-01, FR-HTML-01 |
+| 14 | **Render.** For RDF formats, serialise with Jena RIOT, streaming where possible. For HTML, see [Rendering HTML](#rendering-html). | web adapter | FR-CN-01, FR-HTML-01 |
 | 15 | **Set the headers** and send the response. See [Response headers](#response-headers). A `HEAD` request gets the same status and headers, without the body. | web adapter | FR-CN-04, FR-CN-09, NFR-OPEN-01, NFR-UI-03 |
 | 16 | **Log and measure:** status, duration, and cache hit or miss, per tenant and data source. | web adapter | NFR-OPS-05 |
 
@@ -81,9 +78,9 @@ A conditional request (`If-None-Match`) whose `ETag` still matches gets `304 Not
 
 ### Rendering HTML
 
-HTML is rendered from the same `ResourceDescription`, after the cache. The steps are:
+HTML is rendered by the web adapter from the same `ResourceDescription`, after the cache. The steps are:
 
-1. **Labels.** Labels of the properties and of the linked resources, and their types, must be present, because every IRI on the page becomes a link labelled with its label (FR-HTML-10). Labels from the domain come from a query that the HTML profile declares for that purpose, not from whatever the main queries happen to return (see [Data-dependent HTML rendering](../02-current-platform/html-rendering.md#observations)). That query is one of the profile's `QuerySpec`s: the core runs it in step 11, at the caller's access level, and caches its result with the description. Terms without a label in the domain's data get one from the index of vocabulary extracts that SPieGeL builds at start-up from the configuration (FR-HTML-11, [ADR 0021](../../adr/0021-labels-of-external-vocabularies.md)), with no query. The renderer itself queries nothing.
+1. **Labels.** Labels of the properties and of the linked resources, and their types, must be present, because every IRI on the page becomes a link labelled with its label (FR-HTML-10). Labels from the domain come from a query that the HTML profile declares for that purpose, not from whatever the main queries happen to return (see [Data-dependent HTML rendering](../02-current-platform/html-rendering.md#observations)). That query is one of the profile's `QuerySpec`s: the core runs it in step 11, at the caller's access level, and caches its result with the description. Terms without a label in the domain's data get one from the index of vocabulary extracts that SPieGeL builds at start-up from the configuration (FR-HTML-11, [ADR 0021](../../adr/0021-labels-of-external-vocabularies.md)), with no query. Rendering itself queries nothing.
 2. **Presentation rules.** The tenant's rules, combined with the shared defaults, choose the presentation blocks and components: by type, by predicate, by the predicate's own type and by datatype. → FR-HTML-06. How the rules are expressed is [open question 21](../06-open-questions.md#front-end).
 3. **Geometries.** WKT literals are written into the page as they are, with their CRS (the GeoSPARQL CRS IRI, or WGS84 when there is none). The geometry map component reads them from the page and reprojects them in the browser. The server does no conversion, and the map needs no follow-up request. → FR-HTML-07.
 4. **Template.** A template per URI template or resource type, falling back to the generic subject page, writes Flux markup with the content inside the tags (in the light DOM or in slots), so that the page is readable without JavaScript. → FR-HTML-03, NFR-UI-01, NFR-UI-04, [Design system: Flux](../03-requirements/design-system.md). The template engine is [open question 9](../06-open-questions.md#front-end).

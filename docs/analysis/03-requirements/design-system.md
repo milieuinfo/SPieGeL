@@ -175,7 +175,7 @@ The comparison confirms the choice for Flux: SPieGeL gets the same look as the r
 
 ## Consequences for the design
 
-- **`spiegel-adapter-out-html`** (planned) gets a front-end build next to its Java code: Node.js, pnpm, a bundler, and the new components with their tests. Maven and Jenkins must run it (for example through the `frontend-maven-plugin`), and the build needs read access to the department's Artifactory for the `@domg-wc` scope. External contributors need that too.
+- **`spiegel-adapter-in-rest`**, the web adapter that renders HTML, gets a front-end build next to its Java code: Node.js, pnpm, a bundler, and the new components with their tests. Maven and Jenkins must run it (for example through the `frontend-maven-plugin`), and the build needs read access to the department's Artifactory for the `@domg-wc` scope. External contributors need that too.
 - **Templates** generate Flux markup: tags, slots and CSS classes. The choice of template engine is still open ([open question 9](../06-open-questions.md#front-end)), but it must emit custom elements and attributes cleanly and encode output by context (NFR-SEC-05).
 - **Tenant configuration** includes what Flux needs per domain: the page title, the links in the header, and, once access levels exist, the login and logout URLs.
 - **Response headers** include a strict CSP alongside the existing open CORS policy (NFR-OPEN-01).

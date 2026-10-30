@@ -30,14 +30,14 @@ The one real advantage of a one-page application is that the global header and f
     1. asynchronous loading and reserved space (decision 3);
     2. the **back/forward cache** and **Speculation Rules** (prerendering a link on hover). HTML pages therefore never get `Cache-Control: no-store`, which SPieGeL sends only with `5xx` responses. Because the CSP allows no inline scripts, the rules come from an external file named in the `Speculation-Rules` response header, not from an inline `<script type="speculationrules">`;
     3. **partial navigation** (fetching the server's HTML on a click and swapping only `<main>`, as Turbo Drive or `hx-boost` do) only if measurements show that visitors click through many pages per visit. It must pass the test of decision 4, and handles focus, title, scroll position and page-view counting itself.
-6. **The template engine is chosen next** ([open question 9](../analysis/06-open-questions.md#front-end)). The candidates stay Thymeleaf and JTE: both encode output by context (NFR-SEC-05), and both work without Spring in `spiegel-adapter-html` ([ADR 0004](0004-technology-baseline.md)).
+6. **The template engine is chosen next** ([open question 9](../analysis/06-open-questions.md#front-end)). The candidates stay Thymeleaf and JTE: both encode output by context (NFR-SEC-05), and both work with Spring MVC in `spiegel-adapter-in-rest`, the web adapter that renders HTML ([ADR 0004](0004-technology-baseline.md)).
 
 ## Consequences
 
 - Open question 40 is answered, and question 9 can be decided.
 - HTML follows the same request flow as the RDF formats: tenant, template, access level, cache, negotiation. NFR-PERF-01 applies to HTML as it does to RDF, and an HTML page cannot show other data than its RDF.
-- The web adapter gets a renderer port when feature 005 adds HTML, as the [plan of feature 001](../specs/001-dereference-resource-as-rdf/plan.md) foresaw (decision 10): RDF serialisation and HTML rendering become two implementations of it.
-- `spiegel-adapter-html` keeps the front-end build of [ADR 0005](0005-flux-design-system-for-html.md), but only for the islands and the Flux bundle; pages and their content are Java templates.
+- Rendering stays in the web adapter, `spiegel-adapter-in-rest`; it is not a port of the core. When feature 005 adds HTML, RDF serialisation and HTML rendering become two implementations of one rendering interface inside that adapter, as the [plan of feature 001](../specs/001-dereference-resource-as-rdf/plan.md) foresaw (decision 10).
+- `spiegel-adapter-in-rest` holds the front-end build of [ADR 0005](0005-flux-design-system-for-html.md), but only for the islands and the Flux bundle; pages and their content are Java templates.
 - Every page pays for the global header, which the predecessor's site does not load. SPieGeL accepts that cost and reduces it as in decision 5. A one-page application, or partial navigation, can still be added later on top of pages rendered on the server; the reverse, making a one-page application crawlable afterwards, is much harder.
 - The Speculation Rules header and the back/forward cache become requirements of feature 005, and CSP must allow the external rules file.
 - The same advice raised points that this record does not decide. Two of them differ from earlier decisions and stay open until they are discussed:
