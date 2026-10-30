@@ -4,13 +4,13 @@ The proposed Maven module layout follows the [hexagonal design](hexagonal-design
 
 ```
 spiegel/                                 (parent POM, packaging pom)
-├── spiegel-model                        domain model and its exceptions. No Spring.
-├── spiegel-application                  use cases, inbound and outbound ports, services. No Spring.
+├── spiegel-model                        Domain model and its exceptions. No Spring.
+├── spiegel-application                  Use cases (i.e. inbound ports), outbound ports, services implementing use cases and using outbound ports. No Spring.
 ├── spiegel-adapter                      (packaging pom)
 │   ├── spiegel-adapter-in               (packaging pom) adapters that drive the application
-│   │   └── spiegel-adapter-in-rest      HTTP inbound: dereferencing, 303, content negotiation, /sparql
+│   │   └── spiegel-adapter-in-rest      HTTP inbound: dereferencing, 303, content negotiation, Spring MVC
 │   └── spiegel-adapter-out              (packaging pom) adapters behind the outbound ports
-│       ├── spiegel-adapter-out-virtuoso ResourceRepository over SPARQL 1.1 against Virtuoso (Apache Jena)
+│       ├── spiegel-adapter-out-virtuoso ResourceRepository over SPARQL 1.1 against Virtuoso, using Apache Jena
 │       └── spiegel-adapter-out-elastic  outbound adapter for Elasticsearch
 └── spiegel-bootstrap                    Spring Boot application: wiring, caching, health, packaging
 ```
