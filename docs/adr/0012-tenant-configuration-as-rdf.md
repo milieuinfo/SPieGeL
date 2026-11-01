@@ -1,6 +1,6 @@
 # 0012. Describe tenants in RDF, with one generic template and exceptions
 
-- **Status:** Accepted
+- **Status:** Superseded by [0028](0028-tenant-configuration-in-yaml.md)
 - **Date:** 2026-10-25
 
 ## Context

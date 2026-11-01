@@ -47,3 +47,5 @@ The Maven modules and the packages in each. See [Module structure](module-struct
 ### Bootstrap
 
 - be.vlaanderen.omgeving.spiegel.SpiegelApplication
+- be.vlaanderen.omgeving.spiegel.config.ApplicationConfiguration (wires the services and adapters as beans)
+- be.vlaanderen.omgeving.spiegel.config.tenant (planned: `@ConfigurationProperties` for the tenant configuration in YAML, and its mapping to the domain model)

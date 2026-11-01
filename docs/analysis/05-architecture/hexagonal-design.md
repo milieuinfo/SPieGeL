@@ -19,7 +19,7 @@ flowchart LR
     S --> IDP[OIDC provider]
     S -.->|Link rel=collection| LDES[LDES server]
     subgraph cfg [Configuration, outside SPieGeL]
-        REPO[Configuration repository] -->|CI with spiegel-tools| ART[Configuration artefact]
+        REPO[Configuration repository] -->|CI with spiegel-tools| ART[Configuration artefact: YAML]
     end
     ART --> S
     subgraph lc [Loading chain, outside SPieGeL]
@@ -49,22 +49,25 @@ flowchart LR
         M[UriTemplate · ResourceType · QuerySpec · Profile · AccessLevel · Tenant]
     end
     subgraph outbound [Outbound adapters]
-        CFG[Tenant configuration]
         CACHE[Cache]
         DS[(SPARQL data source: triple store or Ontop)]
         SI[Search: the store's full-text index]
     end
+    BOOT[spiegel-bootstrap: tenant configuration in YAML, wiring] -.-> inbound
+    BOOT -.-> core
+    BOOT -.-> outbound
     WEB --> UC1
     SPQ --> UC2
     SRCH --> UC3
-    inbound -.-> CFG
     UC1 --> CACHE
     UC1 --> DS
     UC2 --> DS
     UC3 --> SI
 ```
 
-Solid arrows are calls from a use case. The dotted arrow is a call that the inbound adapter makes through a port of the core before the use case: it resolves the tenant first (see [Request flow](request-flow.md)).
+Solid arrows are calls into or from a use case.
+
+The tenant configuration is not an adapter either. `spiegel-bootstrap` binds it from YAML with Spring (`@ConfigurationProperties`), maps it to the model's types and passes the resulting `Tenant`s to the web adapter and the application services when it wires them. It also creates the outbound adapters, with what they need from the configuration, such as the endpoints of the data sources (the dotted arrows). The web adapter is initialised with the tenants it serves and selects the tenant of a request by host name itself, before it calls a use case (see [Request flow](request-flow.md)). The use cases receive that tenant as input. The core neither reads the configuration nor calls a port for it ([ADR 0028](../../adr/0028-tenant-configuration-in-yaml.md)).
 
 Authentication and rendering are not ports of the core and not adapters of their own. They belong to the web adapter, `spiegel-adapter-in-rest`, which is implemented with Spring MVC: it validates the caller's token with Spring Security and maps the caller's roles to an `AccessLevel` before it calls the use case, and it renders the `ResourceDescription` that the use case returns in the negotiated media type, with Jena RIOT for RDF formats and a template engine for HTML. The use cases receive the tenant and the access level as input; they do not know how the caller was authenticated, nor in which format the result is written.
 
@@ -74,9 +77,9 @@ The order in which these parts act on a request is described in [Request flow](r
 
 | Concept | Responsibility |
 |---|---|
-| `Tenant` | A domain: host names, data sources (one of them named for `/sparql`), licence, language priority, URI templates, profiles, HTML theme. Read from Turtle by the configuration adapter; the core never sees Turtle ([ADR 0012](../../adr/0012-tenant-configuration-as-rdf.md)). |
+| `Tenant` | A domain: host names, data sources (one of them named for `/sparql`), licence, language priority, URI templates, profiles, HTML theme. Bound from YAML by `spiegel-bootstrap`; the core never sees YAML ([ADR 0028](../../adr/0028-tenant-configuration-in-yaml.md)). |
 | `DataSource` | A named SPARQL endpoint for one access level, with a key to its credentials and a declaration whether it enforces graph permissions ([ADR 0011](../../adr/0011-query-policy.md)). |
-| `UriTemplate` | A path pattern with variables typed by a pattern, and the `ResourceType` it identifies. Also models the `id` → `doc` relation and the `303`. A tenant normally has one generic template for every concept, plus optional, more specific templates for exceptions ([ADR 0012](../../adr/0012-tenant-configuration-as-rdf.md)). |
+| `UriTemplate` | A path pattern with variables typed by a pattern, and the `ResourceType` it identifies. Also models the `id` → `doc` relation and the `303`. A tenant normally has one generic template for every concept, plus optional, more specific templates for exceptions ([ADR 0028](../../adr/0028-tenant-configuration-in-yaml.md)). |
 | `ResourceType` | What kind of resource a template yields, and which `QuerySpec`s describe it. |
 | `QuerySpec` | A query (stored as data), the data source it runs on, and the conditions (profile, media type) under which it runs. Replaces the predecessor's XML query catalogue. |
 | `Profile` | A named view of a resource (for example *summary* or *full*), negotiated per Content Negotiation by Profile. |
@@ -97,7 +100,6 @@ Outbound ports:
 | `DataSourcePort` | SPARQL over HTTP (Jena), for triple stores and for Ontop endpoints over relational sources ([ADR 0009](../../adr/0009-ontop-for-relational-sources.md)) |
 | `QueryInspector` | Checks query text against a `QueryPolicy`: strict SPARQL 1.1 parsing and a walk over the syntax tree, in `spiegel-adapter-out-virtuoso` ([ADR 0011](../../adr/0011-query-policy.md)) |
 | `SearchPort` | The data source's own full-text index through SPARQL, such as `bif:contains` or `ql:contains-word` (FR-SRCH-01) |
-| `TenantConfigurationPort` | Turtle in SPieGeL's configuration vocabulary, validated with SHACL, with `.rq` files for queries ([ADR 0012](../../adr/0012-tenant-configuration-as-rdf.md)). Delivered as a versioned artefact, mounted read-only ([ADR 0013](../../adr/0013-tenant-configuration-delivery.md)) |
 | `CachePort` | In-memory; later a shared cache |
 | `RateLimitPort` | In memory per node, each counting up to its share of the limit; later a shared store, falling back to the count per node when it fails ([ADR 0022](../../adr/0022-edge-concerns.md)) |
 
@@ -113,7 +115,7 @@ Outbound ports:
 | XSLT HTML rendering | Web adapter (`spiegel-adapter-in-rest`) | Template engine to be decided |
 | File-based second-level cache | `CachePort` | The key includes the access level and profile (NFR-SEC-03) |
 | OIDC flow scripts | Spring Security OAuth2 resource server / client in the web adapter | Large simplification |
-| Environment variables → configuration | `@ConfigurationProperties` + tenant configuration files | — |
+| Environment variables → configuration | `@ConfigurationProperties` in `spiegel-bootstrap`, for the application and for the tenant configuration in YAML | [ADR 0028](../../adr/0028-tenant-configuration-in-yaml.md) |
 | Concurrency throttle | Bounded executor or bulkhead per data source | NFR-OPS-02 |
 
 ## Rules that keep the core clean

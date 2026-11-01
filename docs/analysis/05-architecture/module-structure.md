@@ -15,13 +15,13 @@ spiegel/                                 (parent POM, packaging pom)
 │   └── spiegel-adapter-out              (packaging pom) adapters behind the outbound ports
 │       ├── spiegel-adapter-out-virtuoso ResourceRepository over SPARQL 1.1 against Virtuoso, using Apache Jena
 │       └── spiegel-adapter-out-elastic  outbound adapter for Elasticsearch
-└── spiegel-bootstrap                    Spring Boot application: wiring, caching, health, packaging
+└── spiegel-bootstrap                    Spring Boot application: tenant configuration (YAML, @ConfigurationProperties),
+                                         wiring, caching, health, packaging
 ```
 
 Planned modules, added when they are needed:
 
 ```
-spiegel-adapter-out-config               TenantConfigurationPort: Turtle + .rq files, SHACL validation (jena-shacl)
 spiegel-tools                            command-line tools for configuration and CI: context generator,
                                          vocabulary extractor, configuration validator
 ```
@@ -43,7 +43,7 @@ flowchart BT
 - `spiegel-model` depends on nothing in this project, and only on a minimal set of libraries.
 - `spiegel-application` depends on `spiegel-model` only. It holds the use cases (`port.in`), the ports to the outside world (`port.out`) and the services that implement the use cases. It has no Spring dependency: `spiegel-bootstrap` creates its services as beans.
 - Adapters depend on `spiegel-application` and `spiegel-model` only, never on each other.
-- `spiegel-tools` will not be part of the server. It reuses the configuration model and validation of `spiegel-adapter-out-config`, so that CI and the server check the same rules, and is delivered as a command-line tool ([ADR 0026](../../adr/0026-system-boundary.md)).
+- `spiegel-tools` will not be part of the server. It reuses the configuration binding and validation of `spiegel-bootstrap`, so that CI and the server check the same rules ([ADR 0028](../../adr/0028-tenant-configuration-in-yaml.md)), and is delivered as a command-line tool ([ADR 0026](../../adr/0026-system-boundary.md)).
 - Only `spiegel-bootstrap` knows all modules. It is the only module that depends on Spring Boot's auto-configuration.
 - These rules are enforced by a test (for example with ArchUnit), not only by convention.
 
@@ -66,7 +66,7 @@ The split has costs:
 
 ## Phase 1 subset
 
-Phase 1 (see [Scope](../01-context/scope.md#phasing)) needs `spiegel-model`, `spiegel-application`, `spiegel-adapter-in-rest`, `spiegel-adapter-out-virtuoso`, `spiegel-adapter-out-config` and `spiegel-bootstrap`. Authentication arrives in phase 2, in `spiegel-adapter-in-rest`. `spiegel-tools` arrives with its first tool, such as the context generator of [ADR 0017](../../adr/0017-framed-json-ld-with-a-frozen-context.md).
+Phase 1 (see [Scope](../01-context/scope.md#phasing)) needs `spiegel-model`, `spiegel-application`, `spiegel-adapter-in-rest`, `spiegel-adapter-out-virtuoso` and `spiegel-bootstrap`. Authentication arrives in phase 2, in `spiegel-adapter-in-rest`. `spiegel-tools` arrives with its first tool, such as the context generator of [ADR 0017](../../adr/0017-framed-json-ld-with-a-frozen-context.md).
 
 ## Group and artefact identifiers
 

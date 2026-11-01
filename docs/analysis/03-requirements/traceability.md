@@ -14,11 +14,11 @@ This matrix links every function of the predecessor, and every requirement of th
 | Moved, withdrawn and removed URIs (`301`, status, `410`) | no | — | FR-URI-08 to 11, NFR-OPEN-02 | M | 2 | `spiegel-application`, `spiegel-adapter-in-rest`, tenant configuration |
 | Simple HTML pages | XSLT | basic (M) | FR-HTML-01 | M | 1 | `spiegel-adapter-in-rest` |
 | Front page per domain | static, per domain | basic (M) | FR-HTML-02 | M | 1 | `spiegel-adapter-in-rest` |
-| Portal page linking all domains | no; static pages, nothing discovered | — | FR-HTML-08 | S | 2 | `spiegel-adapter-in-rest`, `spiegel-adapter-out-config` |
+| Portal page linking all domains | no; static pages, nothing discovered | — | FR-HTML-08 | S | 2 | `spiegel-adapter-in-rest`, `spiegel-bootstrap` |
 | Discovered front-page blocks (catalogues, thesauri, classes) | no; maintained by hand | — | FR-HTML-09 | S | 1 | `spiegel-application`, `spiegel-adapter-in-rest` |
 | Structure of a domain's data (declared shapes and cube structures, derived summary) | no | — | FR-HTML-15 | C | 2 | `spiegel-application`, `spiegel-adapter-in-rest`, tenant queries |
-| Dataset description per domain (DCAT, VoID) | no | — | FR-META-01 | S | 1 | `spiegel-application`, `spiegel-adapter-in-rest`, `spiegel-adapter-out-config` |
-| Licence findable in data, headers and pages | no | — | FR-META-02 | M | 1 | `spiegel-adapter-out-config`, `spiegel-adapter-in-rest` |
+| Dataset description per domain (DCAT, VoID) | no | — | FR-META-01 | S | 1 | `spiegel-application`, `spiegel-adapter-in-rest`, `spiegel-bootstrap` |
+| Licence findable in data, headers and pages | no | — | FR-META-02 | M | 1 | `spiegel-bootstrap`, `spiegel-adapter-in-rest` |
 | SPARQL Service Description | no | — | FR-META-03 | S | 2 | `spiegel-adapter-in-rest` |
 | Example queries as data (SHACL), tested against the store | example queries in the editor component | — | FR-SPARQL-04 | S | 2 | `spiegel-adapter-in-rest`, tenant configuration |
 | `id` → `doc` 303 | at the reverse proxy | — | FR-URI-02 | M | 1 | `spiegel-adapter-in-rest` (moved from the proxy, [ADR 0022](../../adr/0022-edge-concerns.md)) |
@@ -31,7 +31,7 @@ This matrix links every function of the predecessor, and every requirement of th
 | Authentication and access levels | yes, five levels | extended (C) | FR-AC-01 to 03, NFR-SEC-02 | M | 2 | `spiegel-adapter-in-rest`, `spiegel-application` |
 | Public `/sparql` | yes | — | FR-SPARQL-01 to 04 | M | 2 | `spiegel-adapter-in-rest`, `spiegel-adapter-out-virtuoso` |
 | Properties, values and types as links to their IRIs | yes (XSLT `set-label`, `set-content`) | — | FR-HTML-10 | M | 1 | `spiegel-adapter-in-rest` |
-| Labels for terms of external vocabularies | only if the vocabulary is in the domain's store | — | FR-HTML-11 | S | 1 | `spiegel-adapter-in-rest`, `spiegel-adapter-out-config` (extracts in the configuration, [ADR 0021](../../adr/0021-labels-of-external-vocabularies.md)) |
+| Labels for terms of external vocabularies | only if the vocabulary is in the domain's store | — | FR-HTML-11 | S | 1 | `spiegel-adapter-in-rest`, `spiegel-bootstrap` (extracts in the configuration, [ADR 0021](../../adr/0021-labels-of-external-vocabularies.md)) |
 | Multilingual HTML (data labels and interface texts) | no; fixed label order, Dutch interface texts in the XSLT | — | FR-HTML-12 | S | 2 | `spiegel-adapter-in-rest` |
 | Machine-readable HTML (subject IRI, alternate links, embedded JSON-LD) | partly (`ld-subject` convention) | — | FR-HTML-04 | S | 1 | `spiegel-adapter-in-rest` |
 | Standard SPARQL result formats | partly (SPARQL JSON for the old components) | — | FR-SPARQL-02 | M | 2 | `spiegel-adapter-in-rest` |
@@ -49,7 +49,7 @@ This matrix links every function of the predecessor, and every requirement of th
 | Links to other distributions (OGC API, WFS, map viewers) | no | — | FR-HTML-13 | S | 2 | `spiegel-application`, `spiegel-adapter-in-rest` |
 | Sitemap, `robots.txt`, canonical and alternate links | not checked | — | FR-HTML-16 | S | 1 | `spiegel-adapter-in-rest`, tenant configuration |
 | schema.org and Open Graph for search engines and link previews | not checked | — | FR-HTML-17 | S | 1 | `spiegel-adapter-in-rest` |
-| Images of a resource shown on its page | no | — | FR-HTML-14 | S | 2 | `spiegel-adapter-in-rest`, `spiegel-adapter-out-config` |
+| Images of a resource shown on its page | no | — | FR-HTML-14 | S | 2 | `spiegel-adapter-in-rest`, `spiegel-bootstrap` |
 | Discovery of event streams (LDES) | no | — | FR-ES-01 | S | 2 | `spiegel-adapter-in-rest`, `spiegel-application` ([ADR 0023](../../adr/0023-event-stream-discovery-and-versions.md)) |
 | Assisted (LLM) query building | no | won't (W) | — | W | — | — |
 | Reconciliation | present, not routed | — | — | — | — | retired unless needed |

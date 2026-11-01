@@ -35,3 +35,5 @@ Without a rule, each of these would be placed case by case: some in the applicat
 - Open question 42 is narrowed: SPieGeL will not build a label index itself. The options that remain are copies in each store, a shared label store, reading another tenant's public data source, or the IRI as it is.
 - Several components outside the project (the loading chain, the umbrella catalogue, LDES servers, the identity provider, platform monitoring) need an owner. That is an organisational question, which this decision does not answer.
 - The module structure gains `spiegel-tools`, which arrives when its first tool is built.
+
+*Amended on 2026-11-01:* the tenant configuration is YAML, bound with Spring in `spiegel-bootstrap` ([ADR 0028](0028-tenant-configuration-in-yaml.md)). There is no configuration vocabulary (`https://w3id.org/spiegel/config#`) and there are no shapes for it, so decision 6 no longer covers them. The configuration validator in `spiegel-tools` reuses the binding and checks of `spiegel-bootstrap` (decision 2), so that CI and the server still check the same rules.
