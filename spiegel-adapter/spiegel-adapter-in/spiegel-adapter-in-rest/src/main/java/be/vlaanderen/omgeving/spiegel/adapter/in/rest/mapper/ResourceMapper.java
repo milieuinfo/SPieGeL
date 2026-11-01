@@ -1,16 +1,16 @@
 package be.vlaanderen.omgeving.spiegel.adapter.in.rest.mapper;
 
-import be.vlaanderen.omgeving.spiegel.adapter.in.rest.model.ResourceResponse;
-import be.vlaanderen.omgeving.spiegel.model.Resource;
 import org.springframework.stereotype.Component;
+import org.apache.jena.rdf.model.Model;
 
 /**
- * Maps domain resources to their REST representation.
+ * Maps domain rdf description model to rdf description model used in rest adapter (jena model)
+ * Todo define both models.
  */
 @Component
 public class ResourceMapper {
 
-    public ResourceResponse toResponse(Resource resource) {
-        return new ResourceResponse(resource.iri());
+    public Model toResponse(Object rdfdescription) {
+        return null; // todo
     }
 }

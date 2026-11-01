@@ -1,6 +1,8 @@
 package be.vlaanderen.omgeving.spiegel.application.port.in;
 
+import be.vlaanderen.omgeving.spiegel.model.Profile;
 import be.vlaanderen.omgeving.spiegel.model.Resource;
+import be.vlaanderen.omgeving.spiegel.model.UserContext;
 import be.vlaanderen.omgeving.spiegel.model.exception.ResourceNotFoundException;
 
 /**
@@ -11,9 +13,9 @@ public interface GetResourceUseCase {
     /**
      * Returns the resource identified by the given IRI.
      *
-     * @param iri the IRI of the resource
-     * @return the resource
+     * @param resource, structured identifier of requested resource
+     * @return the resource description (a rdf model)
      * @throws ResourceNotFoundException if no resource is known for the IRI
      */
-    Resource getResource(String iri);
+    Object getResourceDescription(UserContext userContext, Resource resource, Profile profile);
 }

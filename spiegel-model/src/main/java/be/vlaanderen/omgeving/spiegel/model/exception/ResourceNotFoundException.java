@@ -1,18 +1,20 @@
 package be.vlaanderen.omgeving.spiegel.model.exception;
 
+import be.vlaanderen.omgeving.spiegel.model.Resource;
+
 /**
  * Thrown when no resource is known for a requested IRI.
  */
 public class ResourceNotFoundException extends RuntimeException {
 
-    private final String iri;
+    private final Resource resource;
 
-    public ResourceNotFoundException(String iri) {
-        super("No resource found for IRI " + iri);
-        this.iri = iri;
+    public ResourceNotFoundException(Resource resource) {
+        super("No resource found for resource " + resource);
+        this.resource = resource;
     }
 
-    public String getIri() {
-        return iri;
+    public Resource getResource() {
+        return resource;
     }
 }

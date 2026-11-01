@@ -1,6 +1,9 @@
 package be.vlaanderen.omgeving.spiegel.application.port.out;
 
+import be.vlaanderen.omgeving.spiegel.model.Profile;
 import be.vlaanderen.omgeving.spiegel.model.Resource;
+import be.vlaanderen.omgeving.spiegel.model.UserContext;
+
 import java.util.Optional;
 
 /**
@@ -9,10 +12,9 @@ import java.util.Optional;
 public interface ResourceRepository {
 
     /**
-     * Finds the resource identified by the given IRI.
+     * Finds the resource
      *
-     * @param iri the IRI of the resource
-     * @return the resource, or empty if the data source does not know it
+     * @return a resource description, or empty if the data source does not know it
      */
-    Optional<Resource> findByIri(String iri);
+    Optional<Object> findByResource(UserContext userContext, Resource resource, Profile profile);
 }
