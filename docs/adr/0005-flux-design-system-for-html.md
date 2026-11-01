@@ -26,3 +26,5 @@ The choice of template engine remains open.
 - Accessibility (NFR-UI-02) and a strict Content Security Policy (NFR-UI-03) become testable requirements.
 - SPieGeL depends on Flux's release cycle, including the planned v3. Its licence and availability to external contributors are still to be clarified (open question 22).
 - Pages that rely on the old components' conventions (`ld-subject`, browser-side `.rq` templates) will no longer get them. Whether those conventions must stay for a transition period is open question 8.
+
+*Amended on 2026-10-30:* there is no `spiegel-adapter-html`. HTML is rendered by the web adapter, so the front-end build lives in `spiegel-adapter-in-rest` ([ADR 0004](0004-technology-baseline.md), amendment of 2026-10-30).

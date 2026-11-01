@@ -4,6 +4,9 @@
 **Decisions:** ADR 0004, 0010, 0011, 0012, 0013, 0016, 0018 (docs/adr/)
 **Created:** 2026-10-26
 
+!!! warning "Outdated module layout"
+    This plan was written for the earlier modules (`spiegel-core`, `spiegel-adapter-config`, `spiegel-adapter-sparql`, `spiegel-adapter-web`, `spiegel-app`). The modules have since been restructured (see [Module structure](../../analysis/05-architecture/module-structure.md) and ADR 0004, amendment of 2026-10-28). Revise the plan before executing it.
+
 ## Context
 
 SPieGeL is still an empty skeleton: six Maven modules with only `package-info.java`, `AccessLevel` and an `ArchitectureTest`. Spec 001 (approved) asks for the walking skeleton of phase 1: an `id` URI answers `303` to its `doc` URI, and a `doc` URI returns the bounded description of the thing in Turtle, N-Triples, RDF/XML or JSON-LD, with problem details for every error. Everything comes from a tenant configuration in Turtle; nothing is specific to a domain. This plan builds the first path through core, configuration adapter, SPARQL adapter, web adapter and application.

@@ -15,9 +15,9 @@ Use [`template.md`](template.md) for new records.
 | [0007](0007-uri-as-shared-identifier.md) | Use the URI as the shared identifier in every distribution | Accepted |
 | [0008](0008-neo4j-not-a-data-source.md) | Do not use Neo4j as a data source for SPieGeL | Accepted |
 | [0009](0009-ontop-for-relational-sources.md) | Translate relational sources with Ontop, materialise other sources with RML | Accepted |
-| [0010](0010-jena-graph-types-in-the-core.md) | Use Jena's graph types in the core, keep SPARQL out of it | Accepted |
+| [0010](0010-jena-graph-types-in-the-core.md) | Use Jena's graph types in the core, keep SPARQL out of it | Proposed |
 | [0011](0011-query-policy.md) | Check every query against a query policy before it runs | Accepted |
-| [0012](0012-tenant-configuration-as-rdf.md) | Describe tenants in RDF, with one generic template and exceptions | Accepted |
+| [0012](0012-tenant-configuration-as-rdf.md) | Describe tenants in RDF, with one generic template and exceptions | Superseded by [0028](0028-tenant-configuration-in-yaml.md) |
 | [0013](0013-tenant-configuration-delivery.md) | Deliver tenant configuration as a versioned artefact | Accepted |
 | [0014](0014-placement-of-linked-data-components.md) | Keep Linked-Data-specific components in SPieGeL, contribute generic ones to Flux | Accepted |
 | [0015](0015-paged-lists-as-resources.md) | Serve large and follow-up data as paged Hydra lists | Accepted |
@@ -33,3 +33,4 @@ Use [`template.md`](template.md) for new records.
 | [0025](0025-federated-query-in-the-portal.md) | Offer federated queries in the portal, run by Comunica in the visitor's browser | Accepted |
 | [0026](0026-system-boundary.md) | Draw SPieGeL's boundary by what answers requests, what runs in CI, what holds data, and what runs at the consumer | Accepted |
 | [0027](0027-html-rendered-on-the-server.md) | Render HTML on the server, as one more format of the same description, with islands for interaction | Proposed |
+| [0028](0028-tenant-configuration-in-yaml.md) | Configure tenants in YAML, bound by Spring in spiegel-bootstrap | Accepted |

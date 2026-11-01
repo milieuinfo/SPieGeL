@@ -18,7 +18,7 @@ Documentation, including the full analysis and the architecture decisions, is pu
 - **Configurable URI templates.** Each URI template is bound to its own SPARQL query on a named data source. Adding a new resource type should not require new code.
 - **URI policy out of the box.** SPieGeL follows the `id` / `doc` / `ns` pattern of the Flemish URI standard for data, with `303 See Other` from `/id/` to `/doc/`. Skolem IRIs (`/.well-known/genid/…`) are dereferenceable. A dedicated path structure is planned for [ELI](https://eur-lex.europa.eu/eli-register/about.html) legislative resources.
 - **Hexagonal architecture.** A plain domain core, with data sources (SPARQL endpoints: triple stores first, relational databases through Ontop later; other non-RDF sources are materialised with RML before loading), renderers and identity providers behind ports and adapters.
-- **Multi-tenant.** One stateless instance can serve several data domains, each selected by host name.
+- **Multi-tenant.** One stateless instance can serve one or several data domains, each matched by host name or by a path variable.
 - **Access levels.** Each access level can be mapped to its own read-only credentials on the data source, so authorisation is enforced by the store as well as by the application.
 - **Open by default.** CORS is open and a public SPARQL endpoint is available, in line with an open data policy.
 
@@ -28,7 +28,7 @@ Java 21, Spring Boot 4 and Apache Jena 6, built with Maven. See [ADR 0004](docs/
 
 ```shell
 mvn verify                      # build and test all modules
-mvn -pl spiegel-app spring-boot:run
+mvn -pl spiegel-bootstrap spring-boot:run
 ```
 
 ## Data sources

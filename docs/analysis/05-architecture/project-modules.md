@@ -1,14 +1,18 @@
+# Project modules
+
+The Maven modules and the packages in each. See [Module structure](module-structure.md) for the dependency rules.
+
 ## Maven modules
 
-- model
-- application
-- bootstrap
-- adapter
-  - in
-    - rest
-  - out
-    - virtuoso
-    - postgres (?)
+- spiegel-model
+- spiegel-application
+- spiegel-bootstrap
+- spiegel-adapter
+  - spiegel-adapter-in
+    - spiegel-adapter-in-rest
+  - spiegel-adapter-out
+    - spiegel-adapter-out-virtuoso
+    - spiegel-adapter-out-elastic
     - ...
 
 ## Packages
@@ -16,6 +20,8 @@
 ### Model
 
 - be.vlaanderen.omgeving.spiegel.model
+- be.vlaanderen.omgeving.spiegel.model.Resource (structured resource identifier, including the tenant id)
+- be.vlaanderen.omgeving.spiegel.model.UserContext (planned: username and roles of the caller)
 - be.vlaanderen.omgeving.spiegel.model.exception
 
 ### Application
@@ -31,6 +37,8 @@
 - be.vlaanderen.omgeving.spiegel.adapter.in.rest.mapper.ResourceMapper (maps domain model to REST model)
 - be.vlaanderen.omgeving.spiegel.adapter.in.rest.model (REST model)
 - be.vlaanderen.omgeving.spiegel.adapter.in.rest.model.exception (exceptions in REST model)
+- be.vlaanderen.omgeving.spiegel.adapter.in.rest.view (planned: RDF serialisation with Jena RIOT, HTML templates)
+- be.vlaanderen.omgeving.spiegel.adapter.in.rest.security (planned, phase 2: Spring Security, roles → AccessLevel)
 
 
 ### Adapter out: Virtuoso
@@ -41,3 +49,5 @@
 ### Bootstrap
 
 - be.vlaanderen.omgeving.spiegel.SpiegelApplication
+- be.vlaanderen.omgeving.spiegel.config.ApplicationConfiguration (wires the services and adapters as beans)
+- be.vlaanderen.omgeving.spiegel.config.tenant (planned: `@ConfigurationProperties` for the tenant configuration in YAML, and its mapping to the domain model)

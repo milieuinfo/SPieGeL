@@ -89,6 +89,7 @@ nav:
           - Hexagonal design: analysis/05-architecture/hexagonal-design.md
           - Request flow: analysis/05-architecture/request-flow.md
           - Module structure: analysis/05-architecture/module-structure.md
+          - Project modules: analysis/05-architecture/project-modules.md
       - Open questions: analysis/06-open-questions.md
   - Decisions:
       - adr/README.md
@@ -119,6 +120,7 @@ nav:
       - 0025 Federated query in the portal: adr/0025-federated-query-in-the-portal.md
       - 0026 System boundary: adr/0026-system-boundary.md
       - 0027 HTML rendered on the server: adr/0027-html-rendered-on-the-server.md
+      - 0028 Tenant configuration in YAML: adr/0028-tenant-configuration-in-yaml.md
       - Template: adr/template.md
   - Specifications:
       - 001 Dereference a resource as RDF:
