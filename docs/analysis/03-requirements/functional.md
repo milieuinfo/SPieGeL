@@ -90,7 +90,7 @@ Each requirement has a stable identifier, a priority and a phase (see [Scope](..
 
 | ID | Requirement | Priority | Phase | Source |
 |---|---|---|---|---|
-| FR-MT-01 | One deployment serves several domains, each selected by host name or by path, as configured per domain, with its own data sources, URI templates and HTML. | M | 2 | P, C |
+| FR-MT-01 | One deployment can serve one or several domains, each with its own data sources, URI templates and HTML. A request belongs to a domain through one of that domain's URI templates: per domain and URI template it is configured how a request that matches the template also matches the domain, either by host name or by a path variable. Only a request that matches both matches that template for that domain. Whether production runs one deployment for all domains or one per domain is [open question 1](../06-open-questions.md#product-and-scope); both use the same artefact and the same configuration. | M | 2 | P, C |
 | FR-MT-02 | Adding a domain needs configuration only. | M | 2 | P |
 
 ## Data sources

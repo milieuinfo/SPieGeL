@@ -8,7 +8,7 @@ SPieGeL is a **read-only Linked Data publishing server**. It:
 - assembles the description of a resource from one or more queries on one or more data sources;
 - serialises that description in the representation the client negotiates (HTML, Turtle, RDF/XML, N-Triples, JSON-LD), optionally per profile;
 - exposes a public, read-only SPARQL endpoint;
-- serves several data domains (tenants) from one stateless deployment;
+- serves several data domains (tenants), from one stateless deployment or one per domain ([open question 1](../06-open-questions.md#product-and-scope));
 - enforces access levels on non-public data;
 - offers a portal over its domains, as a page of the umbrella domain's tenant;
 - ships command-line tools for writing and checking configuration (`spiegel-tools`).
@@ -47,7 +47,7 @@ No authentication is needed in this phase, because the catalogue is public.
 
 Everything needed to switch off the predecessor:
 
-- several domains (tenants) in one deployment, each selected by host name;
+- several domains (tenants), each matched by host name or by a path variable per URI template, in one deployment or in one per domain (open question 1);
 - the full URI policy, including `ns` pages, Skolem IRIs and ELI paths;
 - a public SPARQL endpoint compatible with the existing browser components;
 - content negotiation by profile;

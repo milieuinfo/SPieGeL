@@ -71,8 +71,8 @@ Solid arrows are calls into or from a use case. The ports, in both directions, s
 
 **The web adapter turns a request into the domain model.** `spiegel-adapter-in-rest` is implemented with Spring MVC. Before it calls a use case, it:
 
-1. selects the tenant, by host name or by the path of the request, as the tenant configuration says;
-2. matches the request against the tenant's URI templates. The matching template leads to a specific configuration within the tenant, and the adapter answers the `303` from an `id` to its `doc` URI itself;
+1. matches the request against the tenants' URI templates. Per tenant and URI template, the configuration says how a request that matches the template also matches the tenant: by host name or by a path variable. Only a request that matches both matches that template for that tenant;
+2. follows the matching template to its specific configuration within the tenant, and answers the `303` from an `id` to its `doc` URI itself;
 3. creates a `Resource` from the match;
 4. creates a `UserContext` with Spring Security, from the caller's token (phase 2);
 5. negotiates the media type and the profile, from a query parameter and/or a header.
@@ -122,7 +122,7 @@ Outbound ports:
 |---|---|---|
 | Java accessor | Adapter (inbound or outbound) | Usually a direct translation |
 | Scripts for `/doc`, `/ns`, `/sparql` and search | Use cases in the core | Currently mix caching, security and domain logic; to be separated |
-| Routes generated at runtime per domain | URI templates in the web adapter, with the tenant selected by host name or path | No per-domain code |
+| Routes generated at runtime per domain | URI templates in the web adapter, with the tenant matched by host name or by a path variable, per template | No per-domain code |
 | XML query catalogue and query templates | Queries per resource type and profile, in the configuration of the SPARQL adapter | The most hidden business logic of the predecessor. Now configured and tested |
 | RDF serialisation | Web adapter (`spiegel-adapter-in-rest`, Jena RIOT) | — |
 | XSLT HTML rendering | Web adapter (`spiegel-adapter-in-rest`) | Template engine to be decided |

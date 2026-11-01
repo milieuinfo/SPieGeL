@@ -4,7 +4,7 @@ Questions that the analysis could not settle. When one is answered, record the a
 
 ## Product and scope
 
-1. **One multi-tenant service, or one service per domain?** SPieGeL's design assumes one stateless multi-tenant service (FR-MT-01). Newer domains, however, use small purpose-built services. Which model does the organisation want for the long term?
+1. **One multi-tenant service, or one service per domain?** SPieGeL's design supports both: one stateless deployment serving several tenants, or one deployment per domain, whose configuration holds a single tenant (FR-MT-01). Newer domains, however, use small purpose-built services. Which model does the organisation want for the long term?
 2. **Are the non-public access levels still used?** The X-Cite project assumes authentication is "no longer used in practice". If that is true for every domain, phase 2 can drop access control. Usage data per domain should settle this before FR-AC-01 to 03 are built.
 3. **Are reconciliation, Linked Data Fragments and the alternative search back ends used by anyone?** They exist in the predecessor but are not routed.
 4. **Is keyword search still needed?** The X-Cite project grades full-text search as *won't*; the predecessor offers it per domain.
