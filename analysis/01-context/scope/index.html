@@ -1420,6 +1420,8 @@
       
         
       
+        
+      
     
     
     
@@ -1546,6 +1548,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-architecture/project-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project modules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1600,6 +1630,8 @@
       
         
           
+        
+      
         
       
         
@@ -2475,6 +2507,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0028-tenant-configuration-in-yaml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0028 Tenant configuration in YAML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2876,7 +2936,7 @@
 <li>assembles the description of a resource from one or more queries on one or more data sources;</li>
 <li>serialises that description in the representation the client negotiates (HTML, Turtle, RDF/XML, N-Triples, JSON-LD), optionally per profile;</li>
 <li>exposes a public, read-only SPARQL endpoint;</li>
-<li>serves several data domains (tenants) from one stateless deployment;</li>
+<li>serves several data domains (tenants), from one stateless deployment or one per domain (<a href="../../06-open-questions/#product-and-scope">open question 1</a>);</li>
 <li>enforces access levels on non-public data;</li>
 <li>offers a portal over its domains, as a page of the umbrella domain's tenant;</li>
 <li>ships command-line tools for writing and checking configuration (<code>spiegel-tools</code>).</li>
@@ -2910,7 +2970,7 @@
 <h3 id="phase-2-successor-to-the-predecessor">Phase 2: successor to the predecessor<a class="headerlink" href="#phase-2-successor-to-the-predecessor" title="Permanent link">&para;</a></h3>
 <p>Everything needed to switch off the predecessor:</p>
 <ul>
-<li>several domains (tenants) in one deployment, each selected by host name;</li>
+<li>several domains (tenants), each matched by host name or by a path variable per URI template, in one deployment or in one per domain (open question 1);</li>
 <li>the full URI policy, including <code>ns</code> pages, Skolem IRIs and ELI paths;</li>
 <li>a public SPARQL endpoint compatible with the existing browser components;</li>
 <li>content negotiation by profile;</li>

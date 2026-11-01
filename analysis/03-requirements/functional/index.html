@@ -1480,6 +1480,8 @@
       
         
       
+        
+      
     
     
     
@@ -1606,6 +1608,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-architecture/project-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project modules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1660,6 +1690,8 @@
       
         
           
+        
+      
         
       
         
@@ -2515,6 +2547,34 @@
     
   
     0027 HTML rendered on the server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0028-tenant-configuration-in-yaml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0028 Tenant configuration in YAML
   
 
     
@@ -3404,7 +3464,7 @@
 </tr>
 <tr>
 <td>FR-SPARQL-04</td>
-<td><strong>Example queries as data.</strong> Each domain offers example queries to start from, including a default query in the editor. Each example is a SHACL <code>sh:SPARQLExecutable</code> (with <code>sh:select</code>, <code>sh:ask</code>, <code>sh:construct</code> or <code>sh:describe</code>), with a description in plain language (<code>rdfs:comment</code>, per language) and keywords, following the convention of the <a href="https://github.com/sib-swiss/sparql-examples">SIB SPARQL examples</a>. The examples are files under version control in the tenant configuration, like the queries of FR-RA-02. SPieGeL publishes them at <code>/.well-known/sparql-examples/</code>, lists them on the domain's front page and the <code>/sparql</code> page, and opens each one in the editor through its URL (FR-SPARQL-03). The build runs every example against the domain's store, so that an example that no longer works is noticed. Reference: <a href="../../04-landscape/uniprot-reference/">UniProt</a>.</td>
+<td><strong>Example queries as data.</strong> Each domain offers example queries to start from, including a default query in the editor. Each example is a SHACL <code>sh:SPARQLExecutable</code> (with <code>sh:select</code>, <code>sh:ask</code>, <code>sh:construct</code> or <code>sh:describe</code>), with a description in plain language (<code>rdfs:comment</code>, per language) and keywords, following the convention of the <a href="https://github.com/sib-swiss/sparql-examples">SIB SPARQL examples</a>. The examples are files under version control in the tenant configuration, next to its YAML (<a href="../../../adr/0028-tenant-configuration-in-yaml/">ADR 0028</a>). SPieGeL publishes them at <code>/.well-known/sparql-examples/</code>, lists them on the domain's front page and the <code>/sparql</code> page, and opens each one in the editor through its URL (FR-SPARQL-03). The build runs every example against the domain's store, so that an example that no longer works is noticed. Reference: <a href="../../04-landscape/uniprot-reference/">UniProt</a>.</td>
 <td>S</td>
 <td>2</td>
 <td>P, L</td>
@@ -3453,7 +3513,7 @@
 <tbody>
 <tr>
 <td>FR-MT-01</td>
-<td>One deployment serves several domains, each selected by host name, with its own data sources, URI templates and HTML.</td>
+<td>One deployment can serve one or several domains, each with its own data sources, URI templates and HTML. A request belongs to a domain through one of that domain's URI templates: per domain and URI template it is configured how a request that matches the template also matches the domain, either by host name or by a path variable. Only a request that matches both matches that template for that domain. Whether production runs one deployment for all domains or one per domain is <a href="../../06-open-questions/#product-and-scope">open question 1</a>; both use the same artefact and the same configuration.</td>
 <td>M</td>
 <td>2</td>
 <td>P, C</td>

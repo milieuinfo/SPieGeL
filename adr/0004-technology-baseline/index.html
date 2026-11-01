@@ -1297,6 +1297,8 @@
       
         
       
+        
+      
     
     
     
@@ -1423,6 +1425,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../analysis/05-architecture/project-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project modules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1479,6 +1509,8 @@
       
         
           
+        
+      
         
       
         
@@ -2434,6 +2466,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../0028-tenant-configuration-in-yaml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0028 Tenant configuration in YAML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../template/" class="md-nav__link">
         
   
@@ -2841,6 +2901,9 @@
 <p>Modules are added when they are needed. Phase 1 starts with <code>spiegel-core</code>, <code>spiegel-adapter-config</code>, <code>spiegel-adapter-sparql</code>, <code>spiegel-adapter-web</code>, <code>spiegel-adapter-html</code> and <code>spiegel-app</code>. <code>spiegel-adapter-security</code> follows in a later phase.</p>
 <p><em>Amended on 2026-10-05:</em> the module for non-RDF sources was called <code>spiegel-adapter-r2rml</code>. It is renamed <code>spiegel-adapter-rml</code>, because RML generalises R2RML (see FR-DS-02). The module did not exist yet, so nothing else changed.</p>
 <p><em>Amended on 2026-10-25:</em> there is no module for non-RDF sources. Relational sources are read through <code>spiegel-adapter-sparql</code> from an Ontop endpoint, and other sources are materialised in the loading chain (<a href="../0009-ontop-for-relational-sources/">ADR 0009</a>).</p>
+<p><em>Amended on 2026-10-28:</em> the modules are restructured along the hexagonal layers: <code>spiegel-core</code> is split into <code>spiegel-model</code> and <code>spiegel-application</code>, adapters are grouped under <code>spiegel-adapter-in</code> and <code>spiegel-adapter-out</code> (<code>spiegel-adapter-web</code> becomes <code>spiegel-adapter-in-rest</code>, <code>spiegel-adapter-sparql</code> becomes <code>spiegel-adapter-out-virtuoso</code>), and <code>spiegel-app</code> becomes <code>spiegel-bootstrap</code>. <code>spiegel-adapter-config</code> and <code>spiegel-adapter-html</code> are removed until they are needed. See <a href="../../analysis/05-architecture/module-structure/">Module structure</a>.</p>
+<p><em>Amended on 2026-10-30:</em> HTML rendering and authentication are not adapters of their own in the hexagonal design. They belong to the web adapter, so <code>spiegel-adapter-html</code> and <code>spiegel-adapter-security</code> will not be added: rendering (Jena RIOT, the template engine and the front-end build) and authentication (Spring Security) live in <code>spiegel-adapter-in-rest</code>. See <a href="../../analysis/05-architecture/hexagonal-design/#ports-and-adapters">Hexagonal design</a>.</p>
+<p><em>Amended on 2026-11-01:</em> reading the tenant configuration is not an adapter either, so <code>spiegel-adapter-config</code> will not be added. The configuration is YAML, bound with Spring in <code>spiegel-bootstrap</code> (<a href="../0028-tenant-configuration-in-yaml/">ADR 0028</a>).</p>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>spiegel-core</code> inherits Spring Boot's plug-in and dependency management through the parent POM, but has no Spring dependency. <code>ArchitectureTest</code> checks this on every build.</li>

@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://milieuinfo.github.io/SPieGeL/analysis/06-open-questions/">
       
       
-        <link rel="prev" href="../05-architecture/module-structure/">
+        <link rel="prev" href="../05-architecture/project-modules/">
       
       
         <link rel="next" href="../../adr/">
@@ -1299,6 +1299,8 @@
       
         
       
+        
+      
     
     
     
@@ -1412,6 +1414,34 @@
     
   
     Module structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-architecture/project-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project modules
   
 
     
@@ -1570,6 +1600,8 @@
       
         
           
+        
+      
         
       
         
@@ -2445,6 +2477,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../adr/0028-tenant-configuration-in-yaml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0028 Tenant configuration in YAML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../adr/template/" class="md-nav__link">
         
   
@@ -2814,7 +2874,7 @@
 <p>Questions that the analysis could not settle. When one is answered, record the answer as an <a href="../../adr/">ADR</a> and link it here, rather than deleting the question.</p>
 <h2 id="product-and-scope">Product and scope<a class="headerlink" href="#product-and-scope" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>One multi-tenant service, or one service per domain?</strong> SPieGeL's design assumes one stateless multi-tenant service (FR-MT-01). Newer domains, however, use small purpose-built services. Which model does the organisation want for the long term?</li>
+<li><strong>One multi-tenant service, or one service per domain?</strong> SPieGeL's design supports both: one stateless deployment serving several tenants, or one deployment per domain, whose configuration holds a single tenant (FR-MT-01). Newer domains, however, use small purpose-built services. Which model does the organisation want for the long term?</li>
 <li><strong>Are the non-public access levels still used?</strong> The X-Cite project assumes authentication is "no longer used in practice". If that is true for every domain, phase 2 can drop access control. Usage data per domain should settle this before FR-AC-01 to 03 are built.</li>
 <li><strong>Are reconciliation, Linked Data Fragments and the alternative search back ends used by anyone?</strong> They exist in the predecessor but are not routed.</li>
 <li><strong>Is keyword search still needed?</strong> The X-Cite project grades full-text search as <em>won't</em>; the predecessor offers it per domain.</li>
@@ -2825,7 +2885,7 @@
 <h2 id="front-end">Front end<a class="headerlink" href="#front-end" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>Do the <code>omgeving-ld</code> browser components stay?</strong> <em>Answered by <a href="../../adr/0005-flux-design-system-for-html/">ADR 0005</a>: no.</em> They are replaced by Flux components where those exist (accordion, rich data table, pager, map, properties), and by new components built to Flux's conventions where they do not: the hierarchy tree, incoming relations, the collection table and the SPARQL editor (FR-HTML-05; see <a href="../03-requirements/design-system/#from-omgeving-ld-to-flux">Design system: Flux</a>). <strong>Still open:</strong> must the same-origin <code>/sparql</code> and the HTML conventions in <a href="../02-current-platform/client-components/">Client components</a> (<code>ld-subject</code>, the <code>.rq</code> templates under <code>/queries/</code>) stay for a transition period, for pages elsewhere that still embed the old components?</li>
-<li><strong>Which template engine for HTML?</strong> The design system is decided: Flux (<a href="../../adr/0005-flux-design-system-for-html/">ADR 0005</a>). The template engine must emit custom elements, slots and attributes cleanly, and encode output by context (NFR-SEC-05). It must also work without Spring, because <code>spiegel-adapter-html</code> has no Spring dependency (<a href="../../adr/0004-technology-baseline/">ADR 0004</a>), and support translation files (FR-HTML-12) and reusable fragments, such as the RDF term. FreeMarker and Pebble do not encode by context, which leaves Thymeleaf (templates loaded at run time) and JTE (templates compiled, type-safe). Which of the two fits depends on whether tenants write templates of their own or configure their layout (FR-HTML-03). Question 40 is answered by <a href="../../adr/0027-html-rendered-on-the-server/">ADR 0027</a>: HTML is rendered on the server, so a template engine is needed.</li>
+<li><strong>Which template engine for HTML?</strong> The design system is decided: Flux (<a href="../../adr/0005-flux-design-system-for-html/">ADR 0005</a>). The template engine must emit custom elements, slots and attributes cleanly, and encode output by context (NFR-SEC-05). It runs in <code>spiegel-adapter-in-rest</code>, the web adapter built on Spring MVC (<a href="../05-architecture/module-structure/">Module structure</a>), so it may plug into Spring MVC's view resolution. It must also support translation files (FR-HTML-12) and reusable fragments, such as the RDF term. FreeMarker and Pebble do not encode by context, which leaves Thymeleaf (templates loaded at run time) and JTE (templates compiled, type-safe). Which of the two fits depends on whether tenants write templates of their own or configure their layout (FR-HTML-03). Question 40 is answered by <a href="../../adr/0027-html-rendered-on-the-server/">ADR 0027</a>: HTML is rendered on the server, so a template engine is needed.</li>
 <li><strong>Where are the domain-specific explorer scripts</strong> for <code>imjv</code>, <code>cbb</code> and <code>dba</code>, and are they still needed?</li>
 <li><strong>How are presentation rules expressed?</strong> The predecessor chooses blocks and components with XSLT rules by type and predicate (see <a href="../02-current-platform/html-rendering/">Data-dependent HTML rendering</a>). FR-HTML-06 makes these rules configuration. Candidates: rules attached to profiles (as in Prez), viewers per URI template (as in ELDA), or a small rule format of our own.</li>
 <li><strong>Under which licence is Flux published, and can external contributors build SPieGeL?</strong> The Flux repository has no licence file, and its packages come from the department's Artifactory, not from the public npm registry. SPieGeL is public and MIT-licensed, and its release would bundle Flux code (see <a href="../03-requirements/design-system/#consequences-for-the-design">Design system: Flux</a>).</li>
@@ -2873,19 +2933,19 @@
 </ol>
 <h2 id="uri-policy">URI policy<a class="headerlink" href="#uri-policy" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Where does the list of valid concepts per domain come from?</strong> In the predecessor it is deployment configuration. Options: SPieGeL's tenant configuration, the data itself (<code>co:Collection</code> resources), or the vocabulary projects. <em>Answered by <a href="../../adr/0012-tenant-configuration-as-rdf/">ADR 0012</a>:</em> from the data. Template variables are typed by a pattern; a value that matches is looked up, and a negative result is cached per data version. A tenant that wants a closed list writes it as a pattern.</li>
+<li><strong>Where does the list of valid concepts per domain come from?</strong> In the predecessor it is deployment configuration. Options: SPieGeL's tenant configuration, the data itself (<code>co:Collection</code> resources), or the vocabulary projects. <em>Answered by <a href="../../adr/0012-tenant-configuration-as-rdf/">ADR 0012</a>:</em> from the data. Template variables are typed by a pattern; a value that matches is looked up, and a negative result is cached per data version. A tenant that wants a closed list writes it as a pattern. This decision is restated in <a href="../../adr/0028-tenant-configuration-in-yaml/">ADR 0028</a>.</li>
 <li><strong>Which domains publish legislative resources</strong> that need ELI paths (FR-URI-05)?</li>
 </ol>
 <h2 id="architecture-and-operations">Architecture and operations<a class="headerlink" href="#architecture-and-operations" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>Which edge concerns move into SPieGeL?</strong> The <code>303</code> redirect, CORS, HSTS and input filtering are currently handled by the reverse proxy. Rate limiting (NFR-OPS-08) is a new concern for the same choice. At the edge it protects SPieGeL before any work is done, but it only knows addresses. That is enough for public access, which is unauthenticated, but not for limits per authenticated client. In SPieGeL it can also limit per authenticated client, per tenant and per kind of request, but it needs a counter shared between nodes. See <a href="../05-architecture/request-flow/#steps">Request flow</a>. <em>Answered by <a href="../../adr/0022-edge-concerns/">ADR 0022</a>:</em> the proxy keeps TLS, HSTS, generic limits and flood protection per address; SPieGeL answers the <code>303</code>, sets CORS and enforces the real rate limits, counting per node in phase 1 behind a <code>RateLimitPort</code>.</li>
-<li><strong>Does the core use Jena's model types,</strong> or its own RDF abstraction? See <a href="../05-architecture/hexagonal-design/#rules-that-keep-the-core-clean">Hexagonal design</a>. <em>Answered by <a href="../../adr/0010-jena-graph-types-in-the-core/">ADR 0010</a>:</em> the core uses Jena's graph types from <code>jena-core</code>, and nothing from <code>jena-arq</code>.</li>
+<li><strong>Does the core use Jena's model types,</strong> or its own RDF abstraction? See <a href="../05-architecture/hexagonal-design/#rules-that-keep-the-core-clean">Hexagonal design</a>. <em>Answered by <a href="../../adr/0010-jena-graph-types-in-the-core/">ADR 0010</a>:</em> the core uses Jena's graph types from <code>jena-core</code>, and nothing from <code>jena-arq</code>. <em>Reopened on 2026-11-01:</em> the core has a domain model of its own, and the type of its RDF description is to be chosen again between Jena's <code>Model</code>, Jena's <code>Graph</code> and Commons RDF's <code>Graph</code>. ADR 0010 is <em>Proposed</em> again; nothing from <code>jena-arq</code> stays the rule.</li>
 <li><strong>Is the data loading (ETL) chain in scope</strong> of this project at all, or a separate line of work?</li>
-<li><strong>Which configuration mechanism in production?</strong> For example environment variables, mounted files or a configuration server. <em>Answered by <a href="../../adr/0013-tenant-configuration-delivery/">ADR 0013</a>:</em> a versioned artefact built from one central configuration repository, validated in CI, mounted read-only and rolled out with a rolling restart; credentials come from the platform's secret store.</li>
+<li><strong>Which configuration mechanism in production?</strong> For example environment variables, mounted files or a configuration server. <em>Answered by <a href="../../adr/0013-tenant-configuration-delivery/">ADR 0013</a>:</em> a versioned artefact built from one central configuration repository, validated in CI, mounted read-only and rolled out with a rolling restart; credentials come from the platform's secret store. Since <a href="../../adr/0028-tenant-configuration-in-yaml/">ADR 0028</a>, that artefact holds a YAML file next to the files that stay RDF or JSON, and the YAML may also be part of <code>application.yml</code> in the jar.</li>
 <li><strong>Fork pull requests:</strong> the internal CI does not build pull requests from external forks. When external contributors appear, do we add a minimal public CI for them?</li>
 <li><strong>Are redirects for moved or retired URIs data or configuration?</strong> Trifid reads them from the store, modelled with the W3C HTTP vocabulary, so data owners can manage them without a deployment (see <a href="../04-landscape/trifid-code-review/#what-spiegel-can-learn-from-it">Trifid code review</a>). The alternative is SPieGeL's tenant configuration. This affects NFR-OPEN-02. <em>Partly answered by FR-URI-11:</em> both, by scale. A single URI is data in the store, a whole URI pattern or host name is configuration. The data describes the fact (<code>dct:isReplacedBy</code>, a status, a tombstone) rather than the HTTP response, because the <em>HTTP in RDF</em> vocabulary is a W3C note that is no longer maintained, and the fact is also useful to RDF consumers. Still open: the exact properties for a tombstone, and whether the domains' existing validity properties are enough for FR-URI-09.</li>
-<li><strong>Hand-written queries, generated queries, or both?</strong> Prez generates each description query from a SHACL shape per profile; SPieGeL's requirements assume query files (FR-RA-02). Generating the simple cases and keeping files for tuned ones is a possible middle way (see <a href="../04-landscape/prez-code-review/#what-spiegel-can-learn-from-it">Prez code review</a>). <em>Answered by <a href="../../adr/0012-tenant-configuration-as-rdf/">ADR 0012</a>:</em> default <code>.rq</code> templates shipped with SPieGeL, replaced or extended by hand-written files. Generation from SHACL may come later, as an adapter that supplies <code>QuerySpec</code>s.</li>
-<li><strong>Do we adopt the Linked Data API vocabulary for tenant configuration?</strong> ELDA's model (item and list endpoints, item templates, selectors, viewers, formatters) covers most of FR-URI-01, FR-RA-01 and FR-HTML-03, and comes with a published vocabulary (see <a href="../04-landscape/elda-code-review/#what-spiegel-can-learn-from-it">ELDA code review</a>). The alternatives are a subset of it, extended with profiles and access levels, or SPieGeL's own format. <em>Answered by <a href="../../adr/0012-tenant-configuration-as-rdf/">ADR 0012</a>:</em> no. The configuration is Turtle in SPieGeL's own small vocabulary, which reuses <code>api:uriTemplate</code> and <code>api:itemTemplate</code> along with <code>prof:</code>, <code>sh:</code>, <code>dcat:</code> and <code>void:</code> terms.</li>
+<li><strong>Hand-written queries, generated queries, or both?</strong> Prez generates each description query from a SHACL shape per profile; SPieGeL's requirements assume query files (FR-RA-02). Generating the simple cases and keeping files for tuned ones is a possible middle way (see <a href="../04-landscape/prez-code-review/#what-spiegel-can-learn-from-it">Prez code review</a>). <em>Answered by <a href="../../adr/0012-tenant-configuration-as-rdf/">ADR 0012</a>:</em> default <code>.rq</code> templates shipped with SPieGeL, replaced or extended by hand-written files. Generation from SHACL may come later, as an adapter that supplies <code>QuerySpec</code>s. <em>Revised by <a href="../../adr/0028-tenant-configuration-in-yaml/">ADR 0028</a>:</em> default queries shipped with SPieGeL, replaced or extended by the tenant's own queries, which are written in the YAML configuration for now.</li>
+<li><strong>Do we adopt the Linked Data API vocabulary for tenant configuration?</strong> ELDA's model (item and list endpoints, item templates, selectors, viewers, formatters) covers most of FR-URI-01, FR-RA-01 and FR-HTML-03, and comes with a published vocabulary (see <a href="../04-landscape/elda-code-review/#what-spiegel-can-learn-from-it">ELDA code review</a>). The alternatives are a subset of it, extended with profiles and access levels, or SPieGeL's own format. <em>Answered by <a href="../../adr/0012-tenant-configuration-as-rdf/">ADR 0012</a>:</em> no. The configuration is Turtle in SPieGeL's own small vocabulary, which reuses <code>api:uriTemplate</code> and <code>api:itemTemplate</code> along with <code>prof:</code>, <code>sh:</code>, <code>dcat:</code> and <code>void:</code> terms. <em>Answered anew by <a href="../../adr/0028-tenant-configuration-in-yaml/">ADR 0028</a>:</em> the configuration is YAML, bound with Spring in <code>spiegel-bootstrap</code>; there is no configuration vocabulary.</li>
 <li><strong>Where do the labels of external vocabularies come from?</strong> Either every store holds the external ontologies its data uses, which is simple for SPieGeL but means loading and maintaining the same ontologies in every store (a job for the loading chain, question 15). Or SPieGeL has one shared vocabulary source for all tenants, as Prez bundles labels of common vocabularies (<a href="../04-landscape/prez-code-review/#what-spiegel-can-learn-from-it">Prez code review</a>), which loads each ontology once. Or both, in that order (FR-HTML-11). A fourth option, fetching an unknown vocabulary from the web while a request is handled, is ruled out: it is slow, depends on third-party sites being up, and conflicts with NFR-SEC-06 (SPieGeL only contacts configured sources). Loading vocabularies from the web <em>ahead of time</em>, into the shared source, remains possible as part of maintaining it. <em>Answered by <a href="../../adr/0021-labels-of-external-vocabularies/">ADR 0021</a>:</em> the domain's own store first, then extracts of external vocabularies in the configuration: only kinds, labels and descriptions, refreshed ahead of time by a CI job and reviewed. Labels of resources of other domains are question 42.</li>
 <li>
 <p><strong>Materialise or translate non-RDF sources (FR-DS-02)?</strong> <em>Answered by <a href="../../adr/0009-ontop-for-relational-sources/">ADR 0009</a>:</em> relational sources that must be current are translated per request by Ontop, running as a separate SPARQL endpoint; everything else is materialised with RML in the loading chain. Still open: which sources need to be current to the second. The analysis that led to the decision follows. With <strong>materialisation</strong>, an RML processor (for example RMLMapper or RMLStreamer) generates RDF into a store in the loading chain (question 15). SPieGeL then only reads that store through its SPARQL adapter, and needs no extra adapter. With <strong>translation per request</strong> (a virtual knowledge graph), queries are rewritten against the source itself, so data is always current, but tool support is narrower: as far as we know it exists mainly for R2RML over relational databases (for example Ontop, which can itself expose a SPARQL endpoint). RML covers more source types (CSV, JSON, XML, Web APIs), but every RML processor we looked at (October 2026) materialises; none rewrites queries per request:</p>
@@ -2960,7 +3020,8 @@
 - <strong>Negotiate in SPieGeL only</strong>, as now: correct, but a cache in front hits less often on negotiated URLs.
 - <strong>Negotiate at the edge and rewrite internally to the suffix URL</strong>, as the Flux team suggests: the cache then holds one copy per format. Negotiation (quality values, SPieGeL's order of preference, <code>406</code>) then exists twice, and the edge cannot take over the fallback from RDF/XML to the next format (AC-3.15), which depends on the data.
 - <strong>Cache only the suffix URLs at the edge</strong>, and pass negotiated requests through to SPieGeL, or cache them briefly.</p>
-<p>This belongs with caching (feature 002) and the edge concerns of <a href="../../adr/0022-edge-concerns/">ADR 0022</a>. It does not change feature 001.</p>
+<p>This belongs with caching (feature 002) and the edge concerns of <a href="../../adr/0022-edge-concerns/">ADR 0022</a>. It does not change feature 001.
+44. <strong>Where is the caller's access level derived?</strong> The web adapter passes a <code>UserContext</code> (username and roles) to the core and determines no access level (<a href="../05-architecture/hexagonal-design/#domain-model">Hexagonal design</a>). Either the core derives the <code>AccessLevel</code> from the roles, as the highest level they grant, and passes it to the outbound ports; or the level means nothing to the core, and only the outbound adapter that needs it, such as the SPARQL adapter choosing the credentials for a level, maps the roles itself. The choice also decides how the cache key holds the caller's level (NFR-SEC-03, <a href="../../adr/0020-cache-key-and-entity-tag/">ADR 0020</a>): with a level in the core, the key holds the level; without one, the core must still key by something that separates what callers may see, such as the roles, or ask the adapter for the level.</p>
 </li>
 </ol>
 
@@ -2998,7 +3059,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../05-architecture/module-structure/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Module structure">
+          <a href="../05-architecture/project-modules/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Project modules">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -3008,7 +3069,7 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Module structure
+                Project modules
               </div>
             </div>
           </a>

@@ -1301,6 +1301,8 @@
       
         
       
+        
+      
     
     
     
@@ -1432,10 +1434,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#domain-core" class="md-nav__link">
+  <a href="#domain-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Domain core
+        Domain model
       
     </span>
   </a>
@@ -1529,6 +1531,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project modules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1583,6 +1613,8 @@
       
         
           
+        
+      
         
       
         
@@ -2458,6 +2490,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0028-tenant-configuration-in-yaml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0028 Tenant configuration in YAML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2777,10 +2837,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#domain-core" class="md-nav__link">
+  <a href="#domain-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Domain core
+        Domain model
       
     </span>
   </a>
@@ -2835,7 +2895,7 @@
 
 
 <h1 id="hexagonal-design">Hexagonal design<a class="headerlink" href="#hexagonal-design" title="Permanent link">&para;</a></h1>
-<p>SPieGeL uses a hexagonal architecture (ports and adapters). The domain core holds the rules that the predecessor spreads over scripts, templates and an XML catalogue. These rules include which URI template matches, which queries describe a resource, which profile applies, and which access level a caller has. The core depends only on interfaces (ports). Everything technology-specific lives in adapters.</p>
+<p>SPieGeL uses a hexagonal architecture (ports and adapters). The domain core holds the rules of a request that depend neither on HTTP nor on SPARQL, in a domain model of its own. The predecessor spreads such rules over scripts, templates and an XML catalogue. Which URI template matches a request belongs to the web adapter, and which queries describe a resource belongs to the SPARQL adapter. The core depends only on interfaces (ports). Everything technology-specific lives in adapters.</p>
 <div class="admonition note">
 <p class="admonition-title">Status</p>
 <p>This is the design as proposed by the analysis. Choices that need a formal decision will be recorded as <a href="../../../adr/">ADRs</a>.</p>
@@ -2851,7 +2911,7 @@
     S --&gt; IDP[OIDC provider]
     S -.-&gt;|Link rel=collection| LDES[LDES server]
     subgraph cfg [Configuration, outside SPieGeL]
-        REPO[Configuration repository] --&gt;|CI with spiegel-tools| ART[Configuration artefact]
+        REPO[Configuration repository] --&gt;|CI with spiegel-tools| ART[Configuration artefact: YAML]
     end
     ART --&gt; S
     subgraph lc [Loading chain, outside SPieGeL]
@@ -2862,38 +2922,51 @@
 <p>The portal and its federated SPARQL editor are pages of the umbrella domain's tenant, not separate services; the editor's queries run in the visitor's browser (<a href="../../../adr/0025-federated-query-in-the-portal/">ADR 0025</a>). An index of data from several domains, such as labels or search terms, is never held by SPieGeL: it is a store of its own, filled by the loading chain, and read like any data source. Tools for writing and checking configuration are a separate artefact, <code>spiegel-tools</code> (<a href="../../../adr/0026-system-boundary/">ADR 0026</a>).</p>
 <h2 id="ports-and-adapters">Ports and adapters<a class="headerlink" href="#ports-and-adapters" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    subgraph inbound [Inbound adapters]
+    subgraph inbound [Inbound adapter: web, Spring MVC]
         WEB[HTTP: /id /doc /ns /eli /.well-known/genid]
         SPQ[HTTP: /sparql]
         SRCH[HTTP: /keywordsearch]
+        TPL[URI templates: request → tenant and Resource]
+        AUTH[Authentication: token → UserContext]
+        NEG[Negotiation: media type and profile]
+        REN[Rendering: RDF formats, HTML]
     end
     subgraph core [Domain core]
         UC1([DereferenceResource])
         UC2([RunSparqlQuery: guarded pass-through])
         UC3([Search])
-        M[UriTemplate · ResourceType · QuerySpec · Profile · AccessLevel · Tenant]
+        M[Resource · UserContext · Profile · RDF description · AccessLevel · QueryPolicy]
     end
     subgraph outbound [Outbound adapters]
-        CFG[Tenant configuration]
-        IDP[Identity: token → AccessLevel]
-        REN[Renderers: RDF formats, HTML]
         CACHE[Cache]
-        DS[(SPARQL data source: triple store or Ontop)]
+        DS[(SPARQL data source: queries per resource type and profile, triple store or Ontop)]
         SI[Search: the store's full-text index]
     end
+    BOOT[spiegel-bootstrap: tenant configuration in YAML, wiring] -.-&gt; inbound
+    BOOT -.-&gt; core
+    BOOT -.-&gt; outbound
     WEB --&gt; UC1
     SPQ --&gt; UC2
     SRCH --&gt; UC3
-    inbound -.-&gt; CFG
-    inbound -.-&gt; IDP
-    inbound -.-&gt; REN
     UC1 --&gt; CACHE
     UC1 --&gt; DS
     UC2 --&gt; DS
     UC3 --&gt; SI</code></pre>
-<p>Solid arrows are calls from a use case. Dotted arrows are calls that an inbound adapter makes through a port of the core, before or after the use case: it resolves the tenant and the caller's access level first, and renders the result last (see <a href="../request-flow/">Request flow</a>). These ports are defined in the core so that the web adapter does not depend on the HTML or security adapter. The use cases receive the tenant and the access level as input; they do not call the identity provider themselves.</p>
+<p>Solid arrows are calls into or from a use case. The ports, in both directions, speak the core's own <a href="#domain-model">domain model</a>.</p>
+<p><strong>The web adapter turns a request into the domain model.</strong> <code>spiegel-adapter-in-rest</code> is implemented with Spring MVC. Before it calls a use case, it:</p>
+<ol>
+<li>matches the request against the tenants' URI templates. Per tenant and URI template, the configuration says how a request that matches the template also matches the tenant: by host name or by a path variable. Only a request that matches both matches that template for that tenant;</li>
+<li>follows the matching template to its specific configuration within the tenant, and answers the <code>303</code> from an <code>id</code> to its <code>doc</code> URI itself;</li>
+<li>creates a <code>Resource</code> from the match;</li>
+<li>creates a <code>UserContext</code> with Spring Security, from the caller's token (phase 2);</li>
+<li>negotiates the media type and the profile, from a query parameter and/or a header.</li>
+</ol>
+<p>It then calls the use case with the <code>Resource</code>, the <code>Profile</code> and the <code>UserContext</code>, and renders the RDF description that comes back in the negotiated media type, with Jena RIOT for RDF formats and a template engine for HTML. Authentication and rendering are not ports of the core and not adapters of their own: they are part of the web adapter. The core knows no URI templates, no HTTP and no formats.</p>
+<p><strong>The SPARQL adapter knows the queries.</strong> For a <code>Resource</code> and a <code>Profile</code>, <code>spiegel-adapter-out-virtuoso</code> looks up in its configuration which queries describe that resource, binds the resource IRI into them, runs them on the configured data source and returns one RDF description. The core does not know the queries.</p>
+<p><strong>The tenant configuration is not an adapter.</strong> <code>spiegel-bootstrap</code> binds it from YAML with Spring (<code>@ConfigurationProperties</code>) and gives each module the part it needs when it wires the application (the dotted arrows): the web adapter gets the tenants, their URI templates and profiles, and the SPARQL adapter gets the data sources and the queries per resource type and profile. Each adapter defines the configuration types it needs, because adapters do not depend on <code>spiegel-bootstrap</code>. The core neither reads the configuration nor calls a port for it (<a href="../../../adr/0028-tenant-configuration-in-yaml/">ADR 0028</a>).</p>
 <p>The order in which these parts act on a request is described in <a href="../request-flow/">Request flow</a>.</p>
-<h2 id="domain-core">Domain core<a class="headerlink" href="#domain-core" title="Permanent link">&para;</a></h2>
+<h2 id="domain-model">Domain model<a class="headerlink" href="#domain-model" title="Permanent link">&para;</a></h2>
+<p>The core has a domain model of its own: a set of Java classes used by the inbound ports (the use cases that adapters call) and by the outbound ports (the interfaces that adapters implement). It includes at least:</p>
 <table>
 <thead>
 <tr>
@@ -2903,48 +2976,37 @@
 </thead>
 <tbody>
 <tr>
-<td><code>Tenant</code></td>
-<td>A domain: host names, data sources (one of them named for <code>/sparql</code>), licence, language priority, URI templates, profiles, HTML theme. Read from Turtle by the configuration adapter; the core never sees Turtle (<a href="../../../adr/0012-tenant-configuration-as-rdf/">ADR 0012</a>).</td>
+<td><code>Resource</code></td>
+<td>A structured identifier of a resource: the tenant id, the key of the configuration within the tenant that the web adapter found through the URI template (the resource type), the values of the template's variables, and the resource IRI. It holds enough for an outbound adapter to map it back to the specific configuration within the tenant.</td>
 </tr>
 <tr>
-<td><code>DataSource</code></td>
-<td>A named SPARQL endpoint for one access level, with a key to its credentials and a declaration whether it enforces graph permissions (<a href="../../../adr/0011-query-policy/">ADR 0011</a>).</td>
-</tr>
-<tr>
-<td><code>UriTemplate</code></td>
-<td>A path pattern with variables typed by a pattern, and the <code>ResourceType</code> it identifies. Also models the <code>id</code> → <code>doc</code> relation and the <code>303</code>. A tenant normally has one generic template for every concept, plus optional, more specific templates for exceptions (<a href="../../../adr/0012-tenant-configuration-as-rdf/">ADR 0012</a>).</td>
-</tr>
-<tr>
-<td><code>ResourceType</code></td>
-<td>What kind of resource a template yields, and which <code>QuerySpec</code>s describe it.</td>
-</tr>
-<tr>
-<td><code>QuerySpec</code></td>
-<td>A query (stored as data), the data source it runs on, and the conditions (profile, media type) under which it runs. Replaces the predecessor's XML query catalogue.</td>
+<td><code>UserContext</code></td>
+<td>The username and the roles of an authenticated caller, created by the web adapter with Spring Security. Empty for an unauthenticated caller, who has the <em>public</em> level.</td>
 </tr>
 <tr>
 <td><code>Profile</code></td>
 <td>A named view of a resource (for example <em>summary</em> or <em>full</em>), negotiated per Content Negotiation by Profile.</td>
 </tr>
 <tr>
-<td><code>AccessLevel</code></td>
-<td>An ordered type (<em>public</em> &lt; <em>internal</em> &lt; <em>confidential</em> &lt; <em>secret</em> &lt; <em>top secret</em>). The caller's level is the highest level among their roles.</td>
+<td>RDF description</td>
+<td>The merged RDF result, independent of format. Whether it is Jena's <code>org.apache.jena.rdf.model.Model</code>, Jena's <code>Graph</code> or <code>org.apache.commons.rdf.api.Graph</code> is still to be decided (<a href="../../../adr/0010-jena-graph-types-in-the-core/">ADR 0010</a>, <a href="../../06-open-questions/#architecture-and-operations">open question 14</a>).</td>
 </tr>
 <tr>
-<td><code>ResourceDescription</code></td>
-<td>The merged RDF result, independent of format: a Jena <code>Graph</code> (<a href="../../../adr/0010-jena-graph-types-in-the-core/">ADR 0010</a>).</td>
+<td><code>AccessLevel</code></td>
+<td>An ordered type (<em>public</em> &lt; <em>internal</em> &lt; <em>confidential</em> &lt; <em>secret</em> &lt; <em>top secret</em>). The caller's level is the highest level among their roles. Whether the core derives it from the <code>UserContext</code>, or only an outbound adapter needs it and maps the roles itself, is <a href="../../06-open-questions/#architecture-and-operations">open question 44</a>.</td>
 </tr>
 <tr>
 <td><code>QueryPolicy</code></td>
-<td>What a query may do: the allowed query forms, and no <code>SERVICE</code>. Applied to every query on <code>/sparql</code> and to every tenant query when the configuration is loaded. It names no graphs; the store decides what a level sees (<a href="../../../adr/0011-query-policy/">ADR 0011</a>).</td>
+<td>What a query on <code>/sparql</code> may do: the allowed query forms, and no <code>SERVICE</code>. It names no graphs; the store decides what a level sees (<a href="../../../adr/0011-query-policy/">ADR 0011</a>).</td>
 </tr>
 </tbody>
 </table>
+<p>Tenants, URI templates, resource types, data sources and queries are not part of the domain model. They are configuration of the adapters that use them, bound by <code>spiegel-bootstrap</code> (<a href="../../../adr/0028-tenant-configuration-in-yaml/">ADR 0028</a>).</p>
 <p>Use cases (inbound ports):</p>
 <ul>
-<li><strong><code>DereferenceResource</code></strong>: given a tenant, a path, the negotiated media type and profile, and the caller's access level, return a <code>ResourceDescription</code>, a redirect (<code>303</code> from <code>id</code> to <code>doc</code>, or <code>301</code> for a moved resource), a tombstone (<code>410</code>), or "not found".</li>
-<li><strong><code>RunSparqlQuery</code></strong>: run a read-only query for a tenant at the caller's access level, on the one data source the tenant names for <code>/sparql</code>. This is a guarded pass-through rather than domain logic: the core does not interpret the query, but checks it against the <code>QueryPolicy</code> through the <code>QueryInspector</code> port, and applies the access level, the bounded pool, the timeout and the result limit.</li>
-<li><strong><code>Search</code></strong>: keyword search for a tenant at the caller's access level.</li>
+<li><strong><code>DereferenceResource</code></strong>: given a <code>Resource</code>, a <code>Profile</code> and a <code>UserContext</code>, return the RDF description, a redirect for a moved resource (<code>301</code>), a tombstone (<code>410</code>), or "not found".</li>
+<li><strong><code>RunSparqlQuery</code></strong>: run a read-only query for a tenant on behalf of a <code>UserContext</code>, on the one data source the tenant names for <code>/sparql</code>. This is a guarded pass-through rather than domain logic: the core does not interpret the query, but checks it against the <code>QueryPolicy</code> through the <code>QueryInspector</code> port, and applies the bounded pool, the timeout and the result limit.</li>
+<li><strong><code>Search</code></strong>: keyword search for a tenant on behalf of a <code>UserContext</code>.</li>
 </ul>
 <p>Outbound ports:</p>
 <table>
@@ -2957,35 +3019,23 @@
 <tbody>
 <tr>
 <td><code>DataSourcePort</code></td>
-<td>SPARQL over HTTP (Jena), for triple stores and for Ontop endpoints over relational sources (<a href="../../../adr/0009-ontop-for-relational-sources/">ADR 0009</a>)</td>
+<td>Describes a <code>Resource</code> for a <code>Profile</code> and a caller: SPARQL over HTTP (Jena), for triple stores and for Ontop endpoints over relational sources (<a href="../../../adr/0009-ontop-for-relational-sources/">ADR 0009</a>). The adapter chooses the queries from its configuration and runs them with the credentials for the caller's level</td>
 </tr>
 <tr>
 <td><code>QueryInspector</code></td>
-<td>Checks query text against a <code>QueryPolicy</code>: strict SPARQL 1.1 parsing and a walk over the syntax tree, in <code>spiegel-adapter-sparql</code> (<a href="../../../adr/0011-query-policy/">ADR 0011</a>)</td>
+<td>Checks query text against a <code>QueryPolicy</code>: strict SPARQL 1.1 parsing and a walk over the syntax tree, in <code>spiegel-adapter-out-virtuoso</code> (<a href="../../../adr/0011-query-policy/">ADR 0011</a>)</td>
 </tr>
 <tr>
 <td><code>SearchPort</code></td>
 <td>The data source's own full-text index through SPARQL, such as <code>bif:contains</code> or <code>ql:contains-word</code> (FR-SRCH-01)</td>
 </tr>
 <tr>
-<td><code>TenantConfigurationPort</code></td>
-<td>Turtle in SPieGeL's configuration vocabulary, validated with SHACL, with <code>.rq</code> files for queries (<a href="../../../adr/0012-tenant-configuration-as-rdf/">ADR 0012</a>). Delivered as a versioned artefact, mounted read-only (<a href="../../../adr/0013-tenant-configuration-delivery/">ADR 0013</a>)</td>
-</tr>
-<tr>
 <td><code>CachePort</code></td>
-<td>In-memory; later a shared cache</td>
-</tr>
-<tr>
-<td><code>IdentityPort</code></td>
-<td>OIDC through Spring Security</td>
+<td>In-memory; later a shared cache. The key is built from the <code>Resource</code>, the <code>Profile</code> and the caller's level (NFR-SEC-03); how the level is known follows open question 44</td>
 </tr>
 <tr>
 <td><code>RateLimitPort</code></td>
 <td>In memory per node, each counting up to its share of the limit; later a shared store, falling back to the count per node when it fails (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>)</td>
-</tr>
-<tr>
-<td><code>RendererPort</code></td>
-<td>Jena RIOT for RDF formats; a template engine for HTML</td>
 </tr>
 </tbody>
 </table>
@@ -3011,22 +3061,22 @@
 </tr>
 <tr>
 <td>Routes generated at runtime per domain</td>
-<td>One set of controllers with <code>Tenant</code> resolved from the host name</td>
+<td>URI templates in the web adapter, with the tenant matched by host name or by a path variable, per template</td>
 <td>No per-domain code</td>
 </tr>
 <tr>
 <td>XML query catalogue and query templates</td>
-<td><code>ResourceType</code> + <code>QuerySpec</code> + <code>Profile</code></td>
-<td>The most hidden business logic of the predecessor. Now typed and tested</td>
+<td>Queries per resource type and profile, in the configuration of the SPARQL adapter</td>
+<td>The most hidden business logic of the predecessor. Now configured and tested</td>
 </tr>
 <tr>
 <td>RDF serialisation</td>
-<td>Renderer adapter (Jena RIOT)</td>
+<td>Web adapter (<code>spiegel-adapter-in-rest</code>, Jena RIOT)</td>
 <td>—</td>
 </tr>
 <tr>
 <td>XSLT HTML rendering</td>
-<td>HTML renderer adapter</td>
+<td>Web adapter (<code>spiegel-adapter-in-rest</code>)</td>
 <td>Template engine to be decided</td>
 </tr>
 <tr>
@@ -3036,13 +3086,13 @@
 </tr>
 <tr>
 <td>OIDC flow scripts</td>
-<td>Spring Security OAuth2 resource server / client</td>
+<td>Spring Security OAuth2 resource server / client in the web adapter, producing a <code>UserContext</code></td>
 <td>Large simplification</td>
 </tr>
 <tr>
 <td>Environment variables → configuration</td>
-<td><code>@ConfigurationProperties</code> + tenant configuration files</td>
-<td>—</td>
+<td><code>@ConfigurationProperties</code> in <code>spiegel-bootstrap</code>, for the application and for the tenant configuration in YAML</td>
+<td><a href="../../../adr/0028-tenant-configuration-in-yaml/">ADR 0028</a></td>
 </tr>
 <tr>
 <td>Concurrency throttle</td>
@@ -3053,7 +3103,8 @@
 </table>
 <h2 id="rules-that-keep-the-core-clean">Rules that keep the core clean<a class="headerlink" href="#rules-that-keep-the-core-clean" title="Permanent link">&para;</a></h2>
 <ul>
-<li>The core has <strong>no</strong> dependency on Spring, servlet APIs, Jena's HTTP client or any template engine. It uses Jena's graph types (<code>Graph</code>, <code>Node</code>, <code>Triple</code> from <code>jena-core</code>), so that descriptions can be merged without conversion, but nothing from <code>jena-arq</code>: it neither parses nor runs SPARQL, nor reads or writes RDF formats (<a href="../../../adr/0010-jena-graph-types-in-the-core/">ADR 0010</a>).</li>
+<li>The core has <strong>no</strong> dependency on Spring, servlet APIs, Jena's HTTP client or any template engine. Which RDF type it uses is still to be decided (<a href="../../../adr/0010-jena-graph-types-in-the-core/">ADR 0010</a>); whichever it is, the core uses nothing from <code>jena-arq</code>: it neither parses nor runs SPARQL, nor reads or writes RDF formats.</li>
+<li>The core knows no URI templates and no queries. They belong to the web adapter and the SPARQL adapter.</li>
 <li>Adapters depend on the core; the core never depends on adapters.</li>
 <li>Authorisation is part of the use case, not of a filter that can be bypassed by a cache hit (NFR-SEC-03).</li>
 </ul>

@@ -1297,6 +1297,8 @@
       
         
       
+        
+      
     
     
     
@@ -1423,6 +1425,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../analysis/05-architecture/project-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project modules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1479,6 +1509,8 @@
       
         
           
+        
+      
         
       
         
@@ -2434,6 +2466,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../0028-tenant-configuration-in-yaml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0028 Tenant configuration in YAML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../template/" class="md-nav__link">
         
   
@@ -2790,7 +2850,7 @@
 
 <h1 id="0010-use-jenas-graph-types-in-the-core-keep-sparql-out-of-it">0010. Use Jena's graph types in the core, keep SPARQL out of it<a class="headerlink" href="#0010-use-jenas-graph-types-in-the-core-keep-sparql-out-of-it" title="Permanent link">&para;</a></h1>
 <ul>
-<li><strong>Status:</strong> Accepted</li>
+<li><strong>Status:</strong> Proposed</li>
 <li><strong>Date:</strong> 2026-10-25</li>
 </ul>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
@@ -2811,7 +2871,7 @@
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>The core uses Jena's graph level:</strong> <code>Graph</code>, <code>Node</code> and <code>Triple</code> from <code>jena-core</code>. <code>ResourceDescription</code> wraps a <code>Graph</code>. Inside a method, the core may use the model level as a view on that graph where it makes the code clearer, but its ports and domain types expose the graph level only.</li>
-<li><strong>The core does not depend on <code>jena-arq</code>.</strong> It neither parses nor runs SPARQL, and does not read or write RDF formats. For the core, a query is text with bindings: a <code>QuerySpec</code> holds the query text, and the resource IRI is passed as a <code>Node</code>. Binding happens in the SPARQL adapter (NFR-SEC-04). Inspecting a query against a policy is done behind a port (<a href="../0011-query-policy/">ADR 0011</a>).</li>
+<li><strong>The core does not depend on <code>jena-arq</code>.</strong> It neither parses nor runs SPARQL, and does not read or write RDF formats. For the core, a query is text with bindings: a <code>QuerySpec</code> holds the query text, and the resource IRI is passed as a <code>Node</code>. Binding happens in the SPARQL adapter (NFR-SEC-04). <em>Since 2026-11-01, the core does not hold the queries at all: the SPARQL adapter looks them up in its configuration for a <code>Resource</code> and a profile (<a href="../../analysis/05-architecture/hexagonal-design/#domain-model">Hexagonal design</a>).</em> Inspecting a query against a policy is done behind a port (<a href="../0011-query-policy/">ADR 0011</a>).</li>
 <li><strong><code>ArchitectureTest</code> enforces this.</strong> Classes in the core must not depend on <code>org.apache.jena.sparql..</code>, <code>org.apache.jena.query..</code>, <code>org.apache.jena.riot..</code>, <code>org.apache.jena.http..</code> or <code>org.apache.jena.rdflink..</code>.</li>
 </ol>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
@@ -2822,6 +2882,7 @@
 <li>Serialising RDF (Jena RIOT) happens in the adapters that render, never in the core.</li>
 <li>Exposing only the graph level keeps the ports small and avoids leaking the model level's implicit state, such as prefix maps and reification, into the domain.</li>
 </ul>
+<p><em>Reopened on 2026-11-01:</em> the core has a domain model of its own (<code>Resource</code>, <code>UserContext</code>, <code>Profile</code> and an RDF description), used by its inbound and outbound ports (<a href="../../analysis/05-architecture/hexagonal-design/#domain-model">Hexagonal design</a>). Which type holds the RDF description is open again: Jena's model level (<code>org.apache.jena.rdf.model.Model</code>), Jena's graph level (<code>Graph</code>, as decided above), or Commons RDF (<code>org.apache.commons.rdf.api.Graph</code>). The status is therefore <em>Proposed</em> again (<a href="../../analysis/06-open-questions/#architecture-and-operations">open question 14</a>). Decision 2, nothing from <code>jena-arq</code> in the core, is not in question.</p>
 
 
 

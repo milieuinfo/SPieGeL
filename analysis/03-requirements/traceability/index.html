@@ -1359,6 +1359,8 @@
       
         
       
+        
+      
     
     
     
@@ -1485,6 +1487,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-architecture/project-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project modules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1539,6 +1569,8 @@
       
         
           
+        
+      
         
       
         
@@ -2414,6 +2446,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0028-tenant-configuration-in-yaml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0028 Tenant configuration in YAML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2768,7 +2828,7 @@
 <td>FR-DS-01</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-sparql</code></td>
+<td><code>spiegel-adapter-out-virtuoso</code></td>
 </tr>
 <tr>
 <td>URI template → queries</td>
@@ -2777,7 +2837,7 @@
 <td>FR-URI-01, FR-RA-01, FR-RA-02</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-core</code></td>
+<td><code>spiegel-application</code></td>
 </tr>
 <tr>
 <td>Content negotiation</td>
@@ -2786,7 +2846,7 @@
 <td>FR-CN-01, FR-CN-05</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-web</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Negotiation that caches and HTTP tools understand (<code>Vary</code>, <code>Content-Location</code>, quality values, <code>HEAD</code>)</td>
@@ -2795,7 +2855,7 @@
 <td>FR-CN-06 to 09</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-web</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Errors that machines can read (<code>application/problem+json</code>)</td>
@@ -2804,7 +2864,7 @@
 <td>FR-CN-10</td>
 <td>S</td>
 <td>1</td>
-<td><code>spiegel-adapter-web</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>JSON-LD for web developers (frame, context per domain)</td>
@@ -2813,7 +2873,7 @@
 <td>FR-CN-11</td>
 <td>S</td>
 <td>1</td>
-<td><code>spiegel-adapter-web</code>, tenant configuration, context generator</td>
+<td><code>spiegel-adapter-in-rest</code>, tenant configuration, context generator</td>
 </tr>
 <tr>
 <td>Links between a thing and its document in the RDF</td>
@@ -2822,7 +2882,7 @@
 <td>FR-URI-07</td>
 <td>S</td>
 <td>1</td>
-<td><code>spiegel-core</code></td>
+<td><code>spiegel-application</code></td>
 </tr>
 <tr>
 <td>Moved, withdrawn and removed URIs (<code>301</code>, status, <code>410</code>)</td>
@@ -2831,7 +2891,7 @@
 <td>FR-URI-08 to 11, NFR-OPEN-02</td>
 <td>M</td>
 <td>2</td>
-<td><code>spiegel-core</code>, <code>spiegel-adapter-web</code>, <code>spiegel-adapter-html</code>, tenant configuration</td>
+<td><code>spiegel-application</code>, <code>spiegel-adapter-in-rest</code>, tenant configuration</td>
 </tr>
 <tr>
 <td>Simple HTML pages</td>
@@ -2840,7 +2900,7 @@
 <td>FR-HTML-01</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-html</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Front page per domain</td>
@@ -2849,7 +2909,7 @@
 <td>FR-HTML-02</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-html</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Portal page linking all domains</td>
@@ -2858,7 +2918,7 @@
 <td>FR-HTML-08</td>
 <td>S</td>
 <td>2</td>
-<td><code>spiegel-adapter-html</code>, <code>spiegel-adapter-config</code></td>
+<td><code>spiegel-adapter-in-rest</code>, <code>spiegel-bootstrap</code></td>
 </tr>
 <tr>
 <td>Discovered front-page blocks (catalogues, thesauri, classes)</td>
@@ -2867,7 +2927,7 @@
 <td>FR-HTML-09</td>
 <td>S</td>
 <td>1</td>
-<td><code>spiegel-core</code>, <code>spiegel-adapter-html</code></td>
+<td><code>spiegel-application</code>, <code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Structure of a domain's data (declared shapes and cube structures, derived summary)</td>
@@ -2876,7 +2936,7 @@
 <td>FR-HTML-15</td>
 <td>C</td>
 <td>2</td>
-<td><code>spiegel-core</code>, <code>spiegel-adapter-html</code>, tenant queries</td>
+<td><code>spiegel-application</code>, <code>spiegel-adapter-in-rest</code>, tenant queries</td>
 </tr>
 <tr>
 <td>Dataset description per domain (DCAT, VoID)</td>
@@ -2885,7 +2945,7 @@
 <td>FR-META-01</td>
 <td>S</td>
 <td>1</td>
-<td><code>spiegel-core</code>, <code>spiegel-adapter-web</code>, <code>spiegel-adapter-config</code></td>
+<td><code>spiegel-application</code>, <code>spiegel-adapter-in-rest</code>, <code>spiegel-bootstrap</code></td>
 </tr>
 <tr>
 <td>Licence findable in data, headers and pages</td>
@@ -2894,7 +2954,7 @@
 <td>FR-META-02</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-config</code>, <code>spiegel-adapter-web</code>, <code>spiegel-adapter-html</code></td>
+<td><code>spiegel-bootstrap</code>, <code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>SPARQL Service Description</td>
@@ -2903,7 +2963,7 @@
 <td>FR-META-03</td>
 <td>S</td>
 <td>2</td>
-<td><code>spiegel-adapter-web</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Example queries as data (SHACL), tested against the store</td>
@@ -2912,7 +2972,7 @@
 <td>FR-SPARQL-04</td>
 <td>S</td>
 <td>2</td>
-<td><code>spiegel-adapter-web</code>, <code>spiegel-adapter-html</code>, tenant configuration</td>
+<td><code>spiegel-adapter-in-rest</code>, tenant configuration</td>
 </tr>
 <tr>
 <td><code>id</code> → <code>doc</code> 303</td>
@@ -2921,7 +2981,7 @@
 <td>FR-URI-02</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-web</code> (moved from the proxy, <a href="../../../adr/0022-edge-concerns/">ADR 0022</a>)</td>
+<td><code>spiegel-adapter-in-rest</code> (moved from the proxy, <a href="../../../adr/0022-edge-concerns/">ADR 0022</a>)</td>
 </tr>
 <tr>
 <td><code>ns</code> vocabulary pages</td>
@@ -2930,7 +2990,7 @@
 <td>FR-URI-03, FR-RA-05</td>
 <td>M</td>
 <td>2</td>
-<td><code>spiegel-core</code></td>
+<td><code>spiegel-application</code></td>
 </tr>
 <tr>
 <td>Skolem IRIs</td>
@@ -2939,7 +2999,7 @@
 <td>FR-URI-04</td>
 <td>M</td>
 <td>2</td>
-<td><code>spiegel-core</code></td>
+<td><code>spiegel-application</code></td>
 </tr>
 <tr>
 <td>ELI paths</td>
@@ -2948,7 +3008,7 @@
 <td>FR-URI-05</td>
 <td>S</td>
 <td>2</td>
-<td><code>spiegel-core</code></td>
+<td><code>spiegel-application</code></td>
 </tr>
 <tr>
 <td>Several domains in one deployment</td>
@@ -2957,7 +3017,7 @@
 <td>FR-MT-01, FR-MT-02</td>
 <td>M</td>
 <td>2</td>
-<td><code>spiegel-core</code>, <code>spiegel-app</code></td>
+<td><code>spiegel-application</code>, <code>spiegel-bootstrap</code></td>
 </tr>
 <tr>
 <td>Profile-dependent queries</td>
@@ -2966,7 +3026,7 @@
 <td>FR-RA-03, FR-CN-03</td>
 <td>M</td>
 <td>2</td>
-<td><code>spiegel-core</code></td>
+<td><code>spiegel-application</code></td>
 </tr>
 <tr>
 <td>Context-specific HTML</td>
@@ -2975,7 +3035,7 @@
 <td>FR-HTML-03</td>
 <td>S</td>
 <td>2</td>
-<td><code>spiegel-adapter-html</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Authentication and access levels</td>
@@ -2984,7 +3044,7 @@
 <td>FR-AC-01 to 03, NFR-SEC-02</td>
 <td>M</td>
 <td>2</td>
-<td><code>spiegel-adapter-security</code>, <code>spiegel-core</code></td>
+<td><code>spiegel-adapter-in-rest</code>, <code>spiegel-application</code></td>
 </tr>
 <tr>
 <td>Public <code>/sparql</code></td>
@@ -2993,7 +3053,7 @@
 <td>FR-SPARQL-01 to 04</td>
 <td>M</td>
 <td>2</td>
-<td><code>spiegel-adapter-web</code>, <code>spiegel-adapter-sparql</code></td>
+<td><code>spiegel-adapter-in-rest</code>, <code>spiegel-adapter-out-virtuoso</code></td>
 </tr>
 <tr>
 <td>Properties, values and types as links to their IRIs</td>
@@ -3002,7 +3062,7 @@
 <td>FR-HTML-10</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-html</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Labels for terms of external vocabularies</td>
@@ -3011,7 +3071,7 @@
 <td>FR-HTML-11</td>
 <td>S</td>
 <td>1</td>
-<td><code>spiegel-adapter-html</code>, <code>spiegel-adapter-config</code> (extracts in the configuration, <a href="../../../adr/0021-labels-of-external-vocabularies/">ADR 0021</a>)</td>
+<td><code>spiegel-adapter-in-rest</code>, <code>spiegel-bootstrap</code> (extracts in the configuration, <a href="../../../adr/0021-labels-of-external-vocabularies/">ADR 0021</a>)</td>
 </tr>
 <tr>
 <td>Multilingual HTML (data labels and interface texts)</td>
@@ -3020,7 +3080,7 @@
 <td>FR-HTML-12</td>
 <td>S</td>
 <td>2</td>
-<td><code>spiegel-adapter-html</code>, <code>spiegel-adapter-web</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Machine-readable HTML (subject IRI, alternate links, embedded JSON-LD)</td>
@@ -3029,7 +3089,7 @@
 <td>FR-HTML-04</td>
 <td>S</td>
 <td>1</td>
-<td><code>spiegel-adapter-html</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Standard SPARQL result formats</td>
@@ -3038,7 +3098,7 @@
 <td>FR-SPARQL-02</td>
 <td>M</td>
 <td>2</td>
-<td><code>spiegel-adapter-web</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Browsing relations, trees, collections</td>
@@ -3056,7 +3116,7 @@
 <td>FR-HTML-06</td>
 <td>S</td>
 <td>2</td>
-<td><code>spiegel-adapter-html</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Map for resources with a geometry</td>
@@ -3065,7 +3125,7 @@
 <td>FR-HTML-07</td>
 <td>S</td>
 <td>2</td>
-<td><code>spiegel-adapter-html</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Departmental design system</td>
@@ -3074,7 +3134,7 @@
 <td>NFR-UI-01, NFR-UI-04</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-html</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Accessibility and CSP</td>
@@ -3083,7 +3143,7 @@
 <td>NFR-UI-02, NFR-UI-03</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-html</code>, <code>spiegel-adapter-web</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Keyword search</td>
@@ -3092,7 +3152,7 @@
 <td>FR-SRCH-01</td>
 <td>S</td>
 <td>2</td>
-<td><code>spiegel-adapter-sparql</code></td>
+<td><code>spiegel-adapter-out-virtuoso</code></td>
 </tr>
 <tr>
 <td>Non-RDF sources through mappings (RML, R2RML)</td>
@@ -3101,7 +3161,7 @@
 <td>FR-DS-02</td>
 <td>C</td>
 <td>later</td>
-<td><code>spiegel-adapter-sparql</code> (Ontop endpoint); none if materialised (<a href="../../../adr/0009-ontop-for-relational-sources/">ADR 0009</a>)</td>
+<td><code>spiegel-adapter-out-virtuoso</code> (Ontop endpoint); none if materialised (<a href="../../../adr/0009-ontop-for-relational-sources/">ADR 0009</a>)</td>
 </tr>
 <tr>
 <td>Full-text search across sources</td>
@@ -3110,7 +3170,7 @@
 <td>FR-SRCH-02</td>
 <td>C</td>
 <td>later</td>
-<td><code>spiegel-core</code>, search adapter</td>
+<td><code>spiegel-application</code>, search adapter</td>
 </tr>
 <tr>
 <td>Elasticsearch source</td>
@@ -3128,7 +3188,7 @@
 <td>FR-RA-06</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-core</code>, tenant queries</td>
+<td><code>spiegel-application</code>, tenant queries</td>
 </tr>
 <tr>
 <td>Paging of large properties, in HTML and RDF alike</td>
@@ -3137,7 +3197,7 @@
 <td>FR-RA-07</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-core</code>, <code>spiegel-adapter-web</code>, tenant configuration</td>
+<td><code>spiegel-application</code>, <code>spiegel-adapter-in-rest</code>, tenant configuration</td>
 </tr>
 <tr>
 <td>Links to other distributions (OGC API, WFS, map viewers)</td>
@@ -3146,7 +3206,7 @@
 <td>FR-HTML-13</td>
 <td>S</td>
 <td>2</td>
-<td><code>spiegel-core</code>, <code>spiegel-adapter-html</code></td>
+<td><code>spiegel-application</code>, <code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Sitemap, <code>robots.txt</code>, canonical and alternate links</td>
@@ -3155,7 +3215,7 @@
 <td>FR-HTML-16</td>
 <td>S</td>
 <td>1</td>
-<td><code>spiegel-adapter-web</code>, <code>spiegel-adapter-html</code>, tenant configuration</td>
+<td><code>spiegel-adapter-in-rest</code>, tenant configuration</td>
 </tr>
 <tr>
 <td>schema.org and Open Graph for search engines and link previews</td>
@@ -3164,7 +3224,7 @@
 <td>FR-HTML-17</td>
 <td>S</td>
 <td>1</td>
-<td><code>spiegel-adapter-html</code></td>
+<td><code>spiegel-adapter-in-rest</code></td>
 </tr>
 <tr>
 <td>Images of a resource shown on its page</td>
@@ -3173,7 +3233,7 @@
 <td>FR-HTML-14</td>
 <td>S</td>
 <td>2</td>
-<td><code>spiegel-adapter-html</code>, <code>spiegel-adapter-config</code></td>
+<td><code>spiegel-adapter-in-rest</code>, <code>spiegel-bootstrap</code></td>
 </tr>
 <tr>
 <td>Discovery of event streams (LDES)</td>
@@ -3182,7 +3242,7 @@
 <td>FR-ES-01</td>
 <td>S</td>
 <td>2</td>
-<td><code>spiegel-adapter-html</code>, <code>spiegel-core</code> (<a href="../../../adr/0023-event-stream-discovery-and-versions/">ADR 0023</a>)</td>
+<td><code>spiegel-adapter-in-rest</code>, <code>spiegel-application</code> (<a href="../../../adr/0023-event-stream-discovery-and-versions/">ADR 0023</a>)</td>
 </tr>
 <tr>
 <td>Assisted (LLM) query building</td>
@@ -3227,7 +3287,7 @@
 <td>NFR-OPS-03, NFR-SEC-03</td>
 <td>S</td>
 <td>1</td>
-<td><code>spiegel-app</code></td>
+<td><code>spiegel-bootstrap</code></td>
 </tr>
 <tr>
 <td>Concurrency limit per store</td>
@@ -3236,7 +3296,7 @@
 <td>NFR-OPS-02</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-sparql</code></td>
+<td><code>spiegel-adapter-out-virtuoso</code></td>
 </tr>
 <tr>
 <td>Rate limiting per client (<code>429</code>)</td>
@@ -3245,7 +3305,7 @@
 <td>NFR-OPS-08</td>
 <td>S</td>
 <td>1</td>
-<td><code>spiegel-adapter-web</code>, <code>RateLimitPort</code> (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>)</td>
+<td><code>spiegel-adapter-in-rest</code>, <code>RateLimitPort</code> (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>)</td>
 </tr>
 <tr>
 <td>Personal data: store's responsibility for the data; minimised in logs, counters and metrics; caching per access level</td>
@@ -3254,7 +3314,7 @@
 <td>NFR-PRIV-01 to 03</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-app</code>, <code>spiegel-adapter-web</code>, loading chain</td>
+<td><code>spiegel-bootstrap</code>, <code>spiegel-adapter-in-rest</code>, loading chain</td>
 </tr>
 <tr>
 <td>Response time, throughput and availability targets</td>
@@ -3263,7 +3323,7 @@
 <td>NFR-PERF-01 to 05</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-app</code>, all adapters</td>
+<td><code>spiegel-bootstrap</code>, all adapters</td>
 </tr>
 <tr>
 <td>Ceiling on the size of a description</td>
@@ -3272,7 +3332,7 @@
 <td>NFR-OPS-09</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-core</code>, <code>spiegel-adapter-sparql</code></td>
+<td><code>spiegel-application</code>, <code>spiegel-adapter-out-virtuoso</code></td>
 </tr>
 <tr>
 <td>Open CORS</td>
@@ -3281,7 +3341,7 @@
 <td>NFR-OPEN-01</td>
 <td>M</td>
 <td>1</td>
-<td><code>spiegel-adapter-web</code>, not at the proxy (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>)</td>
+<td><code>spiegel-adapter-in-rest</code>, not at the proxy (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>)</td>
 </tr>
 </tbody>
 </table>

@@ -16,7 +16,7 @@
         <link rel="prev" href="../request-flow/">
       
       
-        <link rel="next" href="../../06-open-questions/">
+        <link rel="next" href="../project-modules/">
       
       
         
@@ -1301,6 +1301,8 @@
       
         
       
+        
+      
     
     
     
@@ -1518,6 +1520,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project modules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1572,6 +1602,8 @@
       
         
           
+        
+      
         
       
         
@@ -2447,6 +2479,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0028-tenant-configuration-in-yaml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0028 Tenant configuration in YAML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2814,51 +2874,60 @@
 
 <h1 id="module-structure">Module structure<a class="headerlink" href="#module-structure" title="Permanent link">&para;</a></h1>
 <p>The proposed Maven module layout follows the <a href="../hexagonal-design/">hexagonal design</a>. Each adapter is its own module, so that its dependencies cannot leak into the core.</p>
-<div class="highlight"><pre><span></span><code>spiegel/                         (parent POM, packaging pom)
-├── spiegel-core                 domain model, use cases, ports. No Spring.
-├── spiegel-adapter-sparql       DataSourcePort over SPARQL 1.1 (Apache Jena)
-├── spiegel-adapter-web          HTTP inbound: dereferencing, 303, content negotiation, /sparql
-├── spiegel-adapter-html         RendererPort for HTML (template engine, Flux design system, front-end build)
-├── spiegel-adapter-security     IdentityPort: OIDC, roles → AccessLevel
-├── spiegel-adapter-config       TenantConfigurationPort: Turtle + .rq files, SHACL validation (jena-shacl)
-├── spiegel-app                  Spring Boot application: wiring, caching, health, packaging
-└── spiegel-tools                command-line tools for configuration and CI: context generator,
-                                 vocabulary extractor, configuration validator
+<div class="highlight"><pre><span></span><code>spiegel/                                 (parent POM, packaging pom)
+├── spiegel-model                        Domain model and its exceptions. No Spring.
+├── spiegel-application                  Use cases (i.e. inbound ports), outbound ports, services implementing use cases and using outbound ports. No Spring.
+├── spiegel-adapter                      (packaging pom)
+│   ├── spiegel-adapter-in               (packaging pom) adapters that drive the application
+│   │   └── spiegel-adapter-in-rest      web adapter, Spring MVC: dereferencing, 303, content negotiation,
+│   │                                    rendering (Jena RIOT for RDF formats; template engine, Flux and
+│   │                                    front-end build for HTML), authentication (Spring Security, OIDC,
+│   │                                    roles → AccessLevel; phase 2)
+│   └── spiegel-adapter-out              (packaging pom) adapters behind the outbound ports
+│       ├── spiegel-adapter-out-virtuoso ResourceRepository over SPARQL 1.1 against Virtuoso, using Apache Jena;
+│       │                                knows the queries per resource type and profile
+│       └── spiegel-adapter-out-elastic  outbound adapter for Elasticsearch
+└── spiegel-bootstrap                    Spring Boot application: tenant configuration (YAML, @ConfigurationProperties),
+                                         wiring, caching, health, packaging
 </code></pre></div>
+<p>Planned modules, added when they are needed:</p>
+<div class="highlight"><pre><span></span><code>spiegel-tools                            command-line tools for configuration and CI: context generator,
+                                         vocabulary extractor, configuration validator
+</code></pre></div>
+<p>The package layout per module is listed in <a href="../project-modules/">Project modules</a>.</p>
 <h2 id="dependency-rules">Dependency rules<a class="headerlink" href="#dependency-rules" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart BT
-    core[spiegel-core]
-    sparql[spiegel-adapter-sparql] --&gt; core
-    web[spiegel-adapter-web] --&gt; core
-    html[spiegel-adapter-html] --&gt; core
-    sec[spiegel-adapter-security] --&gt; core
-    cfg[spiegel-adapter-config] --&gt; core
-    app[spiegel-app] --&gt; sparql &amp; web &amp; html &amp; sec &amp; cfg
-    tools[spiegel-tools] --&gt; core &amp; cfg</code></pre>
+    model[spiegel-model]
+    application[spiegel-application] --&gt; model
+    rest[spiegel-adapter-in-rest] --&gt; application
+    virtuoso[spiegel-adapter-out-virtuoso] --&gt; application
+    elastic[spiegel-adapter-out-elastic] --&gt; application
+    bootstrap[spiegel-bootstrap] --&gt; rest &amp; virtuoso &amp; elastic</code></pre>
 <ul>
-<li><code>spiegel-core</code> depends on nothing in this project, and only on a minimal set of libraries.</li>
-<li>Adapters depend on <code>spiegel-core</code> only, never on each other.</li>
-<li><code>spiegel-tools</code> is not part of the server. It reuses the configuration model and validation of <code>spiegel-adapter-config</code>, so that CI and the server check the same rules, and is delivered as a command-line tool (<a href="../../../adr/0026-system-boundary/">ADR 0026</a>).</li>
-<li>Only <code>spiegel-app</code> knows all modules. It is the only module that depends on Spring Boot's auto-configuration.</li>
+<li><code>spiegel-model</code> depends on nothing in this project, and only on a minimal set of libraries.</li>
+<li><code>spiegel-application</code> depends on <code>spiegel-model</code> only. It holds the use cases (<code>port.in</code>), the ports to the outside world (<code>port.out</code>) and the services that implement the use cases. It has no Spring dependency: <code>spiegel-bootstrap</code> creates its services as beans.</li>
+<li>Adapters depend on <code>spiegel-application</code> and <code>spiegel-model</code> only, never on each other.</li>
+<li><code>spiegel-tools</code> will not be part of the server. It reuses the configuration binding and validation of <code>spiegel-bootstrap</code>, so that CI and the server check the same rules (<a href="../../../adr/0028-tenant-configuration-in-yaml/">ADR 0028</a>), and is delivered as a command-line tool (<a href="../../../adr/0026-system-boundary/">ADR 0026</a>).</li>
+<li>Only <code>spiegel-bootstrap</code> knows all modules. It is the only module that depends on Spring Boot's auto-configuration.</li>
 <li>These rules are enforced by a test (for example with ArchUnit), not only by convention.</li>
 </ul>
 <h2 id="why-this-split">Why this split<a class="headerlink" href="#why-this-split" title="Permanent link">&para;</a></h2>
-<p>The modules are a direct consequence of the <a href="../hexagonal-design/">hexagonal design</a>: one module for the core, one per adapter, and one that assembles them. Separate Maven modules, rather than packages in one module, are chosen for these reasons:</p>
+<p>The modules are a direct consequence of the <a href="../hexagonal-design/">hexagonal design</a>: one module for the domain model, one for the use cases and ports, one per adapter, and one that assembles them. Separate Maven modules, rather than packages in one module, are chosen for these reasons:</p>
 <ol>
-<li><strong>The compiler guards the boundaries.</strong> A module can only use what its own POM declares. Jena's HTTP client is only in <code>spiegel-adapter-sparql</code>, Jena's serialisers (RIOT) only in the adapters that render RDF, and Spring MVC only in <code>spiegel-adapter-web</code>. The core cannot import a Spring or Jena HTTP class by accident, because it would not compile. With packages in one module, such a boundary is only a convention.</li>
-<li><strong>A test guards what the compiler cannot see.</strong> <code>ArchitectureTest</code> (ArchUnit) checks on every build that the core stays free of frameworks and that adapters do not depend on each other.</li>
-<li><strong>Adapters can be replaced.</strong> A second store type is a second implementation of the same <code>DataSourcePort</code>, without any change to the core. A relational source needs not even that: Ontop offers a SPARQL endpoint, so <code>spiegel-adapter-sparql</code> reads it (<a href="../../../adr/0009-ontop-for-relational-sources/">ADR 0009</a>). The same holds for the template engine, which is still to be chosen (<a href="../../06-open-questions/#front-end">open question 9</a>).</li>
-<li><strong>The core can be tested without infrastructure.</strong> The rules for URI templates, profiles, access levels and merging descriptions are tested without a server, a store or a browser (NFR-Q-01, NFR-Q-02).</li>
-<li><strong>Each technology stays in its own module.</strong> This matters especially for <code>spiegel-adapter-html</code>, which gets a front-end build (Node.js, pnpm, Flux; see <a href="../../03-requirements/design-system/#consequences-for-the-design">Design system: Flux</a>) that must not leak into the rest of the build.</li>
-<li><strong>Modules arrive by phase.</strong> Phase 1 needs no authentication, so <code>spiegel-adapter-security</code> arrives in phase 2 (<a href="../../../adr/0004-technology-baseline/">ADR 0004</a>: modules are added when they are needed).</li>
+<li><strong>The compiler guards the boundaries.</strong> A module can only use what its own POM declares. Jena's HTTP client is only in <code>spiegel-adapter-out-virtuoso</code>, Jena's serialisers (RIOT), the template engine, Spring MVC and Spring Security only in <code>spiegel-adapter-in-rest</code>. The model and application modules cannot import a Spring or Jena HTTP class by accident, because it would not compile. With packages in one module, such a boundary is only a convention.</li>
+<li><strong>A test guards what the compiler cannot see.</strong> <code>ArchitectureTest</code> (ArchUnit) checks on every build that the model and application modules stay free of frameworks and that adapters do not depend on each other.</li>
+<li><strong>Adapters can be replaced.</strong> A second store type is a second implementation of the same outbound port, without any change to the model or application modules. A relational source needs not even that: Ontop offers a SPARQL endpoint, so the SPARQL adapter reads it (<a href="../../../adr/0009-ontop-for-relational-sources/">ADR 0009</a>). The template engine, which is still to be chosen (<a href="../../06-open-questions/#front-end">open question 9</a>), is used only inside <code>spiegel-adapter-in-rest</code>, so choosing or replacing it changes no other module.</li>
+<li><strong>The model and use cases can be tested without infrastructure.</strong> The use cases and the domain model (<code>Resource</code>, <code>UserContext</code>, <code>Profile</code>, the checks on a description) are tested without a server, a store or a browser (NFR-Q-01, NFR-Q-02). URI templates are tested with the web adapter, and the choice of queries with the SPARQL adapter.</li>
+<li><strong>Each technology stays in its own module.</strong> Rendering and authentication are part of the web adapter, not adapters of their own, so their technology stays in <code>spiegel-adapter-in-rest</code>. This matters especially for the front-end build (Node.js, pnpm, Flux; see <a href="../../03-requirements/design-system/#consequences-for-the-design">Design system: Flux</a>), which runs in that module and must not leak into the rest of the build.</li>
+<li><strong>Modules and dependencies arrive by phase.</strong> Modules are added when they are needed (<a href="../../../adr/0004-technology-baseline/">ADR 0004</a>), and so are dependencies within a module: phase 1 needs no authentication, so Spring Security is added to <code>spiegel-adapter-in-rest</code> in phase 2.</li>
 <li><strong>It prevents what the predecessor shows.</strong> There, caching, security and domain logic are mixed in scripts, and the query catalogue lives outside any type system or test (see <a href="../hexagonal-design/#mapping-from-the-predecessor">Mapping from the predecessor</a>). Module boundaries keep these concerns apart.</li>
 </ol>
 <p>The split has costs:
 - <strong>More build files.</strong> There are more POMs and some boilerplate.
-- <strong>Some concerns cross modules.</strong> The cache lives in <code>spiegel-app</code> but must follow the core's rules (NFR-SEC-03), and logging must be consistent in every module.
-- <strong>The core depends on <code>jena-core</code>.</strong> It uses Jena's graph types to merge descriptions without conversion, but nothing from <code>jena-arq</code>, so it has no SPARQL engine, HTTP client or serialisers (<a href="../../../adr/0010-jena-graph-types-in-the-core/">ADR 0010</a>). <code>ArchitectureTest</code> enforces this.</p>
+- <strong>Some concerns cross modules.</strong> The cache lives in <code>spiegel-bootstrap</code> but must follow the application's rules (NFR-SEC-03), and logging must be consistent in every module.
+- <strong>The model depends on <code>jena-core</code>.</strong> It uses Jena's graph types to merge descriptions without conversion, but nothing from <code>jena-arq</code>, so it has no SPARQL engine, HTTP client or serialisers (<a href="../../../adr/0010-jena-graph-types-in-the-core/">ADR 0010</a>). <code>ArchitectureTest</code> enforces this.</p>
 <h2 id="phase-1-subset">Phase 1 subset<a class="headerlink" href="#phase-1-subset" title="Permanent link">&para;</a></h2>
-<p>Phase 1 (see <a href="../../01-context/scope/#phasing">Scope</a>) needs <code>spiegel-core</code>, <code>spiegel-adapter-sparql</code>, <code>spiegel-adapter-web</code>, <code>spiegel-adapter-html</code>, <code>spiegel-adapter-config</code> and <code>spiegel-app</code>. <code>spiegel-adapter-security</code> arrives in phase 2. <code>spiegel-tools</code> arrives with its first tool, such as the context generator of <a href="../../../adr/0017-framed-json-ld-with-a-frozen-context/">ADR 0017</a>.</p>
+<p>Phase 1 (see <a href="../../01-context/scope/#phasing">Scope</a>) needs <code>spiegel-model</code>, <code>spiegel-application</code>, <code>spiegel-adapter-in-rest</code>, <code>spiegel-adapter-out-virtuoso</code> and <code>spiegel-bootstrap</code>. Authentication arrives in phase 2, in <code>spiegel-adapter-in-rest</code>. <code>spiegel-tools</code> arrives with its first tool, such as the context generator of <a href="../../../adr/0017-framed-json-ld-with-a-frozen-context/">ADR 0017</a>.</p>
 <h2 id="group-and-artefact-identifiers">Group and artefact identifiers<a class="headerlink" href="#group-and-artefact-identifiers" title="Permanent link">&para;</a></h2>
 <p>Decided in <a href="../../../adr/0004-technology-baseline/">ADR 0004</a>: group <code>be.vlaanderen.omgeving.spiegel</code>, artefacts as listed above, with <code>spiegel-parent</code> as the parent POM.</p>
 
@@ -2913,13 +2982,13 @@
         
         
           
-          <a href="../../06-open-questions/" class="md-footer__link md-footer__link--next" aria-label="Next: Open questions">
+          <a href="../project-modules/" class="md-footer__link md-footer__link--next" aria-label="Next: Project modules">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Open questions
+                Project modules
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -1297,6 +1297,8 @@
       
         
       
+        
+      
     
     
     
@@ -1423,6 +1425,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../analysis/05-architecture/project-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project modules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1479,6 +1509,8 @@
       
         
           
+        
+      
         
       
         
@@ -2434,6 +2466,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../0028-tenant-configuration-in-yaml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0028 Tenant configuration in YAML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../template/" class="md-nav__link">
         
   
@@ -2824,6 +2884,7 @@
 <li>Several components outside the project (the loading chain, the umbrella catalogue, LDES servers, the identity provider, platform monitoring) need an owner. That is an organisational question, which this decision does not answer.</li>
 <li>The module structure gains <code>spiegel-tools</code>, which arrives when its first tool is built.</li>
 </ul>
+<p><em>Amended on 2026-11-01:</em> the tenant configuration is YAML, bound with Spring in <code>spiegel-bootstrap</code> (<a href="../0028-tenant-configuration-in-yaml/">ADR 0028</a>). There is no configuration vocabulary (<code>https://w3id.org/spiegel/config#</code>) and there are no shapes for it, so decision 6 no longer covers them. The configuration validator in <code>spiegel-tools</code> reuses the binding and checks of <code>spiegel-bootstrap</code> (decision 2), so that CI and the server still check the same rules.</p>
 
 
 

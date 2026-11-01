@@ -16,7 +16,7 @@
         <link rel="prev" href="../0026-system-boundary/">
       
       
-        <link rel="next" href="../template/">
+        <link rel="next" href="../0028-tenant-configuration-in-yaml/">
       
       
         
@@ -1297,6 +1297,8 @@
       
         
       
+        
+      
     
     
     
@@ -1423,6 +1425,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../analysis/05-architecture/project-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project modules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1479,6 +1509,8 @@
       
         
           
+        
+      
         
       
         
@@ -2434,6 +2466,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../0028-tenant-configuration-in-yaml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0028 Tenant configuration in YAML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../template/" class="md-nav__link">
         
   
@@ -2821,14 +2881,14 @@
 <li><strong>partial navigation</strong> (fetching the server's HTML on a click and swapping only <code>&lt;main&gt;</code>, as Turbo Drive or <code>hx-boost</code> do) only if measurements show that visitors click through many pages per visit. It must pass the test of decision 4, and handles focus, title, scroll position and page-view counting itself.</li>
 </ol>
 </li>
-<li><strong>The template engine is chosen next</strong> (<a href="../../analysis/06-open-questions/#front-end">open question 9</a>). The candidates stay Thymeleaf and JTE: both encode output by context (NFR-SEC-05), and both work without Spring in <code>spiegel-adapter-html</code> (<a href="../0004-technology-baseline/">ADR 0004</a>).</li>
+<li><strong>The template engine is chosen next</strong> (<a href="../../analysis/06-open-questions/#front-end">open question 9</a>). The candidates stay Thymeleaf and JTE: both encode output by context (NFR-SEC-05), and both work with Spring MVC in <code>spiegel-adapter-in-rest</code>, the web adapter that renders HTML (<a href="../0004-technology-baseline/">ADR 0004</a>).</li>
 </ol>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Open question 40 is answered, and question 9 can be decided.</li>
 <li>HTML follows the same request flow as the RDF formats: tenant, template, access level, cache, negotiation. NFR-PERF-01 applies to HTML as it does to RDF, and an HTML page cannot show other data than its RDF.</li>
-<li>The web adapter gets a renderer port when feature 005 adds HTML, as the <a href="../../specs/001-dereference-resource-as-rdf/plan/">plan of feature 001</a> foresaw (decision 10): RDF serialisation and HTML rendering become two implementations of it.</li>
-<li><code>spiegel-adapter-html</code> keeps the front-end build of <a href="../0005-flux-design-system-for-html/">ADR 0005</a>, but only for the islands and the Flux bundle; pages and their content are Java templates.</li>
+<li>Rendering stays in the web adapter, <code>spiegel-adapter-in-rest</code>; it is not a port of the core. When feature 005 adds HTML, RDF serialisation and HTML rendering become two implementations of one rendering interface inside that adapter, as the <a href="../../specs/001-dereference-resource-as-rdf/plan/">plan of feature 001</a> foresaw (decision 10).</li>
+<li><code>spiegel-adapter-in-rest</code> holds the front-end build of <a href="../0005-flux-design-system-for-html/">ADR 0005</a>, but only for the islands and the Flux bundle; pages and their content are Java templates.</li>
 <li>Every page pays for the global header, which the predecessor's site does not load. SPieGeL accepts that cost and reduces it as in decision 5. A one-page application, or partial navigation, can still be added later on top of pages rendered on the server; the reverse, making a one-page application crawlable afterwards, is much harder.</li>
 <li>The Speculation Rules header and the back/forward cache become requirements of feature 005, and CSP must allow the external rules file.</li>
 <li>The same advice raised points that this record does not decide. Two of them differ from earlier decisions and stay open until they are discussed:<ul>
@@ -2890,13 +2950,13 @@
         
         
           
-          <a href="../template/" class="md-footer__link md-footer__link--next" aria-label="Next: Template">
+          <a href="../0028-tenant-configuration-in-yaml/" class="md-footer__link md-footer__link--next" aria-label="Next: 0028 Tenant configuration in YAML">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Template
+                0028 Tenant configuration in YAML
               </div>
             </div>
             <div class="md-footer__button md-icon">

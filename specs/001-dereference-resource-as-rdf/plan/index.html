@@ -1297,6 +1297,8 @@
       
         
       
+        
+      
     
     
     
@@ -1423,6 +1425,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../analysis/05-architecture/project-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project modules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1477,6 +1507,8 @@
       
         
           
+        
+      
         
       
         
@@ -2352,6 +2384,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0028-tenant-configuration-in-yaml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0028 Tenant configuration in YAML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -3114,6 +3174,10 @@
 <p><strong>Spec:</strong> docs/specs/001-dereference-resource-as-rdf/spec.md
 <strong>Decisions:</strong> ADR 0004, 0010, 0011, 0012, 0013, 0016, 0018 (docs/adr/)
 <strong>Created:</strong> 2026-10-26</p>
+<div class="admonition warning">
+<p class="admonition-title">Outdated module layout</p>
+<p>This plan was written for the earlier modules (<code>spiegel-core</code>, <code>spiegel-adapter-config</code>, <code>spiegel-adapter-sparql</code>, <code>spiegel-adapter-web</code>, <code>spiegel-app</code>). The modules have since been restructured (see <a href="../../../analysis/05-architecture/module-structure/">Module structure</a> and ADR 0004, amendment of 2026-10-28). Revise the plan before executing it.</p>
+</div>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>SPieGeL is still an empty skeleton: six Maven modules with only <code>package-info.java</code>, <code>AccessLevel</code> and an <code>ArchitectureTest</code>. Spec 001 (approved) asks for the walking skeleton of phase 1: an <code>id</code> URI answers <code>303</code> to its <code>doc</code> URI, and a <code>doc</code> URI returns the bounded description of the thing in Turtle, N-Triples, RDF/XML or JSON-LD, with problem details for every error. Everything comes from a tenant configuration in Turtle; nothing is specific to a domain. This plan builds the first path through core, configuration adapter, SPARQL adapter, web adapter and application.</p>
 <h2 id="global-constraints">Global Constraints<a class="headerlink" href="#global-constraints" title="Permanent link">&para;</a></h2>

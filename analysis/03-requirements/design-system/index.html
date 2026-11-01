@@ -1447,6 +1447,8 @@
       
         
       
+        
+      
     
     
     
@@ -1573,6 +1575,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-architecture/project-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project modules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1627,6 +1657,8 @@
       
         
           
+        
+      
         
       
         
@@ -2482,6 +2514,34 @@
     
   
     0027 HTML rendered on the server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0028-tenant-configuration-in-yaml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0028 Tenant configuration in YAML
   
 
     
@@ -3387,7 +3447,7 @@
 <p>The comparison confirms the choice for Flux: SPieGeL gets the same look as the rest of the government, and its pages remain server-rendered, generic and usable without JavaScript.</p>
 <h2 id="consequences-for-the-design">Consequences for the design<a class="headerlink" href="#consequences-for-the-design" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>spiegel-adapter-html</code></strong> gets a front-end build next to its Java code: Node.js, pnpm, a bundler, and the new components with their tests. Maven and Jenkins must run it (for example through the <code>frontend-maven-plugin</code>), and the build needs read access to the department's Artifactory for the <code>@domg-wc</code> scope. External contributors need that too.</li>
+<li><strong><code>spiegel-adapter-in-rest</code></strong>, the web adapter that renders HTML, gets a front-end build next to its Java code: Node.js, pnpm, a bundler, and the new components with their tests. Maven and Jenkins must run it (for example through the <code>frontend-maven-plugin</code>), and the build needs read access to the department's Artifactory for the <code>@domg-wc</code> scope. External contributors need that too.</li>
 <li><strong>Templates</strong> generate Flux markup: tags, slots and CSS classes. The choice of template engine is still open (<a href="../../06-open-questions/#front-end">open question 9</a>), but it must emit custom elements and attributes cleanly and encode output by context (NFR-SEC-05).</li>
 <li><strong>Tenant configuration</strong> includes what Flux needs per domain: the page title, the links in the header, and, once access levels exist, the login and logout URLs.</li>
 <li><strong>Response headers</strong> include a strict CSP alongside the existing open CORS policy (NFR-OPEN-01).</li>

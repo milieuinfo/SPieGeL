@@ -1301,6 +1301,8 @@
       
         
       
+        
+      
     
     
     
@@ -1590,6 +1592,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project modules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1644,6 +1674,8 @@
       
         
           
+        
+      
         
       
         
@@ -2519,6 +2551,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../adr/0028-tenant-configuration-in-yaml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0028 Tenant configuration in YAML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../adr/template/" class="md-nav__link">
         
   
@@ -2966,7 +3026,7 @@
 <ol>
 <li><strong>Cheap decisions first.</strong> Tenant, URI template, <code>303</code> and content negotiation need no data, so they come before any query.</li>
 <li><strong>Authorise before the cache.</strong> The caller's access level is known before the cache is consulted, and it is part of the cache key (NFR-SEC-03).</li>
-<li><strong>Data before format.</strong> The core produces a format-independent <code>ResourceDescription</code>. Media type and HTML presentation are applied after the cache, so one cached description serves every format of the same profile.</li>
+<li><strong>Data before format.</strong> The core returns a format-independent RDF description. Media type and HTML presentation are applied after the cache, so one cached description serves every format of the same profile.</li>
 <li><strong>Fail closed.</strong> A resource that does not exist and one the caller may not see give the same answer (NFR-SEC-07). A description with a failed query is never cached or served. One cut off at the ceiling says so (NFR-OPS-09).</li>
 </ol>
 <h2 id="dereferencing-a-resource-id-doc-ns-skolem-iris-and-eli">Dereferencing a resource: <code>/id</code>, <code>/doc</code>, <code>/ns</code>, Skolem IRIs and ELI<a class="headerlink" href="#dereferencing-a-resource-id-doc-ns-skolem-iris-and-eli" title="Permanent link">&para;</a></h2>
@@ -2974,36 +3034,33 @@
     autonumber
     participant C as Client
     participant P as Reverse proxy
-    participant W as Web adapter
-    participant T as Tenant configuration
-    participant I as Identity adapter
+    participant W as Web adapter (Spring MVC)
     participant U as DereferenceResource (core)
     participant K as Cache
     participant D as Data source
-    participant R as Renderer
     C-&gt;&gt;P: GET https://{host}/doc/{concept}/{id}
     Note over P: TLS, HSTS, X-Forwarded-*&lt;br/&gt;flood protection per address
     P-&gt;&gt;W: GET /doc/{concept}/{id} (Accept, Accept-Profile)
-    W-&gt;&gt;T: tenant for host name
-    W-&gt;&gt;I: caller → access level (phase 2)
+    W-&gt;&gt;W: match tenant (host name or path variable, per URI template)
+    W-&gt;&gt;W: authenticate caller → UserContext (phase 2)
     W-&gt;&gt;W: rate limit per client, tenant and kind (429)
-    W-&gt;&gt;W: match URI template
+    W-&gt;&gt;W: match URI template → Resource
     alt id template
         W--&gt;&gt;P: 303 See Other → doc URI
         P--&gt;&gt;C: 303
     end
     W-&gt;&gt;W: negotiate media type and profile
-    W-&gt;&gt;U: tenant, template match, profile, access level
-    U-&gt;&gt;K: lookup (tenant, IRI, profile, access level)
+    W-&gt;&gt;U: Resource, Profile, UserContext
+    U-&gt;&gt;K: lookup (Resource, profile, caller's level)
     alt cache miss
-        U-&gt;&gt;D: run the profile's queries (access level's credentials)
-        D--&gt;&gt;U: RDF
-        U-&gt;&gt;U: merge, check completeness
+        U-&gt;&gt;D: describe Resource for profile
+        Note over D: adapter chooses the queries&lt;br/&gt;from its configuration, runs and merges them
+        D--&gt;&gt;U: RDF description
+        U-&gt;&gt;U: check: empty, moved, removed
         U-&gt;&gt;K: store
     end
-    U--&gt;&gt;W: ResourceDescription or not found
-    W-&gt;&gt;R: render (media type, profile, presentation rules)
-    R--&gt;&gt;W: body
+    U--&gt;&gt;W: RDF description or not found
+    W-&gt;&gt;W: render (media type, profile, presentation rules)
     W--&gt;&gt;P: 200 with Vary, Link, Content-Location, ETag, CORS, CSP
     P--&gt;&gt;C: 200</code></pre>
 <h3 id="steps">Steps<a class="headerlink" href="#steps" title="Permanent link">&para;</a></h3>
@@ -3031,14 +3088,14 @@
 </tr>
 <tr>
 <td>2</td>
-<td><strong>Resolve the tenant</strong> from the host name. An unknown host gets <code>404</code>.</td>
-<td>web adapter, <code>TenantConfigurationPort</code></td>
+<td><strong>Resolve the tenant</strong>, among the tenants that <code>spiegel-bootstrap</code> gave the web adapter at start-up. Per tenant and URI template, the configuration says how a request that matches the template also matches the tenant: by host name or by a path variable. A tenant matched by host name is known here; one matched by a path variable is known with the template match of step 4. A request that matches no tenant gets <code>404</code>.</td>
+<td>web adapter</td>
 <td>FR-MT-01, FR-MT-02</td>
 </tr>
 <tr>
 <td>3</td>
-<td><strong>Identify the caller</strong> <em>(phase 2)</em>. A bearer token (OpenID Connect or client credentials) is validated on every request, with no server-side session. A caller without a token is an unauthenticated client and gets the <em>public</em> level, the lowest. In phase 1 every caller is one. The level is the highest one granted by the caller's roles.</td>
-<td>web adapter, <code>IdentityPort</code></td>
+<td><strong>Identify the caller</strong> <em>(phase 2)</em>. A bearer token (OpenID Connect or client credentials) is validated on every request, with no server-side session. A caller without a token is an unauthenticated client and gets the <em>public</em> level, the lowest. In phase 1 every caller is one. The web adapter creates a <code>UserContext</code> with the caller's username and roles; it does not determine an access level. The level is the highest one granted by the roles, derived in the core or in an outbound adapter (<a href="../../06-open-questions/#architecture-and-operations">open question 44</a>).</td>
+<td>web adapter (Spring Security)</td>
 <td>FR-AC-01, FR-AC-02, NFR-OPS-01</td>
 </tr>
 <tr>
@@ -3049,14 +3106,14 @@
 </tr>
 <tr>
 <td>4</td>
-<td><strong>Match the URI template.</strong> When several match, the most specific wins: more literal characters, then more variables. Variables are typed by a pattern, so an invalid value gives <code>404</code> (no match) without a query, not an error. No match gives <code>404</code>. A value that matches is not checked against a list: the data decides whether the resource exists (step 12), and a negative result is cached per data version (<a href="../../../adr/0012-tenant-configuration-as-rdf/">ADR 0012</a>).</td>
-<td>core (<code>UriTemplate</code>)</td>
+<td><strong>Match the URI template.</strong> When several match, the most specific wins: more literal characters, then more variables. Variables are typed by a pattern, so an invalid value gives <code>404</code> (no match) without a query, not an error. No match gives <code>404</code>. A value that matches is not checked against a list: the data decides whether the resource exists (step 12), and a negative result is cached per data version (<a href="../../../adr/0028-tenant-configuration-in-yaml/">ADR 0028</a>). The match leads to a specific configuration within the tenant, and the web adapter creates a <code>Resource</code> from it: tenant id, resource type, variable values and resource IRI.</td>
+<td>web adapter</td>
 <td>FR-URI-01, FR-URI-03 to 05</td>
 </tr>
 <tr>
 <td>5</td>
 <td><strong><code>id</code> → <code>doc</code>.</strong> If the template is an <code>id</code> template, answer <code>303 See Other</code> with the matching <code>doc</code> URI in <code>Location</code>, for every media type. The data is not consulted, so the redirect reveals nothing about whether the resource exists or is visible.</td>
-<td>core (<code>UriTemplate</code>), web adapter</td>
+<td>web adapter</td>
 <td>FR-URI-02, NFR-SEC-07</td>
 </tr>
 <tr>
@@ -3068,7 +3125,7 @@
 <tr>
 <td>7</td>
 <td><strong>Negotiate the profile.</strong> <code>_profile</code> overrides <code>Accept-Profile</code>. If nothing is asked for, or the request cannot be met, the resource type's default profile <em>for this media type</em> applies, for example a lighter HTML profile. The response says which profile was used.</td>
-<td>core (<code>Profile</code>)</td>
+<td>web adapter</td>
 <td>FR-CN-03</td>
 </tr>
 <tr>
@@ -3079,32 +3136,32 @@
 </tr>
 <tr>
 <td>8</td>
-<td><strong>Call the use case</strong> <code>DereferenceResource</code> with the tenant, the template match (resource IRI and type), the profile and the access level.</td>
+<td><strong>Call the use case</strong> <code>DereferenceResource</code> with the <code>Resource</code>, the <code>Profile</code> and the <code>UserContext</code>.</td>
 <td>web adapter → core</td>
 <td>—</td>
 </tr>
 <tr>
 <td>9</td>
-<td><strong>Select the queries.</strong> Those <code>QuerySpec</code>s of the resource type whose conditions hold for the profile. The conditions are typed and tested.</td>
-<td>core (<code>ResourceType</code>, <code>QuerySpec</code>)</td>
+<td><strong>Select the queries</strong> on a cache miss (step 10): those configured for the <code>Resource</code>'s resource type whose conditions hold for the profile. The core does not know them.</td>
+<td>SPARQL adapter, from its configuration</td>
 <td>FR-RA-01 to 03</td>
 </tr>
 <tr>
 <td>10</td>
-<td><strong>Look up the cache</strong> under (tenant, resource IRI, profile, access level). The media type is not part of the key, because the cache holds RDF: a read-only description that every format of the profile is serialised from (<a href="../../../adr/0020-cache-key-and-entity-tag/">ADR 0020</a>).</td>
+<td><strong>Look up the cache</strong> under the <code>Resource</code> (tenant and resource IRI), the profile and the caller's access level (see open question 44). The media type is not part of the key, because the cache holds RDF: a read-only description that every format of the profile is serialised from (<a href="../../../adr/0020-cache-key-and-entity-tag/">ADR 0020</a>).</td>
 <td>core → <code>CachePort</code></td>
 <td>NFR-SEC-03, NFR-OPS-03</td>
 </tr>
 <tr>
 <td>11</td>
 <td><strong>Run the queries</strong> on a miss, on each query's named data source, with the credentials for the caller's access level. The resource IRI is bound as a term, not pasted into text. Queries run concurrently, within a bounded pool per data source and with a timeout.</td>
-<td>core → <code>DataSourcePort</code></td>
+<td>core → <code>DataSourcePort</code> (SPARQL adapter)</td>
 <td>FR-DS-01, FR-AC-03, NFR-SEC-02, NFR-SEC-04, NFR-OPS-02</td>
 </tr>
 <tr>
 <td>12</td>
-<td><strong>Merge and check.</strong> Merge the results into one <code>ResourceDescription</code>, with blank nodes to the configured depth and <code>owl:unionOf</code> lists expanded for vocabularies. If a query failed or timed out, the request fails (step E2), and nothing is cached. A description that reaches the tenant's ceiling on triples is not a failure: it is served and cached, marked as incomplete in the RDF and in a header (NFR-OPS-09). If the description is empty, SPieGeL looks for a recorded move or removal of this URI: a move gives <code>301</code> to the new URI, a removal gives <code>410</code> with its tombstone (FR-URI-08, FR-URI-10, FR-URI-11). Otherwise the result is <em>not found</em>: the resource does not exist, or the caller may not see it. Otherwise, add the links between the document and the thing it describes (<code>foaf:primaryTopic</code>, <code>foaf:page</code>).</td>
-<td>core</td>
+<td><strong>Merge and check.</strong> The SPARQL adapter merges the results into one RDF description, with blank nodes to the configured depth and <code>owl:unionOf</code> lists expanded for vocabularies. If a query failed or timed out, the request fails (step E2), and nothing is cached. A description that reaches the tenant's ceiling on triples is not a failure: it is served and cached, marked as incomplete in the RDF and in a header (NFR-OPS-09). The core then checks the description. If it is empty, SPieGeL looks for a recorded move or removal of this URI: a move gives <code>301</code> to the new URI, a removal gives <code>410</code> with its tombstone (FR-URI-08, FR-URI-10, FR-URI-11). Otherwise the result is <em>not found</em>: the resource does not exist, or the caller may not see it. Otherwise, add the links between the document and the thing it describes (<code>foaf:primaryTopic</code>, <code>foaf:page</code>).</td>
+<td>SPARQL adapter, then core</td>
 <td>FR-RA-01, FR-RA-04, FR-RA-05, FR-URI-06 to 08, FR-URI-10, FR-URI-11, NFR-OPS-09, NFR-SEC-07</td>
 </tr>
 <tr>
@@ -3116,7 +3173,7 @@
 <tr>
 <td>14</td>
 <td><strong>Render.</strong> For RDF formats, serialise with Jena RIOT, streaming where possible. For HTML, see <a href="#rendering-html">Rendering HTML</a>.</td>
-<td><code>RendererPort</code></td>
+<td>web adapter</td>
 <td>FR-CN-01, FR-HTML-01</td>
 </tr>
 <tr>
@@ -3135,9 +3192,9 @@
 </table>
 <p>A conditional request (<code>If-None-Match</code>) whose <code>ETag</code> still matches gets <code>304 Not Modified</code> after step 13, without rendering. The tag is computed from versions and the negotiated variant alone.</p>
 <h3 id="rendering-html">Rendering HTML<a class="headerlink" href="#rendering-html" title="Permanent link">&para;</a></h3>
-<p>HTML is rendered from the same <code>ResourceDescription</code>, after the cache. The steps are:</p>
+<p>HTML is rendered by the web adapter from the same RDF description, after the cache. The steps are:</p>
 <ol>
-<li><strong>Labels.</strong> Labels of the properties and of the linked resources, and their types, must be present, because every IRI on the page becomes a link labelled with its label (FR-HTML-10). Labels from the domain come from a query that the HTML profile declares for that purpose, not from whatever the main queries happen to return (see <a href="../../02-current-platform/html-rendering/#observations">Data-dependent HTML rendering</a>). That query is one of the profile's <code>QuerySpec</code>s: the core runs it in step 11, at the caller's access level, and caches its result with the description. Terms without a label in the domain's data get one from the index of vocabulary extracts that SPieGeL builds at start-up from the configuration (FR-HTML-11, <a href="../../../adr/0021-labels-of-external-vocabularies/">ADR 0021</a>), with no query. The renderer itself queries nothing.</li>
+<li><strong>Labels.</strong> Labels of the properties and of the linked resources, and their types, must be present, because every IRI on the page becomes a link labelled with its label (FR-HTML-10). Labels from the domain come from a query that the HTML profile declares for that purpose, not from whatever the main queries happen to return (see <a href="../../02-current-platform/html-rendering/#observations">Data-dependent HTML rendering</a>). That query is one of the profile's queries: the SPARQL adapter runs it in step 11, at the caller's access level, and caches its result with the description. Terms without a label in the domain's data get one from the index of vocabulary extracts that SPieGeL builds at start-up from the configuration (FR-HTML-11, <a href="../../../adr/0021-labels-of-external-vocabularies/">ADR 0021</a>), with no query. Rendering itself queries nothing.</li>
 <li><strong>Presentation rules.</strong> The tenant's rules, combined with the shared defaults, choose the presentation blocks and components: by type, by predicate, by the predicate's own type and by datatype. → FR-HTML-06. How the rules are expressed is <a href="../../06-open-questions/#front-end">open question 21</a>.</li>
 <li><strong>Geometries.</strong> WKT literals are written into the page as they are, with their CRS (the GeoSPARQL CRS IRI, or WGS84 when there is none). The geometry map component reads them from the page and reprojects them in the browser. The server does no conversion, and the map needs no follow-up request. → FR-HTML-07.</li>
 <li><strong>Template.</strong> A template per URI template or resource type, falling back to the generic subject page, writes Flux markup with the content inside the tags (in the light DOM or in slots), so that the page is readable without JavaScript. → FR-HTML-03, NFR-UI-01, NFR-UI-04, <a href="../../03-requirements/design-system/">Design system: Flux</a>. The template engine is <a href="../../06-open-questions/#front-end">open question 9</a>.</li>
@@ -3294,10 +3351,10 @@
 <h2 id="follow-up-requests-from-the-browser">Follow-up requests from the browser<a class="headerlink" href="#follow-up-requests-from-the-browser" title="Permanent link">&para;</a></h2>
 <p>The interactive components (incoming relations, the hierarchy, the collection table) request more data after the page has loaded. A map of the resource's own geometries does not: its data is already in the page.</p>
 <p>They request <strong>paged lists</strong>, which are Linked Data resources in their own right (<a href="../../../adr/0015-paged-lists-as-resources/">ADR 0015</a>): <code>?_property=…</code> for the values of a property of the subject, <code>?_inverse=…</code> for the resources that refer to it through one predicate, and <code>?_inverse</code> alone for the overview of incoming predicates with a bounded count each. A component asks for JSON-LD with SPieGeL's fixed <code>@context</code>; a harvester can ask for the same list in Turtle. Each page is described with Hydra and links to the next one, so no total is needed.</p>
-<p>A list follows the same steps as dereferencing: tenant, identity, rate limit, cache under the data version with the access level in the key, and bounded queries with <code>LIMIT N+1</code>. Its queries are SPieGeL's default templates or the tenant's own <code>QuerySpec</code>s. Nothing is queried through <code>/sparql</code> from the browser.</p>
+<p>A list follows the same steps as dereferencing: tenant, identity, rate limit, cache under the data version with the access level in the key, and bounded queries with <code>LIMIT N+1</code>. Its queries are SPieGeL's default templates or the tenant's own queries, known to the SPARQL adapter. Nothing is queried through <code>/sparql</code> from the browser.</p>
 <h2 id="front-page-and-keyword-search">Front page and keyword search<a class="headerlink" href="#front-page-and-keyword-search" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Front page</strong> (FR-HTML-02, FR-HTML-09): <code>GET /</code> on a tenant's host name. Steps 1 and 2 select the tenant from the host, so every host name, such as <code>data.imjv.omgeving.vlaanderen.be</code> or <code>data.bodemenondergrond.vlaanderen.be</code>, gets its own front page. The page is built from <strong>discovery blocks</strong>: the tenant's block queries (by default DCAT catalogues with their datasets, SKOS concept schemes, and <code>rdfs:Class</code> and <code>owl:Class</code>) run like any <code>QuerySpec</code>, at the <em>public</em> access level, bounded, with a timeout, and cached (steps 9 to 13). The template renders the non-empty blocks after an optional configured introduction, example queries and search terms. If one block fails, the page shows the other blocks and says that one could not be loaded. Unlike a resource description, a front page is a list of independent blocks. An unknown host gets <code>404</code>, as in step 2.</li>
+<li><strong>Front page</strong> (FR-HTML-02, FR-HTML-09): <code>GET /</code> on a tenant's host name. Steps 1 and 2 select the tenant from the host, so every host name, such as <code>data.imjv.omgeving.vlaanderen.be</code> or <code>data.bodemenondergrond.vlaanderen.be</code>, gets its own front page. The page is built from <strong>discovery blocks</strong>: the tenant's block queries (by default DCAT catalogues with their datasets, SKOS concept schemes, and <code>rdfs:Class</code> and <code>owl:Class</code>) run like any other configured query, at the <em>public</em> access level, bounded, with a timeout, and cached (steps 9 to 13). The template renders the non-empty blocks after an optional configured introduction, example queries and search terms. If one block fails, the page shows the other blocks and says that one could not be loaded. Unlike a resource description, a front page is a list of independent blocks. An unknown host gets <code>404</code>, as in step 2.</li>
 <li><strong>Portal page</strong> (FR-HTML-08): the front page of the umbrella tenant (<code>algemeen</code>) also lists every published domain and links to its front page. The list is discovered from the tenant configuration (all tenants), from the actual publication (a query on the umbrella domain's open data catalogue), or from both, merged with configured entries for domains published elsewhere. Which source is used is <a href="../../06-open-questions/#front-end">open question 25</a>.</li>
 <li><strong>Keyword search</strong> (FR-SRCH-01): steps 1 to 3, then two queries through the search port (a count, then a page of results) with the same bounds and timeouts, rendered as a list. Whether it stays is <a href="../../06-open-questions/#product-and-scope">open question 4</a>.</li>
 </ul>
@@ -3308,7 +3365,7 @@
 <li>A failed or timed-out query makes the request fail, never a partial page. A description cut off at the ceiling is served, but always marked as incomplete (step 12, NFR-OPS-09).</li>
 <li>Labels for HTML come from a query declared by the HTML profile (rendering step 1).</li>
 </ul>
-<p>Related decisions: edge concerns (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>), default and hand-written queries (<a href="../../../adr/0012-tenant-configuration-as-rdf/">ADR 0012</a>). Related open question: presentation rules (<a href="../../06-open-questions/#front-end">21</a>).</p>
+<p>Related decisions: edge concerns (<a href="../../../adr/0022-edge-concerns/">ADR 0022</a>), default and tenant queries (<a href="../../../adr/0028-tenant-configuration-in-yaml/">ADR 0028</a>). Related open question: presentation rules (<a href="../../06-open-questions/#front-end">21</a>).</p>
 
 
 
