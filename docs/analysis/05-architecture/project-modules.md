@@ -20,6 +20,8 @@ The Maven modules and the packages in each. See [Module structure](module-struct
 ### Model
 
 - be.vlaanderen.omgeving.spiegel.model
+- be.vlaanderen.omgeving.spiegel.model.Resource (structured resource identifier, including the tenant id)
+- be.vlaanderen.omgeving.spiegel.model.UserContext (planned: username and roles of the caller)
 - be.vlaanderen.omgeving.spiegel.model.exception
 
 ### Application

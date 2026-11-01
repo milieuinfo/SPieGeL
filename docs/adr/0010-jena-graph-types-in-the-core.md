@@ -1,6 +1,6 @@
 # 0010. Use Jena's graph types in the core, keep SPARQL out of it
 
-- **Status:** Accepted
+- **Status:** Proposed
 - **Date:** 2026-10-25
 
 ## Context
@@ -26,7 +26,7 @@ The SPARQL engine, the HTTP client and the RIOT parsers and serialisers live in 
 ## Decision
 
 1. **The core uses Jena's graph level:** `Graph`, `Node` and `Triple` from `jena-core`. `ResourceDescription` wraps a `Graph`. Inside a method, the core may use the model level as a view on that graph where it makes the code clearer, but its ports and domain types expose the graph level only.
-2. **The core does not depend on `jena-arq`.** It neither parses nor runs SPARQL, and does not read or write RDF formats. For the core, a query is text with bindings: a `QuerySpec` holds the query text, and the resource IRI is passed as a `Node`. Binding happens in the SPARQL adapter (NFR-SEC-04). Inspecting a query against a policy is done behind a port ([ADR 0011](0011-query-policy.md)).
+2. **The core does not depend on `jena-arq`.** It neither parses nor runs SPARQL, and does not read or write RDF formats. For the core, a query is text with bindings: a `QuerySpec` holds the query text, and the resource IRI is passed as a `Node`. Binding happens in the SPARQL adapter (NFR-SEC-04). *Since 2026-11-01, the core does not hold the queries at all: the SPARQL adapter looks them up in its configuration for a `Resource` and a profile ([Hexagonal design](../analysis/05-architecture/hexagonal-design.md#domain-model)).* Inspecting a query against a policy is done behind a port ([ADR 0011](0011-query-policy.md)).
 3. **`ArchitectureTest` enforces this.** Classes in the core must not depend on `org.apache.jena.sparql..`, `org.apache.jena.query..`, `org.apache.jena.riot..`, `org.apache.jena.http..` or `org.apache.jena.rdflink..`.
 
 ## Consequences
@@ -36,3 +36,5 @@ The SPARQL engine, the HTTP client and the RIOT parsers and serialisers live in 
 - `spiegel-core` gains a dependency on `jena-core`, but not on Jena's HTTP client, so NFR-Q-01 still holds.
 - Serialising RDF (Jena RIOT) happens in the adapters that render, never in the core.
 - Exposing only the graph level keeps the ports small and avoids leaking the model level's implicit state, such as prefix maps and reification, into the domain.
+
+*Reopened on 2026-11-01:* the core has a domain model of its own (`Resource`, `UserContext`, `Profile` and an RDF description), used by its inbound and outbound ports ([Hexagonal design](../analysis/05-architecture/hexagonal-design.md#domain-model)). Which type holds the RDF description is open again: Jena's model level (`org.apache.jena.rdf.model.Model`), Jena's graph level (`Graph`, as decided above), or Commons RDF (`org.apache.commons.rdf.api.Graph`). The status is therefore *Proposed* again ([open question 14](../analysis/06-open-questions.md#architecture-and-operations)). Decision 2, nothing from `jena-arq` in the core, is not in question.

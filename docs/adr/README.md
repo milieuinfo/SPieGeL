@@ -15,7 +15,7 @@ Use [`template.md`](template.md) for new records.
 | [0007](0007-uri-as-shared-identifier.md) | Use the URI as the shared identifier in every distribution | Accepted |
 | [0008](0008-neo4j-not-a-data-source.md) | Do not use Neo4j as a data source for SPieGeL | Accepted |
 | [0009](0009-ontop-for-relational-sources.md) | Translate relational sources with Ontop, materialise other sources with RML | Accepted |
-| [0010](0010-jena-graph-types-in-the-core.md) | Use Jena's graph types in the core, keep SPARQL out of it | Accepted |
+| [0010](0010-jena-graph-types-in-the-core.md) | Use Jena's graph types in the core, keep SPARQL out of it | Proposed |
 | [0011](0011-query-policy.md) | Check every query against a query policy before it runs | Accepted |
 | [0012](0012-tenant-configuration-as-rdf.md) | Describe tenants in RDF, with one generic template and exceptions | Superseded by [0028](0028-tenant-configuration-in-yaml.md) |
 | [0013](0013-tenant-configuration-delivery.md) | Deliver tenant configuration as a versioned artefact | Accepted |

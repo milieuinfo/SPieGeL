@@ -90,7 +90,7 @@ Each requirement has a stable identifier, a priority and a phase (see [Scope](..
 
 | ID | Requirement | Priority | Phase | Source |
 |---|---|---|---|---|
-| FR-MT-01 | One deployment serves several domains, each selected by host name, with its own data sources, URI templates and HTML. | M | 2 | P, C |
+| FR-MT-01 | One deployment serves several domains, each selected by host name or by path, as configured per domain, with its own data sources, URI templates and HTML. | M | 2 | P, C |
 | FR-MT-02 | Adding a domain needs configuration only. | M | 2 | P |
 
 ## Data sources
