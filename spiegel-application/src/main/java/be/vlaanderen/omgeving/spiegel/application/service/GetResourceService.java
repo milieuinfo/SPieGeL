@@ -3,7 +3,7 @@ package be.vlaanderen.omgeving.spiegel.application.service;
 import be.vlaanderen.omgeving.spiegel.application.port.in.GetResourceUseCase;
 import be.vlaanderen.omgeving.spiegel.application.port.out.ResourceRepository;
 import be.vlaanderen.omgeving.spiegel.model.Profile;
-import be.vlaanderen.omgeving.spiegel.model.Resource;
+import be.vlaanderen.omgeving.spiegel.model.ResourceObject;
 import be.vlaanderen.omgeving.spiegel.model.UserContext;
 import be.vlaanderen.omgeving.spiegel.model.exception.ResourceNotFoundException;
 
@@ -21,7 +21,7 @@ public class GetResourceService implements GetResourceUseCase {
     }
 
     @Override
-    public Object getResourceDescription(UserContext userContext, Resource resource, Profile profile) {
+    public Object getResourceDescription(UserContext userContext, ResourceObject resource, Profile profile) {
         return resourceRepository.findByResource(userContext, resource, profile).orElseThrow(() -> new ResourceNotFoundException(resource));
     }
 }

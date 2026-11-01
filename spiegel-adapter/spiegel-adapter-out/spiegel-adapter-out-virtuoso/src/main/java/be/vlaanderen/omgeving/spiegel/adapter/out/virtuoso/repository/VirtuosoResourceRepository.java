@@ -3,7 +3,7 @@ package be.vlaanderen.omgeving.spiegel.adapter.out.virtuoso.repository;
 import be.vlaanderen.omgeving.spiegel.adapter.out.virtuoso.mapper.VirtuosoMapper;
 import be.vlaanderen.omgeving.spiegel.application.port.out.ResourceRepository;
 import be.vlaanderen.omgeving.spiegel.model.Profile;
-import be.vlaanderen.omgeving.spiegel.model.Resource;
+import be.vlaanderen.omgeving.spiegel.model.ResourceObject;
 import be.vlaanderen.omgeving.spiegel.model.UserContext;
 
 import java.util.Objects;
@@ -23,7 +23,7 @@ public class VirtuosoResourceRepository implements ResourceRepository {
     }
 
     @Override
-    public Optional<Object> findByResource(UserContext userContext, Resource resource, Profile profile) {
+    public Optional<Object> findByResource(UserContext userContext, ResourceObject resourceObject, Profile profile) {
         return Optional.empty();
     }
 }

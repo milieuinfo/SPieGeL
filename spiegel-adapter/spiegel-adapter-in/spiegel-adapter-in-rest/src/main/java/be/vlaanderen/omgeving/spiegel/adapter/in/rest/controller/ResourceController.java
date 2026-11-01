@@ -3,7 +3,7 @@ package be.vlaanderen.omgeving.spiegel.adapter.in.rest.controller;
 import be.vlaanderen.omgeving.spiegel.adapter.in.rest.mapper.ResourceMapper;
 import be.vlaanderen.omgeving.spiegel.application.port.in.GetResourceUseCase;
 import be.vlaanderen.omgeving.spiegel.model.Profile;
-import be.vlaanderen.omgeving.spiegel.model.Resource;
+import be.vlaanderen.omgeving.spiegel.model.ResourceObject;
 import be.vlaanderen.omgeving.spiegel.model.UserContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -53,7 +53,7 @@ public class ResourceController {
         // perform redirect or document
     }
 
-    private Object getResource(UserContext userContext, Resource resource, Profile profile) {
-        return getResourceUseCase.getResourceDescription(userContext, resource, profile);
+    private Object getResource(UserContext userContext, ResourceObject resourceObject, Profile profile) {
+        return getResourceUseCase.getResourceDescription(userContext, resourceObject, profile);
     }
 }
