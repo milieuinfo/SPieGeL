@@ -71,7 +71,8 @@ public class ResourceController {
         // 5, Determine and create Profile object based on incoming request, selected document endpoint path definition, a specific query parameter or header of incoming request
         // 6. Call getResourceUseCase
         // 7. Map retrieved description of the resource to jena model (the structured data)
-        // 8. Render the appropriate view (representation) based on content negotiation and profile (in this step the profile only deteremines the reprenstation,
+        // 8. Render the appropriate view (representation) based on content negotiation and profile (in this step the profile only determines the representation,
+        // 8.1 make use of the spring content negotiation mechanism, custom http message converters, thymeleaf in case of html, etc...
     }
 
     private Model getResource(UserContext userContext, SpResource spResource, Profile profile) {
