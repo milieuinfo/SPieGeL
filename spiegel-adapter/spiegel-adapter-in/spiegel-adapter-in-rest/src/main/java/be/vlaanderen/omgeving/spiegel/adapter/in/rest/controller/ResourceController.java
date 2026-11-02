@@ -63,7 +63,7 @@ public class ResourceController {
         // Which filters is still to decide but will probably result in a UserContext object being available in the request scopee and a hostname (tenant)
         // 1. Create or get UserContext.
         // 2. get matching redirect endpoints (defined in the configuration) based on incoming request and the configuration
-        #//   - this are endpoints configurations that the application must do a redirect.
+        //   - this are endpoints configurations that the application must do a redirect.
         // 2.1 if match perform the redirect on the best matched redirect configuration (most selective)
         // 2.2 else (no redirect endpoint) get all matching document endpoint path definitions
         // 3. select the best match (most selective).
@@ -73,7 +73,7 @@ public class ResourceController {
         // 7. Map retrieved description of the resource to jena model (the structured data)
         // 8. Render the appropriate view (representation) based on content negotiation and profile (in this step the profile only deteremines the reprenstation,
     }
-e
+
     private Model getResource(UserContext userContext, SpResource spResource, Profile profile) {
         Graph resourceDescription = getResourceUseCase.getResourceDescription(userContext, spResource, profile);
         return rdfGraphMapper.toJenaModel(resourceDescription);
