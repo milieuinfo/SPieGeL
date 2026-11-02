@@ -22,6 +22,9 @@ import java.util.Optional;
 
 /**
  * Reads resources from a SPARQL endpoint.using SPARQL 1.1 Protocol
+ * <p>
+ * Todo: Configure this repository with the appropriate configuration class(es) during bootstrap.
+ * Todo: For a given resource and profile get the uery-templates to use from this configuration.
  */
 public class SparqlEndpointRepository implements ResourceRepository {
 
@@ -29,6 +32,7 @@ public class SparqlEndpointRepository implements ResourceRepository {
      * Endpoint that implements the SPARQL 1.1 Query operations of the SPARQL 1.1 protocol
      *
      * @see <http://www.w3.org/TR/sparql11-query/>
+     *
      */
     private URI sparqlQueryEndpoint;
     private HttpClient httpClient;

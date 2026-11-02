@@ -12,6 +12,9 @@ import java.util.Objects;
 
 /**
  * Implements {@link GetResourceUseCase} on top of a {@link ResourceRepository}.
+ * <p>
+ * Todo: Configure this service with the appropriate configuration class(es) during bootstrap.
+ * Todo: For a given resource get the ResourceRepository to use from this configuration.
  */
 public class GetResourceService implements GetResourceUseCase {
 

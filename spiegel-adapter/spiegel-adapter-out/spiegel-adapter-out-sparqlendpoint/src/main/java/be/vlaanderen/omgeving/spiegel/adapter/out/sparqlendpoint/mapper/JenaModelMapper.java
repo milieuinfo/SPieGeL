@@ -14,6 +14,6 @@ public class JenaModelMapper {
      * @return the Graph
      */
     public Graph toRdfGraph(Model model) {
-        return null; // todo;
+        return null; // todo implement;
     }
 }
