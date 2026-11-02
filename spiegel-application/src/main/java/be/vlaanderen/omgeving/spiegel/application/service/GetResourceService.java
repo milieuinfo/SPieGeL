@@ -11,10 +11,14 @@ import org.apache.commons.rdf.api.Graph;
 import java.util.Objects;
 
 /**
- * Implements {@link GetResourceUseCase} on top of a {@link ResourceRepository}.
+ * Application service that implements {@link GetResourceUseCase}.
+ * <p>
+ * Delegates the actual lookup of a resource's RDF description to a {@link ResourceRepository},
+ * and throws a {@link ResourceNotFoundException} when the repository does not have a description
+ * for the requested resource.
  * <p>
  * Todo: Configure this service with the appropriate configuration class(es) during bootstrap.
- * Todo: For a given resource get the ResourceRepository to use from this configuration.
+ * Todo: For a given resource, determine the specific {@link ResourceRepository} adapter instance to use based on that configuration.
  */
 public class GetResourceService implements GetResourceUseCase {
 

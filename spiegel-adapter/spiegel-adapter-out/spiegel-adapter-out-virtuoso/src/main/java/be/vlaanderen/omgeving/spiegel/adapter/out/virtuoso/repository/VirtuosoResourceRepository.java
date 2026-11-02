@@ -12,6 +12,7 @@ import java.util.Optional;
 
 /**
  * Reads resources from Virtuoso
+ * This class might extend the SparqlEndpointRepository or use the jdbs support of Virtuoso.
  */
 public class VirtuosoResourceRepository implements ResourceRepository {
 

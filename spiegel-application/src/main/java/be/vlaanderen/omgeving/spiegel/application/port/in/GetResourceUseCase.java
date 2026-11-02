@@ -13,7 +13,7 @@ public interface GetResourceUseCase {
      *
      * @param spResource, structured identifier of requested resource
      * @return the resource description (a rdf model)
-     * @throws ResourceNotFoundException if no resource is known for the IRI
+     * @throws ResourceNotFoundException if no resource is known for the SpResource
      */
     Graph getResourceDescription(UserContext userContext, SpResource spResource, Profile profile);
 }

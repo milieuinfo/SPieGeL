@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Reads resources from a SPARQL endpoint.using SPARQL 1.1 Protocol
+ * Reads resources from a generic SPARQL endpoint using the standard SPARQL 1.1 Protocol
  * <p>
- * Todo: Configure this repository with the appropriate configuration class(es) during bootstrap.
- * Todo: For a given resource and profile get the uery-templates to use from this configuration.
+ * Todo: Configure this repository instance with the appropriate configuration class(es) during bootstrap.
+ * Todo: For a given resource and profile get the query-templates to use (i.e. from its configuration instantiated during bootstrap)..
  */
 public class SparqlEndpointRepository implements ResourceRepository {
 
@@ -44,9 +44,9 @@ public class SparqlEndpointRepository implements ResourceRepository {
 
     @Override
     public Optional<Graph> findByResource(UserContext userContext, SpResource spResource, Profile profile) {
-        // todo get query-templates based on resource object and profile from configuration
-        // todo execute queries
-        // todo map the resulting jena model to commons rdf graph
+        // todo get query-templates based on resource object and profile and configuration
+        // todo resolve query-templates and execute queries
+        // todo map and return the resulting jena model to the commons rdf graph model
         return Optional.empty();
     }
 
@@ -62,12 +62,6 @@ public class SparqlEndpointRepository implements ResourceRepository {
         return executeConstructQuery(parsedQuery, bindings);
     }
 
-    /**
-     * Executes a SPARQL 1.1 CONSTRUCT query using the SPARQL 1.1 protocol
-     *
-     * @see <a href="http://www.w3.org/TR/sparql11-query/"></a>
-     * @see <a href="https://www.w3.org/TR/2013/REC-sparql11-query-20130321/#ask"></a>
-     */
     public Model executeConstructQuery(Query query, QuerySolutionMap bindings) {
 
         query = buildQuery(query, bindings);
