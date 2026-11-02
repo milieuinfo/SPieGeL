@@ -6,13 +6,10 @@ import be.vlaanderen.omgeving.spiegel.model.UserContext;
 import be.vlaanderen.omgeving.spiegel.model.exception.ResourceNotFoundException;
 import org.apache.commons.rdf.api.Graph;
 
-/**
- * Looks up a single resource by its IRI.
- */
 public interface GetResourceUseCase {
 
     /**
-     * Returns the resource identified by the given IRI.
+     * Returns a description of the resource.
      *
      * @param resourceObject, structured identifier of requested resource
      * @return the resource description (a rdf model)

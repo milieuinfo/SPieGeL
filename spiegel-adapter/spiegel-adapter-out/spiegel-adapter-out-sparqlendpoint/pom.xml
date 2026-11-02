@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>be.vlaanderen.omgeving.spiegel</groupId>
+        <artifactId>spiegel-adapter-out</artifactId>
+        <version>0.1.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>spiegel-adapter-out-sparqlendpoint</artifactId>
+    <name>SPieGeL :: Sparqlendpoint adapter</name>
+    <description>ResourceRepository over the SPARQL 1.1 Protocol using Apache Jena.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>be.vlaanderen.omgeving.spiegel</groupId>
+            <artifactId>spiegel-application</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>jena-arq</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

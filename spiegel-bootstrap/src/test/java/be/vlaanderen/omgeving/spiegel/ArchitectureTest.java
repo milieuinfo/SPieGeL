@@ -34,10 +34,19 @@ class ArchitectureTest {
                     "..spiegel.adapter..")
             .because("use cases and ports (the hexagon) must not depend on frameworks or adapters");
 
+// vervangen met inboundAndOutboundadaptersAreIndependent
+//    @ArchTest
+//    static final ArchRule adaptersAreIndependent = slices()
+//            .matching("be.vlaanderen.omgeving.spiegel.adapter.(*).(*)..")
+//            .should().notDependOnEachOther()
+//            .allowEmptyShould(true)
+//            .because("adapters depend on the application and model only, never on each other");
+
     @ArchTest
-    static final ArchRule adaptersAreIndependent = slices()
-            .matching("be.vlaanderen.omgeving.spiegel.adapter.(*).(*)..")
+    static final ArchRule inboundAndOutboundadaptersAreIndependent = slices()
+            .matching("be.vlaanderen.omgeving.spiegel.adapter.(*)..")
             .should().notDependOnEachOther()
             .allowEmptyShould(true)
-            .because("adapters depend on the application and model only, never on each other");
+            .because("inbound and outbound adapters must not depend on each other, "
+                     + "but adapters on the same side (e.g. multiple adapter-out implementations) may");
 }

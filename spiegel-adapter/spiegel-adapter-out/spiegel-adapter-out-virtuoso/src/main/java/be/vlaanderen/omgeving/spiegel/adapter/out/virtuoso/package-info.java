@@ -1,4 +1,4 @@
 /**
- * DataSourcePort over the SPARQL 1.1 Protocol, using Apache Jena.
+ * DataSourcePort using Virtuoso as datasource
  */
 package be.vlaanderen.omgeving.spiegel.adapter.out.virtuoso;

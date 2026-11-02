@@ -1,6 +1,6 @@
 package be.vlaanderen.omgeving.spiegel.adapter.out.virtuoso.repository;
 
-import be.vlaanderen.omgeving.spiegel.adapter.out.virtuoso.mapper.JenaModelMapper;
+import be.vlaanderen.omgeving.spiegel.adapter.out.sparqlendpoint.mapper.JenaModelMapper;
 import be.vlaanderen.omgeving.spiegel.application.port.out.ResourceRepository;
 import be.vlaanderen.omgeving.spiegel.model.Profile;
 import be.vlaanderen.omgeving.spiegel.model.ResourceObject;
@@ -11,9 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Reads resources from Virtuoso over the SPARQL 1.1 Protocol.
- *
- * <p>Not connected to Virtuoso yet: every lookup comes back empty.
+ * Reads resources from Virtuoso
  */
 public class VirtuosoResourceRepository implements ResourceRepository {
 

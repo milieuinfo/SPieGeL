@@ -40,12 +40,14 @@ public class ResourceController {
                            defaultValue = "")
             List<MediaType> acceptHeaders) {
 
+        // todo
+
         // 1. get matching redirect endpoint path definitions
         // if match perform redirect
         // else
         // 2. get all matching document endpoint path definitions
         // 2.1 select the best match
-        // 3. Create Resource object based on incoming request and document endpoint pathdefinition
+        // 3. Create Resource object based on incoming request and selected document endpoint pathdefinition
         // 4. Create UserContext based on SecurityContext
         // 5, Create Profile based on query parameter or header of incoming request
         // 6. Call getResourceUseCase
