@@ -49,6 +49,7 @@
   <properties>
     <java.version>21</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <commons.rdf.version>0.5.0</commons.rdf.version>
     <jena.version>6.2.0</jena.version>
     <archunit.version>1.5.1</archunit.version>
     <!-- Security overrides of versions managed by Spring Boot 4.1.1; drop once Boot ships them. -->
@@ -87,6 +88,18 @@
         <groupId>org.apache.jena</groupId>
         <artifactId>jena-arq</artifactId>
         <version>${jena.version}</version>
+      </dependency>
+      <!-- Apache Commons RDF -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-rdf-api</artifactId>
+        <version>${commons.rdf.version}</version>
+      </dependency>
+      <!-- and at least one of the implementations: -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-rdf-simple</artifactId>
+        <version>${commons.rdf.version}</version>
       </dependency>
       <dependency>
         <groupId>com.tngtech.archunit</groupId>

@@ -6,6 +6,7 @@ import be.vlaanderen.omgeving.spiegel.model.Profile;
 import be.vlaanderen.omgeving.spiegel.model.ResourceObject;
 import be.vlaanderen.omgeving.spiegel.model.UserContext;
 import be.vlaanderen.omgeving.spiegel.model.exception.ResourceNotFoundException;
+import org.apache.commons.rdf.api.Graph;
 
 import java.util.Objects;
 
@@ -21,7 +22,7 @@ public class GetResourceService implements GetResourceUseCase {
     }
 
     @Override
-    public Object getResourceDescription(UserContext userContext, ResourceObject resource, Profile profile) {
+    public Graph getResourceDescription(UserContext userContext, ResourceObject resource, Profile profile) {
         return resourceRepository.findByResource(userContext, resource, profile).orElseThrow(() -> new ResourceNotFoundException(resource));
     }
 }

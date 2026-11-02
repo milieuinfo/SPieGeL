@@ -4,6 +4,7 @@ import be.vlaanderen.omgeving.spiegel.model.Profile;
 import be.vlaanderen.omgeving.spiegel.model.ResourceObject;
 import be.vlaanderen.omgeving.spiegel.model.UserContext;
 import be.vlaanderen.omgeving.spiegel.model.exception.ResourceNotFoundException;
+import org.apache.commons.rdf.api.Graph;
 
 /**
  * Looks up a single resource by its IRI.
@@ -17,5 +18,5 @@ public interface GetResourceUseCase {
      * @return the resource description (a rdf model)
      * @throws ResourceNotFoundException if no resource is known for the IRI
      */
-    Object getResourceDescription(UserContext userContext, ResourceObject resourceObject, Profile profile);
+    Graph getResourceDescription(UserContext userContext, ResourceObject resourceObject, Profile profile);
 }

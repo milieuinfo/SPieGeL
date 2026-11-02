@@ -1,12 +1,14 @@
 package be.vlaanderen.omgeving.spiegel.adapter.in.rest.controller;
 
-import be.vlaanderen.omgeving.spiegel.adapter.in.rest.mapper.ResourceMapper;
+import be.vlaanderen.omgeving.spiegel.adapter.in.rest.mapper.RdfGraphMapper;
 import be.vlaanderen.omgeving.spiegel.application.port.in.GetResourceUseCase;
 import be.vlaanderen.omgeving.spiegel.model.Profile;
 import be.vlaanderen.omgeving.spiegel.model.ResourceObject;
 import be.vlaanderen.omgeving.spiegel.model.UserContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.rdf.api.Graph;
+import org.apache.jena.rdf.model.Model;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,11 +24,11 @@ import java.util.List;
 public class ResourceController {
 
     private final GetResourceUseCase getResourceUseCase;
-    private final ResourceMapper resourceMapper;
+    private final RdfGraphMapper rdfGraphMapper;
 
-    public ResourceController(GetResourceUseCase getResourceUseCase, ResourceMapper resourceMapper) {
+    public ResourceController(GetResourceUseCase getResourceUseCase, RdfGraphMapper rdfGraphMapper) {
         this.getResourceUseCase = getResourceUseCase;
-        this.resourceMapper = resourceMapper;
+        this.rdfGraphMapper = rdfGraphMapper;
     }
 
     @GetMapping("/**")
@@ -38,22 +40,21 @@ public class ResourceController {
                            defaultValue = "")
             List<MediaType> acceptHeaders) {
 
-        // get matching redirect endpoint path definitions
+        // 1. get matching redirect endpoint path definitions
         // if match perform redirect
-
-        // else get matching document endpoint pathdefinitions
-        // if match select best match
-        // create Resource object based on request and document endpoint pathdefinition
-        // create UserContext based on SecurityContext
-        // create Profile based on query parameter or header
-        // call getResourceUseCase
-        // map retrieved resource rdf description to jena model
-        // generate appropriate view based on content negotiation
-
-        // perform redirect or document
+        // else
+        // 2. get all matching document endpoint path definitions
+        // 2.1 select the best match
+        // 3. Create Resource object based on incoming request and document endpoint pathdefinition
+        // 4. Create UserContext based on SecurityContext
+        // 5, Create Profile based on query parameter or header of incoming request
+        // 6. Call getResourceUseCase
+        // 7. Map retrieved resource rdf description to jena model
+        // 8. Generate appropriate view based on content negotiation
     }
 
-    private Object getResource(UserContext userContext, ResourceObject resourceObject, Profile profile) {
-        return getResourceUseCase.getResourceDescription(userContext, resourceObject, profile);
+    private Model getResource(UserContext userContext, ResourceObject resourceObject, Profile profile) {
+        Graph resourceDescription = getResourceUseCase.getResourceDescription(userContext, resourceObject, profile);
+        return rdfGraphMapper.toJenaModel(resourceDescription);
     }
 }

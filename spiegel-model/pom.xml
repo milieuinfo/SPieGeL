@@ -11,4 +11,16 @@
   <artifactId>spiegel-model</artifactId>
   <name>SPieGeL :: Model</name>
   <description>Domain model. Free of framework dependencies.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-rdf-api</artifactId>
+    </dependency>
+    <!-- and at least one of the implementations: -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-rdf-simple</artifactId>
+    </dependency>
+  </dependencies>
 </project>
