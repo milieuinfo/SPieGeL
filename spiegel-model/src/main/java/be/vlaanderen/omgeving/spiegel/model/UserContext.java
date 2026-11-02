@@ -4,7 +4,16 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
+ * Represents the identity and authorization context of the user performing a request.
+ * <p>
+ * A {@code UserContext} carries the {@linkplain #username() username} and the
+ * {@linkplain #roles() roles} assigned to that user. Outbound port adapters (e.g. repositories
+ * querying a SPARQL endpoint or Virtuoso) use this information to determine and enforce the
+ * appropriate access rights when resolving or filtering a {@link SpResource}.
  *
+ * @param username the identifier of the authenticated user; never {@code null}
+ * @param roles    the set of roles granted to the user, used to determine access rights;
+ *                 never {@code null}, but may be empty
  */
 public record UserContext(String username, Set<String> roles) {
     public UserContext {
