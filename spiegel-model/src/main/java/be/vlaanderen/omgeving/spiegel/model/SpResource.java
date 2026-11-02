@@ -20,7 +20,7 @@ import java.util.Map;
  * The inbound adapters that drive the application (i.e spring mvc rest adapter) must be able to generate such a record (in their specific context)
  * and pass it to the application for use cases (inbound ports) that require this record.
  *
- * @param namespace    the namespace (tenant) this resource belongs to; must not be {@code null}
+ * @param namespace    the namespace this resource belongs to; must not be {@code null}
  * @param pad          the path under which the resource is published; must not be {@code null}
  * @param localid      the local identifier of the resource within the path; must not be {@code null}
  * @param resourceType <strong>Experimental:</strong> a type of the resource (not necessarily the rdfs:Class); must not be {@code null}.
