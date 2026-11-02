@@ -3,7 +3,7 @@ package be.vlaanderen.omgeving.spiegel.adapter.in.rest.controller;
 import be.vlaanderen.omgeving.spiegel.adapter.in.rest.mapper.RdfGraphMapper;
 import be.vlaanderen.omgeving.spiegel.application.port.in.GetResourceUseCase;
 import be.vlaanderen.omgeving.spiegel.model.Profile;
-import be.vlaanderen.omgeving.spiegel.model.ResourceObject;
+import be.vlaanderen.omgeving.spiegel.model.SpResource;
 import be.vlaanderen.omgeving.spiegel.model.UserContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,8 +55,8 @@ public class ResourceController {
         // 8. Generate appropriate view based on content negotiation
     }
 
-    private Model getResource(UserContext userContext, ResourceObject resourceObject, Profile profile) {
-        Graph resourceDescription = getResourceUseCase.getResourceDescription(userContext, resourceObject, profile);
+    private Model getResource(UserContext userContext, SpResource spResource, Profile profile) {
+        Graph resourceDescription = getResourceUseCase.getResourceDescription(userContext, spResource, profile);
         return rdfGraphMapper.toJenaModel(resourceDescription);
     }
 }

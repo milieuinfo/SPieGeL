@@ -2,7 +2,7 @@ package be.vlaanderen.omgeving.spiegel.adapter.out.sparqlendpoint.repository;
 
 import be.vlaanderen.omgeving.spiegel.application.port.out.ResourceRepository;
 import be.vlaanderen.omgeving.spiegel.model.Profile;
-import be.vlaanderen.omgeving.spiegel.model.ResourceObject;
+import be.vlaanderen.omgeving.spiegel.model.SpResource;
 import be.vlaanderen.omgeving.spiegel.model.UserContext;
 import org.apache.commons.rdf.api.Graph;
 import org.apache.jena.query.ParameterizedSparqlString;
@@ -43,7 +43,7 @@ public class SparqlEndpointRepository implements ResourceRepository {
     }
 
     @Override
-    public Optional<Graph> findByResource(UserContext userContext, ResourceObject resourceObject, Profile profile) {
+    public Optional<Graph> findByResource(UserContext userContext, SpResource spResource, Profile profile) {
         // todo get query-templates based on resource object and profile from configuration
         // todo execute queries
         // todo map the resulting jena model to commons rdf graph

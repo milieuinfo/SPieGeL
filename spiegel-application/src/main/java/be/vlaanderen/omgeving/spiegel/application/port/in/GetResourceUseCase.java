@@ -1,7 +1,7 @@
 package be.vlaanderen.omgeving.spiegel.application.port.in;
 
 import be.vlaanderen.omgeving.spiegel.model.Profile;
-import be.vlaanderen.omgeving.spiegel.model.ResourceObject;
+import be.vlaanderen.omgeving.spiegel.model.SpResource;
 import be.vlaanderen.omgeving.spiegel.model.UserContext;
 import be.vlaanderen.omgeving.spiegel.model.exception.ResourceNotFoundException;
 import org.apache.commons.rdf.api.Graph;
@@ -11,9 +11,9 @@ public interface GetResourceUseCase {
     /**
      * Returns a description of the resource.
      *
-     * @param resourceObject, structured identifier of requested resource
+     * @param spResource, structured identifier of requested resource
      * @return the resource description (a rdf model)
      * @throws ResourceNotFoundException if no resource is known for the IRI
      */
-    Graph getResourceDescription(UserContext userContext, ResourceObject resourceObject, Profile profile);
+    Graph getResourceDescription(UserContext userContext, SpResource spResource, Profile profile);
 }
