@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -11,13 +10,12 @@
 
   <groupId>be.vlaanderen.omgeving.spiegel</groupId>
   <artifactId>spiegel-parent</artifactId>
-  <version>0.1.1-SNAPSHOT</version>
-  <packaging>pom</packaging>
-
   <name>SPieGeL</name>
   <description>Open-source, configurable Linked Data publishing server</description>
   <url>https://milieuinfo.github.io/SPieGeL/</url>
   <inceptionYear>2026</inceptionYear>
+  <packaging>pom</packaging>
+  <version>0.1.1-SNAPSHOT</version>
 
   <organization>
     <name>Vlaamse Overheid, Departement Omgeving</name>
@@ -48,10 +46,15 @@
 
   <properties>
     <java.version>21</java.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Libraries -->
+    <archunit.version>1.5.1</archunit.version>
+
     <commons.rdf.version>0.5.0</commons.rdf.version>
     <jena.version>6.2.0</jena.version>
-    <archunit.version>1.5.1</archunit.version>
     <!-- Security overrides of versions managed by Spring Boot 4.1.1; drop once Boot ships them. -->
     <tomcat.version>11.0.25</tomcat.version>
     <jackson-bom.version>3.1.7</jackson-bom.version>
@@ -59,36 +62,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>be.vlaanderen.omgeving.spiegel</groupId>
-        <artifactId>spiegel-model</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>be.vlaanderen.omgeving.spiegel</groupId>
-        <artifactId>spiegel-application</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>be.vlaanderen.omgeving.spiegel</groupId>
-        <artifactId>spiegel-adapter-in-rest</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>be.vlaanderen.omgeving.spiegel</groupId>
-        <artifactId>spiegel-adapter-out-sparqlendpoint</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>be.vlaanderen.omgeving.spiegel</groupId>
-        <artifactId>spiegel-adapter-out-virtuoso</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>be.vlaanderen.omgeving.spiegel</groupId>
-        <artifactId>spiegel-adapter-out-elastic</artifactId>
-        <version>${project.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.apache.jena</groupId>
         <artifactId>jena-arq</artifactId>
@@ -100,7 +73,7 @@
         <artifactId>commons-rdf-api</artifactId>
         <version>${commons.rdf.version}</version>
       </dependency>
-      <!-- and at least one of the implementations: -->
+      <!-- Apache Commons RDF and at least one of its implementations: -->
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-rdf-simple</artifactId>
@@ -115,14 +88,31 @@
   </dependencyManagement>
 
   <dependencies>
+    <!-- Provided scope (shared by all modules) -->
+<!--    <dependency>-->
+<!--      <groupId>org.projectlombok</groupId>-->
+<!--      <artifactId>lombok</artifactId>-->
+<!--      <version>1.18.42</version>-->
+<!--      <scope>provided</scope>-->
+<!--    </dependency>-->
+
+    <!-- Test scope (shared by all modules) -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
+      <!-- JUnit version comes from spring-boot-starter-parent -->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
+      <!-- AssertJ version comes from spring-boot-starter-parent -->
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <!-- Mockito version comes from spring-boot-starter-parent -->
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -9,9 +9,9 @@
   </parent>
 
   <artifactId>spiegel-adapter-in</artifactId>
-  <packaging>pom</packaging>
   <name>SPieGeL :: Inbound adapters</name>
   <description>Adapters that drive the application through its inbound ports.</description>
+  <packaging>pom</packaging>
 
   <modules>
     <module>spiegel-adapter-in-rest</module>

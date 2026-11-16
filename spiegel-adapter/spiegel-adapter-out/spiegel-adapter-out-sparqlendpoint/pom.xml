@@ -18,10 +18,20 @@
         <dependency>
             <groupId>be.vlaanderen.omgeving.spiegel</groupId>
             <artifactId>spiegel-application</artifactId>
+            <version>${project.version}</version>
         </dependency>
+
+        <!-- External -->
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>
+        </dependency>
+
+        <!-- Test scoped -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

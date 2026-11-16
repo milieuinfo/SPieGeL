@@ -9,9 +9,9 @@
   </parent>
 
   <artifactId>spiegel-adapter</artifactId>
-  <packaging>pom</packaging>
   <name>SPieGeL :: Adapters</name>
   <description>Inbound and outbound adapters.</description>
+  <packaging>pom</packaging>
 
   <modules>
     <module>spiegel-adapter-in</module>

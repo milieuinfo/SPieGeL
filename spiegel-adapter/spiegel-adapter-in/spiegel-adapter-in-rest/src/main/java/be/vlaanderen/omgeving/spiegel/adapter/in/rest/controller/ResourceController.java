@@ -59,10 +59,10 @@ public class ResourceController {
 
         // todo
         // 0. Before this controller method is entered some http servlet filters will be executed (i.e authentication, rate limit, etc) which will be result
-        // in objects available in the request scope or a direct response (i.e rate limit).
-        // Which filters is still to decide but will probably result in a UserContext object being available in the request scopee and a hostname (tenant)
+        // in objects available in the request scope or in a direct response (i.e rate limit).
+        // Which filters is still to decide but will probably result in a UserContext object being available in the request scope and a hostname (tenant)
         // 1. Create or get UserContext.
-        // 2. get matching redirect endpoints (defined in the configuration) based on incoming request and the configuration
+        // 2. Get matching redirect endpoints (defined in the configuration) based on incoming request and the configuration
         //   - this are endpoints configurations that the application must do a redirect.
         // 2.1 if match perform the redirect on the best matched redirect configuration (most selective)
         // 2.2 else (no redirect endpoint) get all matching document endpoint path definitions

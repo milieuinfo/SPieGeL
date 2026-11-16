@@ -5,9 +5,12 @@ spring:
 management:
   endpoints:
     web:
+      base-path: /admin
       exposure:
         include: health, info
   endpoint:
     health:
       probes:
         enabled: true
+
+#  spiegel:

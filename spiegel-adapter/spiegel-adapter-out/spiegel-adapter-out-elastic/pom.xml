@@ -16,6 +16,7 @@
     <dependency>
       <groupId>be.vlaanderen.omgeving.spiegel</groupId>
       <artifactId>spiegel-application</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>
